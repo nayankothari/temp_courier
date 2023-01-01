@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% load static %}
+    <link rel="stylesheet" href="{% static 'css\\index.css' %}">
+    <link rel="stylesheet" href="{% static 'css\\tracking.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <title>Airpost Xpress | {% block title %}{% endblock title %}</title>
+</head>
+
+<body>
+    <!-- bg-body-tertiary -->
+    <section id="blank_section">
+    </section>
+    <nav class="navbar navbar-expand-lg navbar-default nav_color_spec fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'img/airpost_logo.png' %}" alt="Airpost Xpress" class="img-fluid" id="nav_img">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="menu_btn">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Network</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Contact Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Navbar ends here -->
+    <!-- Body Home section here -->
+
+
+    {% block content %} {% endblock content %}
+
+    <div class="container-fluid bg-black">
+        <div class="row justify-content-evenly">
+            <div class="col-md-3 mb-5">
+                <h5 class="link-text-decor pt-2">Company</h5>
+                <hr class="bold-lines">
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{% url 'home' %}" class="link-text-decor mt-5">Home</a><br>
+                        <a href="" class="link-text-decor mt-5">Service</a><br>
+                        <a href="" class="link-text-decor mt-5">Network</a><br>
+                        <a href="" class="link-text-decor">About Us</a><br>
+                        <a href="" class="link-text-decor">Contact Us</a><br>
+                    </div>
+                    <div class="col-6">
+                        <a href="tracking" class="link-text-decor">Track Shipment</a><br>
+                        <a href="" class="link-text-decor">Privacy & Policy</a><br>
+                        <a href="" class="link-text-decor">Terms & Condition</a><br>
+                        <a href="" class="link-text-decor">Careers</a><br>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <h5 class="link-text-decor pt-2">Contact</h5>
+                <hr class="bold-lines">
+                <a href="" class="link-text-decor">Email: customercare@airpostxpress.com</a>
+            </div>
+            <div class="col-md-3">
+                <h5 class="link-text-decor pt-3">Have a business enquiry?</h5>
+                <hr class="bold-lines">
+                <p class="link-text-decor">Monday to Friday: 10:30 AM To 07:30 PM</p>
+                <p class="link-text-decor">Saturday: 10:30 AM To 07:00 PM</p>
+                <p class="link-text-decor">For more information, please drop a mail.</p>
+            </div>
+            <br>
+            <p class="link-text-decor text-center sm_in_sm">&#169; Copyright {{ today_date }} Airpost Xpress Courier Services - All Rights Reserved.</p>
+        </div>
+    </div>
+    <hr class="mt-1"> {% block alert %}{% endblock alert %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+
+</html>

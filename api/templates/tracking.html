@@ -1,0 +1,111 @@
+{% extends "base.html" %} {% load static %} {% block title %}Tracking{% endblock title %} {% block content %}
+
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4 class="text-center mt-5"></h4>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <!-- <thead>
+                        <tr>
+                            <th scope="col" class="text-center" colspan="2">Booking Detail</th>
+                        </tr>
+                    </thead> -->
+                    <tbody>
+                        <tr>
+                            <th scope="row" colspan="2" class="tracking_head">Booking Detail</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">C.N. Number</th>
+                            <td><b>{{ booking_details.c_note_number }}</b></td>
+
+                        </tr>
+                        {% if booking_details.ref_courier_name.type != 'Internal' %}
+                        <tr>
+                            <th scope="row">Ref. Number</th>
+                            <td>{{ booking_details.ref_courier_number }}</td>
+
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <th scope="row">From Center</th>
+                            <td>{{ booking_details.from_destination }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">To Center</th>
+                            <td><b>{{ booking_details.to_destination }}</b></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Date/Time</th>
+                            <td>{{ booking_details.doc_date }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Receiver name</th>
+                            <td>{{ booking_details.receiver_name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Current Status</th>
+                            <td><b>{{ last_status }}</b></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- For internal tracking Details -->
+
+<div class="container">
+    <div class="row">
+        {% if booking_details.ref_courier_name.type == 'Internal' %}
+        <div class="col-12">
+            <div class="scrollme">
+                <table class="table table-striped table-responsive">
+                    <tbody>
+                        <tr>
+                            <th class="tracking_head" colspan="5">Tracking Details</th>
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                        </tr>
+
+                        {% for track_his in tracking_history %}
+                        <tr>
+                            <td>{{ track_his.in_out_datetime|date:"Y-m-d" }}</td>
+                            <td>{{ track_his.d_from }}</td>
+                            <td>{{ track_his.d_to }}</td>
+                            <td>{{ track_his.status }}</td>
+                            {% if track_his.remarks %}
+                            <td>{{ track_his.remarks }}</td>
+                            {% else %}
+                            <td></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 text-center mb-3 mt-3">
+                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-primary">Back to Tracking Page</button></a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+
+        <!-- For external tracking details-->
+        <div class="col-12">
+            <h1>Hii</h1>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

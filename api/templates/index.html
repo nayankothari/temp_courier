@@ -1,0 +1,160 @@
+{% extends "base.html" %} {% load static %} {% block title %}Home{% endblock title %} {% block content %}
+
+<div class="container-fluid div_cont">
+    <div class="row tracking_details">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <form method="post" action="" target="_blank">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="trackingdetails" class="form-label" id="tracking_name">TRACK YOUR SHIPMENT</label>
+                    <input type="text" class="form-control" id="trackingdetails" aria-describedby="emailHelp" name="tracking_number" required>
+                </div>
+                <button type="submit" class="btn btn-success">Track shipment</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
+</div>
+
+<section id="back_img">
+    <div class="container-fluid">
+        <div class="row justify-content-around first_section">
+            <div class="col-md-5 mt-5">
+                <h1>Welcome to Airpost Xpress</h1>
+                <h4>Your Trusted Partner</h4><br>
+                <p>Airpost Xpress is known for their fast-paced, reliable, and efficient delivery systems. we are not only deliver goods and parcels but also transport feelings, emotions, affection, and curiosity.<br><br>Anytime, anywhere and on time, this
+                    is what our service means<br> Give us the honor to serve you.</p>
+                <!-- <img src="{% static 'img/home_img.png' %}" class="img-fluid" alt="AIRPOST XPRESS"> -->
+            </div>
+            <div class="col-md-5">
+                <img src="{%static 'img\first_pic.jpg'%}" class="img-fluid" alt="">
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="container-fluid">
+        <div class="row justify-content-around first_section">
+            <div class="col-md-5">
+                <img src="{%static 'img\second_img.jpg'%}" class="img-fluid" alt="">
+                <!-- <img src="{% static 'img/home_img.png' %}" class="img-fluid" alt="AIRPOST XPRESS"> -->
+            </div>
+            <div class="col-md-5 mt-5">
+                <h1>Do You Want A Fast Service? Just Contact Us.</h1>
+                <p>With the progress of time and technology, distance is not too large for you to send a package over to your loved ones, From one end of the world to the other, there’s no losing out on sending a token of love to your loved ones.</p>
+                <div class="row justify-content-center">
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-primary"><i class="bi bi-whatsapp"></i> +91 9529486594</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <hr>
+    <div class="container">
+        <div class="row justify-content-center mt-2">
+            <div class="col-md-4 mt-5 text-center">
+                <h1 class="fafa_icon_font"><i class="bi bi-truck"></i></h1>
+                <h3>Swift Delivery</h3>
+                <p>Airpost Xpress is the name; efficient and super-fast delivery is our game, Feel the experience of swift deliveries with Us</p>
+            </div>
+            <div class="col-md-4 mt-5 text-center">
+                <h1 class="fafa_icon_font"><i class="bi bi-bookmark-check"></i></h1>
+                <h3>Trusted Service</h3>
+                <p>Your package and your trust, our delivery is efficient and fast, Always on time</p>
+            </div>
+            <div class="col-md-4 mt-5 text-center">
+                <h1 class="fafa_icon_font"><i class="bi bi-person-up"></i></h1>
+                <h3>Customer Satisfaction</h3>
+                <p>The goal as a company is to have customer service that is not just the best but legendary</p>
+
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-4 mt-2 text-center">
+                <h1 class="fafa_icon_font"><i class="bi bi-airplane"></i></h1>
+                <h3>Fast Track</h3>
+                <p>Taking delivery services up a notch, Because we know the value of time and Stay connected to your loved ones with our on-time services.</p>
+            </div>
+            <div class="col-md-4 mt-2 text-center">
+                <h1 class="fafa_icon_font"><i class="bi bi-globe"></i></h1>
+                <h3>World wide service</h3>
+                <p>No matter for where the deliveries are, we still deliver on time throughout the world</p>
+            </div>
+            <div class="col-md-4 mt-2 text-center mb-4">
+                <h1 class="fafa_icon_font"><i class="bi bi-people-fill"></i></h1>
+                <h3>Team work</h3>
+                <p>Don’t worry, our team of ninjas will go out fighting to deliver your package on time</p>
+            </div>
+            <hr>
+        </div>
+    </div>
+</section>
+<div class="container-fluid industries_serving_bg">
+    <div class="row justify-content-center">
+        <div class="col-12 text-center mt-4">
+            <h1 class="mb-5 mt-2">Industries We Serve</h1>
+        </div>
+        <div class="col-md-3 mt-3 text-center">
+            <h2 class="fafa_icon_font_industries"><i class="bi bi-cart4"></i></h2>
+            <h5>Ecommerce</h5>
+        </div>
+        <div class="col-md-3 mt-3 text-center">
+            <h2 class="fafa_icon_font_industries"><i class="bi bi-heart-pulse"></i></h2>
+            <h5>Pharma & Healthcare</h5>
+        </div>
+        <div class="col-md-3 mt-3 text-center">
+            <h2 class="fafa_icon_font_industries"><i class="bi bi-bank"></i></h2>
+            <h5>Banking & Finance</h5>
+        </div>
+        <div class="col-md-3 mt-3 text-center">
+            <h2 class="fafa_icon_font_industries"><i class="bi bi-gear-wide-connected"></i></h2>
+            <h5>Machinery & Manufacturing</h5>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-3 text-center">
+            <h2 class="fafa_icon_font_industries"><i class="bi bi-basket"></i></h2>
+            <h5>Food & Groceries</h5>
+        </div>
+        <div class="col-md-3 text-center">
+            <h2 class="fafa_icon_font_industries"><i class="bi bi-house-check"></i></h2>
+            <h5>Household Items</h5>
+        </div>
+        <div class="col-md-3 text-center mb-3">
+            <h2 class="fafa_icon_font_industries"><i class="bi bi-car-front"></i></h2>
+            <h5>Automotive & Autoparts</h5>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" role="dialog" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="myModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title warning_message"><i class="bi bi-exclamation-triangle-fill"></i> Warning</h5>
+                <button type="button" class="close" aria-label="Close" data-bs-dismiss="modal">                
+                <span aria-hidden="true ">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body ">
+                <p><b>एरपोस्ट एक्सप्रेस</b> कभी भी किसी भी पार्सल एवं डॉक्यूमेंट की डिलीवरी के लिए किसी भी प्रकार से पैसों की मांग नहीं करता सिवाए COD & TOPAY सभी प्रिय ग्राहकों से आग्रह है की गूगल या जस्ट डाइल में नंबर देखकर फ़ोन करते समय सावधान रहे एवं
+                    किसी भी UPI मोड जैसे गूगल पे,फ़ोन पे के माध्यम से पैसे डिलीवरी के लिए ना भेजे एवं अपनी गोपनीय जानकारी जैसे बैंक खाता ,OTP ,पिन,पासवर्ड इत्यादि किसी को ना बतायें | जनहित में जारी |
+                    <br><br><b>Airpost Xpress</b> never asks for any Money other than COD /TOPAY to get delivered any parcel & document and call carefully on Google / Just Dial Available number and never Transfer money through your Google pay, Phone pay
+                    or by any other UPI Linked mode to get deliver your shipment. Don’t share any confidential details like Bank details,OTP,PIN, & PASSWORD - issued in public interest</p>
+            </div>
+            <div class="modal-footer ">
+                <button type="button " class="btn btn-secondary " data-bs-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <script type="text/javascript ">
+    $(window).on('load', function() {
+        $('#myModal').modal('show');
+    });
+</script> -->
+{% endblock content %}

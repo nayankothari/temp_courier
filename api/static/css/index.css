@@ -1,0 +1,113 @@
+#nav_img {
+    width: 200px;
+}
+
+.menu_btn {
+    padding-left: 160px;
+    font-weight: bold;
+}
+
+.menu_btn :hover {
+    color: rgb(8, 5, 142) !important;
+}
+
+.hover-underline-animation {
+    display: inline-block;
+    position: relative;
+    color: #000000 !important;
+}
+
+.hover-underline-animation:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #07c627;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+}
+
+.hover-underline-animation:hover:after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+.tracking_details {
+    /* -webkit-appearance: none; */
+    text-align: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 120px;
+    padding-bottom: 80px;
+    /* background-color: #d3e0f5 !important; */
+    /* background-image: linear-gradient(to right bottom, #2193b0, #34a3ba, #47b2c4, #59c2ce, #6cd2d7, #72d8dc, #78dde1, #7ee3e6, #78e0e8, #74dcea, #70d9ec, #6dd5ed); */
+    background-image: linear-gradient( rgba(0, 0, 0, 0.756), rgba(0, 0, 0, 0.781)), url("../img/b1.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#tracking_name {
+    font-weight: bolder;
+    color: #ffffff;
+}
+
+.first_section {
+    padding-bottom: 20px;
+}
+
+.fafa_icon_font {
+    font-weight: bold;
+    font-size: 300%;
+    color: rgb(4, 3, 85);
+}
+
+.bold-lines {
+    font-weight: bolder;
+    color: white;
+}
+
+.link-text-decor {
+    text-decoration: none;
+    color: rgb(154, 148, 148);
+}
+
+.fafa_icon_font_industries {
+    font-weight: bold;
+    font-size: 300%;
+    color: rgb(1, 1, 13);
+}
+
+.warning_message {
+    color: #242601;
+}
+
+.nav_color_spec {
+    background: rgb(248, 239, 64);
+    /* background: none; */
+}
+
+.industries_serving_bg {
+    background-image: linear-gradient( rgba(8, 72, 73, 0.176), rgba(72, 159, 165, 0.201));
+    top: 0;
+    bottom: 0;
+    /* background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; */
+}
+
+@media screen and (max-width: 991px) {
+    .menu_btn {
+        padding-left: 0;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .sm_in_sm {
+        padding-top: 10px;
+        font-size: 10px;
+    }
+}
