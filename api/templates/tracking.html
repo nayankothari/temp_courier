@@ -92,6 +92,36 @@
                 </table>
             </div>
         </div>
+        {% else %}
+        <div class="col-12">
+            <div class="scrollme">
+                <table class="table table-striped table-responsive">
+                    <tbody>
+                        <tr>
+                            <th class="tracking_head" colspan="5">Tracking Details</th>
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Status</th>
+                        </tr>
+
+                        {% for track_his in tracking_history %}
+                        <tr>
+                            <td>{{ track_his.Date }}</td>
+                            <td>{{ track_his.Location }}</td>
+                            <td>{{ track_his.Activity }}</td>
+                            <td>{{ track_his.CheckpointState }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- For external tracking details-->
+
+        {% endif %}
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 text-center mb-3 mt-3">
@@ -99,13 +129,6 @@
                 </div>
             </div>
         </div>
-        {% else %}
-
-        <!-- For external tracking details-->
-        <div class="col-12">
-            <h1>Hii</h1>
-        </div>
-        {% endif %}
     </div>
 </div>
 {% endblock content %}
