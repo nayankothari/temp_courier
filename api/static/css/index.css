@@ -44,7 +44,31 @@
     padding-bottom: 80px;
     /* background-color: #d3e0f5 !important; */
     /* background-image: linear-gradient(to right bottom, #2193b0, #34a3ba, #47b2c4, #59c2ce, #6cd2d7, #72d8dc, #78dde1, #7ee3e6, #78e0e8, #74dcea, #70d9ec, #6dd5ed); */
+    animation: breath 2s linear;
     background-image: linear-gradient( rgba(0, 0, 0, 0.756), rgba(0, 0, 0, 0.781)), url("../img/b1.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+/* Contact US background css */
+
+@keyframes breath {
+    0% {
+        background-size: 130% auto;
+    }
+    50% {
+        background-size: 120% auto;
+    }
+    100% {
+        background-size: 100% auto;
+    }
+}
+
+.contact_us_background {
+    animation: breath 2s linear;
+    background-image: linear-gradient( rgba(0, 0, 0, 0.508), rgba(0, 0, 0, 0.467)), url("../img/contact_us.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -109,5 +133,14 @@
     .sm_in_sm {
         padding-top: 10px;
         font-size: 10px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .contact_us_background {
+        animation: none !important;
+    }
+    .tracking_details {
+        animation: none !important;
     }
 }

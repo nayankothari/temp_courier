@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import home, tracking
+from .views import home, tracking, contactUs
 
 
 urlpatterns = [    
     path("", home, name="home"),
     path("tracking/", home, name="only_tracking"),
     path("tracking/<str:tracking_number>", tracking, name="tracking_page"),    
+    path("contact_us", contactUs, name="ContactUS"),    
 ]

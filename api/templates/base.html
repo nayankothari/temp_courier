@@ -43,7 +43,7 @@
                             <a class="nav-link active hover-underline-animation" aria-current="page" href="#">About Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Contact Us</a>
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="{% url 'ContactUS' %}">Contact Us</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Login</a>
@@ -71,7 +71,7 @@
                         <a href="" class="link-text-decor mt-5">Service</a><br>
                         <a href="" class="link-text-decor mt-5">Network</a><br>
                         <a href="" class="link-text-decor">About Us</a><br>
-                        <a href="" class="link-text-decor">Contact Us</a><br>
+                        <a href="{% url 'ContactUS' %}" class="link-text-decor">Contact Us</a><br>
                     </div>
                     <div class="col-6">
                         <a href="tracking" class="link-text-decor">Track Shipment</a><br>

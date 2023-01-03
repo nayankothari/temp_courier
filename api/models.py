@@ -68,3 +68,15 @@ class BranchNetwork(models.Model):
 
     def __str__(self):
         return self.branch_name
+
+
+class contactus(models.Model):
+    name = models.CharField(max_length=256)
+    email = models.EmailField(max_length=254)
+    country = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=12)
+    message = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.name
