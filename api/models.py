@@ -80,3 +80,6 @@ class contactus(models.Model):
 
     def __str__(self):
         return self.name
+
+def abc():
+    pass
