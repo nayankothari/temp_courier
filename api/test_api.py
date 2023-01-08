@@ -14,14 +14,19 @@
 
 
 test_data = {
-    "Tirupati": "https://trackcourier.io/api/v1/get_checkpoints_table/e8bb853c9121b286ae16987bcb997ff9/tirupati-courier/",
+    "Tirupati": "https://trackcourier.io/api/v1/get_checkpoints_table/cd134aa029084eb33f8ea379f30a3df0/tirupati-courier/",
     "ST courier": "https://trackcourier.io/api/v1/get_checkpoints_table/e8bb853c9121b286ae16987bcb997ff9/st-courier/",
     "Professional": "https://trackcourier.io/api/v1/get_checkpoints_table/e8bb853c9121b286ae16987bcb997ff9/professional-courier/",
 }
 
 
-# import requests
-# import time
+import requests
+import time
+
+
+
+res = requests.post(url=test_data.get("Tirupati") + "241100164235", headers={"content-type": "application/json"})
+print(res.json())
 
 
 # https://www.tracktry.com/index_ajax.php?tracknumber=392227081439&lang=en
@@ -31,16 +36,16 @@ test_data = {
 # # , headers={"content-type": "application/json"})
 # print(response.text)
 
-import requests
-from bs4 import BeautifulSoup
+# import requests
+# from bs4 import BeautifulSoup
 
-url = "https://www.tracktry.com/track/241100164235/shree-tirupati"
-response = requests.get(url)
+# url = "https://www.tracktry.com/track/241100164235/shree-tirupati"
+# response = requests.get(url)
 
-soup = BeautifulSoup(response.content, 'html.parser')
-class_ = "Tracking-result"
-lists = soup.find_all("div", class_="Tracking-result")
-print(lists)
+# soup = BeautifulSoup(response.content, 'html.parser')
+# class_ = "Tracking-result"
+# lists = soup.find_all("div", class_="Tracking-result")
+# print(lists)
 
 
 

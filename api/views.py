@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Booking, Trackinghistory
-from .models import contactus
+from .models import contactus, Token
 import base64
 import requests
 import datetime
@@ -32,7 +32,11 @@ def tracking(request, tracking_number):
                     last_status = str(tracking_history[0].status) + " - " + str(tracking_history[0].d_to)
                 
                 if booking_details.ref_courier_name.type != 'Internal':
-                    url = str(booking_details.ref_courier_name.link) + str(booking_details.ref_courier_number)
+                    token_obj = Token.objects.all().values()
+                    token = ""
+                    if token_obj:
+                        token = token_obj[0]["token"]
+                    url = str(booking_details.ref_courier_name.link).format(token) + str(booking_details.ref_courier_number)                    
                     try:
                         response = requests.post(url, headers={"content-type": "application/json"}, timeout=2)
                         data_load_from_another_site = response.json()                    
@@ -52,7 +56,7 @@ def tracking(request, tracking_number):
 
 
 
-def contactUs(request):
+def contactUs(request):    
     if request.method == "POST":
         name = request.POST.get("name")
         email = request.POST.get("email")

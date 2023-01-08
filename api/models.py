@@ -12,7 +12,11 @@ class State(models.Model):
     def __str__(self):
         return self.state_name
 
+class Token(models.Model):
+    token = models.CharField(max_length=500)
 
+    def __str__(self):
+        return self.token
 
 class ParcelStatus(models.Model):
     name = models.CharField(max_length=256)
