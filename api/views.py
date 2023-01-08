@@ -59,9 +59,8 @@ def contactUs(request):
         country = request.POST.get("country")
         pincode = request.POST.get("pincode")
         message = request.POST.get("message")
-        if name and email and country and pincode:
-            print("Every thingh is ok")
-            contact_obj = contactus.objects.create(name=name, email=email, country=country, pincode=pincode, message=message)
+        if name and email and country and pincode:            
+            contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message)
             contact_obj.save()
             return_message = "Request submitted successfully."                   
             return render(request, "contactus.html", {"return_message": return_message})
@@ -70,3 +69,13 @@ def contactUs(request):
 
 
     return render(request, "contactus.html")
+
+def network(request):
+    
+    return render(request, "network.html")
+
+def services(request):
+    return render(request, "services.html")
+
+def about_us(request):
+    return render(request, "aboutus.html")

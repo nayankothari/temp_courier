@@ -6,6 +6,14 @@ from django.utils import timezone
 REF_COURIER_TYPE = (("External", "External"), ("Internal", "Internal"))
 OFFICE_NETWORKS = (("Franchise", "Franchise"), ("R O", "R O"))
 
+class State(models.Model):
+    state_name = models.CharField(max_length=256, null=False, blank=False)
+
+    def __str__(self):
+        return self.state_name
+
+
+
 class ParcelStatus(models.Model):
     name = models.CharField(max_length=256)
 
@@ -61,9 +69,12 @@ class BranchNetwork(models.Model):
     branch_incharge_number = models.BigIntegerField()
     office_number = models.BigIntegerField(null=True, blank=True)
     office_lane_line_number = models.BigIntegerField(null=True, blank=True)
-    address = models.TextField()
+    email = models.EmailField(max_length=256, blank=True, null=True)    
     pincode = models.IntegerField()
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=False, blank=False, default="")    
     zone = models.ForeignKey(Destination, on_delete=models.CASCADE)
+    area_name = models.CharField(max_length=256, null=True, blank=True)
+    address = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=256, choices=OFFICE_NETWORKS)
 
     def __str__(self):
@@ -74,12 +85,9 @@ class contactus(models.Model):
     name = models.CharField(max_length=256)
     email = models.EmailField(max_length=254)
     country = models.CharField(max_length=100)
-    pincode = models.CharField(max_length=12)
+    mobile_number = models.CharField(max_length=15, blank=True)
     message = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.name
-
-def abc():
-    pass

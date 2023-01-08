@@ -74,6 +74,107 @@
     background-size: cover;
 }
 
+
+/* Service css */
+
+.service_background_img {
+    animation: breath 2s linear;
+    background-image: linear-gradient( rgba(0, 0, 0, 0.508), rgba(0, 0, 0, 0.467)), url("../img/contact_us.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.line {
+    border: 4px solid rgb(255, 251, 0);
+    width: 150px;
+}
+
+.line_for {
+    border-top: 4px solid rgb(175, 175, 3);
+    background-color: rgb(255, 255, 0);
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.line_for_about_us {
+    border-top: 4px solid rgb(175, 175, 3);
+    background-color: rgb(255, 255, 0);
+    margin-left: 0;
+    margin-right: 50%;
+}
+
+.service_p {
+    color: rgb(150, 148, 22);
+    font-weight: bolder;
+}
+
+.card-style {
+    /* background-color: rgba(214, 213, 198, 0.587); */
+    /* box-shadow: .5px .5px 5px; */
+    border-radius: 5px;
+    text-align: center;
+}
+
+.card-style2 {
+    /* background-color: rgba(197, 195, 172, 0.276); */
+    /* box-shadow: .5px .5px 5px; */
+    box-shadow: 0 0 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.img-border {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.service_covid {
+    color: red;
+    margin-top: -30px;
+}
+
+.black_color {
+    color: #000000;
+}
+
+.img_height {
+    /* height: 450px !important; */
+}
+
+
+/* For about US */
+
+.back_color_about_us {
+    background-image: linear-gradient( rgba(173, 231, 241, 0.342), rgba(163, 224, 218, 0.252));
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+/* Network css */
+
+.network_background {
+    animation: breath 2s linear;
+    background-image: linear-gradient( rgba(0, 0, 0, 0.508), rgba(0, 0, 0, 0.467)), url("../img/network.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.networ_search_form {
+    background-color: rgba(255, 255, 255, 0.711);
+    border-radius: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom: 20px;
+}
+
+.area_name {
+    padding-top: 10px;
+}
+
 #tracking_name {
     font-weight: bolder;
     color: #ffffff;
@@ -141,6 +242,12 @@
         animation: none !important;
     }
     .tracking_details {
+        animation: none !important;
+    }
+    .network_background {
+        animation: none !important;
+    }
+    .service_background_img {
         animation: none !important;
     }
 }

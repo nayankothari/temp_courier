@@ -93,6 +93,7 @@
             </div>
         </div>
         {% else %}
+        <!-- For external tracking details-->
         <div class="col-12">
             <div class="scrollme">
                 <table class="table table-striped table-responsive">
@@ -111,7 +112,7 @@
                         <tr>
                             <td>{{ track_his.Date }}</td>
                             <td>{{ track_his.Location }}</td>
-                            <td>{{ track_his.Activity }}</td>
+                            <td>{{ track_his.Activity | safe}}</td>
                             <td>{{ track_his.CheckpointState }}</td>
                         </tr>
                         {% endfor %}
@@ -119,7 +120,6 @@
                 </table>
             </div>
         </div>
-        <!-- For external tracking details-->
 
         {% endif %}
         <div class="container">

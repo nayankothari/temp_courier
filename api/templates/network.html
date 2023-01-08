@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block title %}Network{% endblock title %} {% block content %}
+
+<div class="container-fluid pt-1">
+    <div class="row justify-content-evenly mt-4 network_background pt-5">
+        <div class="col-md-4 text-center">
+            <form class="form-inline networ_search_form">
+                {% csrf_token %}
+                <div class="form-group mx-sm-3 mb-2 mt-4">
+                    <h2><label for="pincode" class="area_name">Pincode</label></h2>
+                    <input type="text" class="form-control" id="pincode" placeholder="Search By Pincode">
+                </div>
+                <button type="submit" class="btn btn-primary mb-3">Search</button>
+            </form>
+        </div>
+        <div class="col-md-4 text-center mb-5">
+            <form class="form-inline networ_search_form">
+                {% csrf_token %}
+                <div class="form-group mx-sm-3 mb-2 mt-4">
+                    <h2><label for="area_name" class="area_name">Area Name</label></h2>
+                    <input type="text" class="form-control" id="area_name" placeholder="Search By Area Name">
+                </div>
+                <button type="submit" class="btn btn-primary mb-3">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -34,19 +34,19 @@
                             <a class="nav-link active hover-underline-animation" aria-current="page" href="{% url 'home' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Services</a>
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="{% url 'services' %}">Services</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Network</a>
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="{% url 'network' %}">Network</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">About Us</a>
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="{% url 'about_us' %}">About Us</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active hover-underline-animation" aria-current="page" href="{% url 'ContactUS' %}">Contact Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active hover-underline-animation" aria-current="page" href="#">Login</a>
+                            <a class="nav-link active hover-underline-animation" aria-current="page" href="/login">Login</a>
                         </li>
                     </ul>
                 </div>
@@ -68,9 +68,9 @@
                 <div class="row">
                     <div class="col-6">
                         <a href="{% url 'home' %}" class="link-text-decor mt-5">Home</a><br>
-                        <a href="" class="link-text-decor mt-5">Service</a><br>
-                        <a href="" class="link-text-decor mt-5">Network</a><br>
-                        <a href="" class="link-text-decor">About Us</a><br>
+                        <a href="{% url 'services' %}" class="link-text-decor mt-5">Service</a><br>
+                        <a href="{% url 'network' %}" class="link-text-decor mt-5">Network</a><br>
+                        <a href="{% url 'about_us' %}" class="link-text-decor">About Us</a><br>
                         <a href="{% url 'ContactUS' %}" class="link-text-decor">Contact Us</a><br>
                     </div>
                     <div class="col-6">
