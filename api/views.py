@@ -1,15 +1,22 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import Booking, Trackinghistory
-from .models import contactus, Token
+"""
+Some of basic django imports that help to render and filter data from database.
+"""
 import base64
 import requests
 import datetime
+from django.db.models import Q
+from .models import Booking, Trackinghistory
+from django.shortcuts import render, redirect
+from .models import contactus, Token, BranchNetwork
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 today_date = datetime.datetime.now().strftime("%Y")
 # Create your views here.
-def home(request):           
+def home(request):  
+    """
+    Thi function returns to home page.
+    """         
     if request.method == "POST":
         tracking_id = request.POST.get("tracking_number")                
         if tracking_id:                                    
@@ -75,8 +82,34 @@ def contactUs(request):
     return render(request, "contactus.html")
 
 def network(request):
-    
-    return render(request, "network.html")
+    message = 1    
+    head_offices = BranchNetwork.objects.filter(status="R O")            
+    if request.method == "POST":
+        if "by_pincode" in request.POST and request.POST.get("pincode"):
+            pincode = request.POST.get("pincode")
+            data = BranchNetwork.objects.filter(pincode=pincode)          
+            if data:                              
+                print(data)
+                message = None
+                context = {"head_offices": head_offices, "message": None, "data": data}
+                return render(request, "network.html", context=context)
+            else:
+                context = {"head_offices": head_offices, "message": 1}
+                return render(request, "network.html", context=context)
+        
+        elif "by_area" in request.POST and request.POST.get("area_name"):
+            area_name = request.POST.get("area_name")           
+            ques = Q(branch_name__startswith=area_name) #| Q(state=area_name) | Q(zone=area_name) | Q(area_name=area_name)
+            data = BranchNetwork.objects.filter(ques)
+            print(data)
+        
+        else:
+            context = {"head_offices": head_offices, "message": 1}
+            return render(request, "network.html", context=context)
+
+    message = None
+    context = {"head_offices": head_offices, "message": message}
+    return render(request, "network.html", context=context)
 
 def services(request):
     return render(request, "services.html")

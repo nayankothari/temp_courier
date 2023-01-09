@@ -210,6 +210,11 @@
     color: #242601;
 }
 
+.color_for_ro {
+    /* color: rgb(31, 8, 122) !important; */
+    color: rgba(101, 4, 4, 0.661) !important;
+}
+
 .nav_color_spec {
     background: rgb(248, 239, 64);
     /* background: none; */

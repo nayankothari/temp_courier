@@ -72,7 +72,7 @@ class BranchNetwork(models.Model):
     branch_name = models.CharField(max_length=256)
     branch_incharge_number = models.BigIntegerField()
     office_number = models.BigIntegerField(null=True, blank=True)
-    office_lane_line_number = models.BigIntegerField(null=True, blank=True)
+    office_lane_line_number = models.CharField(max_length=25, null=True, blank=True)
     email = models.EmailField(max_length=256, blank=True, null=True)    
     pincode = models.IntegerField()
     state = models.ForeignKey(State, on_delete=models.CASCADE, null=False, blank=False, default="")    
