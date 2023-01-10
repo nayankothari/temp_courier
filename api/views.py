@@ -88,8 +88,7 @@ def network(request):
         if "by_pincode" in request.POST and request.POST.get("pincode"):
             pincode = request.POST.get("pincode")
             data = BranchNetwork.objects.filter(pincode=pincode)          
-            if data:                              
-                print(data)
+            if data:                                              
                 message = None
                 context = {"head_offices": head_offices, "message": None, "data": data}
                 return render(request, "network.html", context=context)
@@ -99,9 +98,16 @@ def network(request):
         
         elif "by_area" in request.POST and request.POST.get("area_name"):
             area_name = request.POST.get("area_name")           
-            ques = Q(branch_name__startswith=area_name) #| Q(state=area_name) | Q(zone=area_name) | Q(area_name=area_name)
+            ques = (Q(branch_name__icontains=area_name) | Q(state__state_name__icontains=area_name) 
+            | Q(zone__name__icontains=area_name) | Q(area_name__icontains=area_name))
             data = BranchNetwork.objects.filter(ques)
-            print(data)
+            if data:                                              
+                message = None
+                context = {"head_offices": head_offices, "message": None, "data": data}
+                return render(request, "network.html", context=context)
+            else:
+                context = {"head_offices": head_offices, "message": 1}
+                return render(request, "network.html", context=context)            
         
         else:
             context = {"head_offices": head_offices, "message": 1}
