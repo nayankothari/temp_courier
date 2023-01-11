@@ -11,6 +11,16 @@
     color: rgb(8, 5, 142) !important;
 }
 
+.nav_login_btn {
+    color: black !important;
+    font-weight: bold !important;
+    margin-left: 10px !important;
+}
+
+.nav_login_btn:hover {
+    color: white !important;
+}
+
 .hover-underline-animation {
     display: inline-block;
     position: relative;
@@ -227,6 +237,14 @@
     /* background-position: center;
     background-repeat: no-repeat;
     background-size: cover; */
+}
+
+
+/* ************** For Login *********************** */
+
+.box_border {
+    border: 1px solid;
+    box-shadow: 5px 5px .3px;
 }
 
 @media screen and (max-width: 991px) {

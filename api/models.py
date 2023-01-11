@@ -1,10 +1,18 @@
 from django.db import models
 from datetime import datetime
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 REF_COURIER_TYPE = (("External", "External"), ("Internal", "Internal"))
 OFFICE_NETWORKS = (("Franchise", "Franchise"), ("R O", "R O"))
+
+class Country(models.Model):
+    country_name = models.CharField(max_length=256, null=True, blank=False)
+
+    def __str__(self):
+        return self.country_name
+
 
 class State(models.Model):
     state_name = models.CharField(max_length=256, null=False, blank=False)
@@ -48,8 +56,10 @@ class Booking(models.Model):
     receiver_mobile_number = models.BigIntegerField()
     ref_courier_name = models.ForeignKey(RefCourier, on_delete=models.CASCADE)
     ref_courier_number = models.CharField(max_length=50, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
+    
 
     def __str__(self):
         return str(self.c_note_number)
@@ -75,6 +85,7 @@ class BranchNetwork(models.Model):
     office_lane_line_number = models.CharField(max_length=25, null=True, blank=True)
     email = models.EmailField(max_length=256, blank=True, null=True)    
     pincode = models.IntegerField()
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=False)
     state = models.ForeignKey(State, on_delete=models.CASCADE, null=False, blank=False, default="")    
     zone = models.ForeignKey(Destination, on_delete=models.CASCADE)
     area_name = models.CharField(max_length=256, null=True, blank=True)

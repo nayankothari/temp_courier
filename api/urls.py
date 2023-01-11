@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import network, services, about_us
 from .views import home, tracking, contactUs
+from .views import login_auth, dashboard, logout
 
 
 urlpatterns = [    
@@ -11,5 +12,7 @@ urlpatterns = [
     path(r"network", network, name="network"),
     path(r"services", services, name="services"),  
     path(r"about_us", about_us, name="about_us"),
-
+    path(r"login_auth", login_auth, name="login_auth"),
+    path(r"logout", logout, name="logout"),
+    path(r"dashboard", dashboard, name="dashboard"),
 ]

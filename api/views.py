@@ -7,8 +7,10 @@ import datetime
 from django.db.models import Q
 from .models import Booking, Trackinghistory
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User, auth
 from .models import contactus, Token, BranchNetwork
-from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+# from django.http import HttpResponse, HttpResponseRedirect
 
 
 today_date = datetime.datetime.now().strftime("%Y")
@@ -117,8 +119,33 @@ def network(request):
     context = {"head_offices": head_offices, "message": message}
     return render(request, "network.html", context=context)
 
+
 def services(request):
     return render(request, "services.html")
 
+
 def about_us(request):
     return render(request, "aboutus.html")
+
+
+def login_auth(request):
+    if request.method == "POST":
+        user_name = request.POST.get("username")
+        password = request.POST.get("password")
+        user = auth.authenticate(username=user_name, password=password)
+        if user:
+            auth.login(request, user)
+            return redirect("dashboard")
+        else:
+            context = {"message": "Invalid credentials !"}
+            return render(request, "login.html", context)
+    return render(request, "login.html")
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect("home")
+
+@login_required(login_url="login_auth")
+def dashboard(request):
+    return render(request, "dashboard.html")
