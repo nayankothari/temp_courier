@@ -51,6 +51,7 @@ class Booking(models.Model):
     c_note_number = models.BigIntegerField(unique=True)    
     from_destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="from_destination", default=1)
     to_destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="to_destination", default=1)
+    sender_name = models.CharField(max_length=256, null=True, blank=True)
     sender_mobile = models.BigIntegerField()
     receiver_name = models.CharField(max_length=256, null=True, blank=True)
     receiver_mobile_number = models.BigIntegerField()

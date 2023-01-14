@@ -144,8 +144,20 @@ def login_auth(request):
 
 def logout(request):
     auth.logout(request)
-    return redirect("home")
+    return redirect("login_auth")
+
 
 @login_required(login_url="login_auth")
 def dashboard(request):
+    
     return render(request, "dashboard.html")
+
+
+@login_required(login_url="login_auth")
+def bookings(request):    
+    return render(request, "bookings.html")
+
+
+@login_required(login_url="login_auth")
+def tracking_history(request):
+    return render(request, "tracking_history.html")

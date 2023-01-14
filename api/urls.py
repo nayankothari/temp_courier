@@ -2,6 +2,7 @@ from django.urls import path
 from .views import network, services, about_us
 from .views import home, tracking, contactUs
 from .views import login_auth, dashboard, logout
+from .views import bookings, tracking_history
 
 
 urlpatterns = [    
@@ -15,4 +16,6 @@ urlpatterns = [
     path(r"login_auth", login_auth, name="login_auth"),
     path(r"logout", logout, name="logout"),
     path(r"dashboard", dashboard, name="dashboard"),
+    path(r"bookings", bookings, name="bookings"),
+    path(r"tracking_history", tracking_history, name="tracking_history"),
 ]

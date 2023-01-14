@@ -1,0 +1,94 @@
+{% extends 'base.html' %}{% load static %}{% block title %}Booking{% endblock title %}{% block content %}
+
+<div class="container mt-5">
+    <div class="row mt-5">
+        <div class="col-md-6 mt-5">
+            <h3 class="alert alert-primary text-center">Add \ Edit Booking</h3>
+            <form action="" method="post">
+                {% csrf_token %}
+                <!-- For booking datetime and c note number -->
+                <input type="hidden" name="id">
+                <div class="row">
+                    <div class="col-md-6 mt-2">
+                        <label for="datetime"><b>Booking Date</b></label>
+                        <input type="date" id="datetime" class="form-control" name="date-field" />
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label for="cnotenumber"><b>Number</b></label>
+                        <input type="text" id="cnotenumber" class="form-control">
+                        <!-- placeholder="C. N. Number"> -->
+                    </div>
+                </div>
+                <!-- for From, To destination -->
+                <div class="row">
+                    <div class="col-md-6 mt-2">
+                        <label for="from_destination"><b>From Destination</b></label>
+                        <select class="form-select" id="from_destination" aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label for="to_destination"><b>To Destination</b></label>
+                        <select class="form-select" id="to_destination" aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mt-2">
+                        <label for="sender_name"><b>Sender Name</b></label>
+                        <input type="text" id="sender_mobile" class="form-control">
+                        <!-- placeholder="Sender/Party Name"> -->
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label for="sender_mobile"><b>Sender Mobile</b></label>
+                        <input type="text" id="sender_mobile" class="form-control">
+                        <!-- placeholder="Sender Mobile Number"> -->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mt-2">
+                        <label for="receiver_name"><b>Receiver Name</b></label>
+                        <input type="text" id="receiver_mobile" class="form-control">
+                        <!-- placeholder="Receiver/Party Name"> -->
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label for="receiver_mobile"><b>Receiver Mobile</b></label>
+                        <input type="text" id="receiver_mobile" class="form-control">
+                        <!-- placeholder="Receiver Mobile Number"> -->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mt-2">
+                        <label for="from_destination"><b>Ref. Courier Name</b></label>
+                        <select class="form-select" id="from_destination" aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label for="receiver_mobile"><b>Ref. Courier Number</b></label>
+                        <input type="text" id="receiver_mobile" class="form-control" placeholder="Sender Mobile Number">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center mt-3 mb-3">
+                        <button type="submit" class="btn btn-primary">Save Booking</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
