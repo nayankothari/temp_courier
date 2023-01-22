@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Destination, RefCourier, Booking
 from .models import Trackinghistory, ParcelStatus, BranchNetwork
-from .models import contactus, State, Token, Country
+from .models import contactus, State, Token, Country, PartyAccounts
 
 class AdminTracking(admin.ModelAdmin):
     list_display = ['c_note_number', 'in_out_datetime', 'd_from', 'd_to', 'status']
@@ -21,3 +21,5 @@ admin.site.register(contactus, ContactUs)
 admin.site.register(State)
 admin.site.register(Token)
 admin.site.register(Country)
+admin.site.register(PartyAccounts)
+

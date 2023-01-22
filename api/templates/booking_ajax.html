@@ -1,0 +1,34 @@
+<script>
+    $("tbody").on("click", ".edit-btn", function() {
+        let doc_id = $(this).attr("data-sid")
+        let csr = $("input[name=csrfmiddlewaretoken").val();
+        doc_data = {
+            id: doc_id,
+            csrfmiddlewaretoken: csr,
+        }
+        $.ajax({
+            url: "{% url 'edit_data_retrive' %}",
+            method: "POST",
+            data: doc_data,
+            success: function(data) {
+                // console.log(data)
+                let doc_data = data.data[0];
+                $("#id").val(doc_data.id);
+                $("#cnotenumber").val(doc_data.c_note_number);
+                $("#datetime").val(doc_data.doc_date);
+                $("#from_destination").val(doc_data.from_destination__name);
+                $("#party").val(doc_data.party_name__party_name);
+                $("#receiver_mobile").val(doc_data.receiver_mobile_number);
+                $("#receiver_name").val(doc_data.receiver_name);
+                alert(doc_data.ref_courier_name__name);
+                $("#ref_courier_name").val(doc_data.ref_courier_name__name);
+                $("#ref_courier_number").val(doc_data.ref_courier_number);
+                $("#sender_mobile").val(doc_data.sender_mobile);
+                $("#sender_name").val(doc_data.sender_name);
+                $("#to_destination").val(doc_data.to_destination__name);
+
+
+            },
+        });
+    });
+</script>

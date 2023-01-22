@@ -1,8 +1,8 @@
 from django.urls import path
 from .views import network, services, about_us
 from .views import home, tracking, contactUs
-from .views import login_auth, dashboard, logout
-from .views import bookings, tracking_history
+from .views import login_auth, dashboard, logout, edit_data_retrive
+from .views import bookings, tracking_history, save_booking
 
 
 urlpatterns = [    
@@ -18,4 +18,6 @@ urlpatterns = [
     path(r"dashboard", dashboard, name="dashboard"),
     path(r"bookings", bookings, name="bookings"),
     path(r"tracking_history", tracking_history, name="tracking_history"),
+    path(r"save_booking", save_booking, name="save_booking"), 
+    path(r"edit_data_retrive", edit_data_retrive, name="edit_data_retrive"), 
 ]

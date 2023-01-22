@@ -2,20 +2,38 @@
 
 <div class="container mt-5">
     <div class="row mt-5">
-        <div class="col-md-6 mt-5">
-            <h3 class="alert alert-primary text-center">Add \ Edit Booking</h3>
-            <form action="" method="post">
+        <div class="col-md-6 mt-3 border-dark">
+            <h4 class="alert alert-primary text-center">Book your shipment</h4>
+            <!--  url 'save_booking'  -->
+            <form action="{% url 'save_booking' %}" method="post">
                 {% csrf_token %}
                 <!-- For booking datetime and c note number -->
-                <input type="hidden" name="id">
+                <input type="hidden" name="id" id="id"> {% for message in messages %} {% if request.session.success %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% else %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %} {% endfor %}
+                <label for="party"><b>Party Ledger</b></label>
+                <select class="form-select control-label" name="party" id="party" aria-label="Default select example" required>
+                {% for party in parties %}                    
+                    <option value="{{ party.id }}">{{ party.party_name }}</option>
+                {% endfor %}
+                    </select>
+                <!-- </div> -->
                 <div class="row">
                     <div class="col-md-6 mt-2">
                         <label for="datetime"><b>Booking Date</b></label>
-                        <input type="date" id="datetime" class="form-control" name="date-field" />
+                        <input type="datetime-local" id="datetime" name="datetime" class="form-control" name="date-field" />
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="cnotenumber"><b>Number</b></label>
-                        <input type="text" id="cnotenumber" class="form-control">
+                        <label for="cnotenumber"><b>C. Note number</b></label>
+                        <input type="text" name="cnotenumber" id="cnotenumber" class="form-control" required>
                         <!-- placeholder="C. N. Number"> -->
                     </div>
                 </div>
@@ -23,72 +41,112 @@
                 <div class="row">
                     <div class="col-md-6 mt-2">
                         <label for="from_destination"><b>From Destination</b></label>
-                        <select class="form-select" id="from_destination" aria-label="Default select example">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <select class="form-select" name="from_destination" id="from_destination" aria-label="Default select example" required>
+                            {% for dest in destinations %}
+                            <!-- <option selected>Open this select menu</option> -->
+                            <option value="{{ dest.id }}">{{ dest.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="to_destination"><b>To Destination</b></label>
-                        <select class="form-select" id="to_destination" aria-label="Default select example">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <select class="form-select" name="todest" id="to_destination" aria-label="Default select example" required>
+                            {% for dest in destinations %}
+                            <!-- <option selected>Open this select menu</option> -->
+                            <option value="{{ dest.id }}">{{ dest.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mt-2">
                         <label for="sender_name"><b>Sender Name</b></label>
-                        <input type="text" id="sender_mobile" class="form-control">
+                        <input type="text" name="s_name" id="sender_name" class="form-control">
                         <!-- placeholder="Sender/Party Name"> -->
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="sender_mobile"><b>Sender Mobile</b></label>
-                        <input type="text" id="sender_mobile" class="form-control">
+                        <input type="text" name="s_number" id="sender_mobile" class="form-control">
                         <!-- placeholder="Sender Mobile Number"> -->
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mt-2">
                         <label for="receiver_name"><b>Receiver Name</b></label>
-                        <input type="text" id="receiver_mobile" class="form-control">
+                        <input type="text" name="r_name" id="receiver_name" class="form-control">
                         <!-- placeholder="Receiver/Party Name"> -->
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="receiver_mobile"><b>Receiver Mobile</b></label>
-                        <input type="text" id="receiver_mobile" class="form-control">
+                        <input type="text" name="r_number" id="receiver_mobile" class="form-control" required>
                         <!-- placeholder="Receiver Mobile Number"> -->
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mt-2">
                         <label for="from_destination"><b>Ref. Courier Name</b></label>
-                        <select class="form-select" id="from_destination" aria-label="Default select example">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <select class="form-select" name="ref_courier" id="ref_courier_name" aria-label="Default select example" required>
+                            {% for ref_courier in ref_courier_name %}
+                            <option value="{{ ref_courier.id }}">{{ ref_courier.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="receiver_mobile"><b>Ref. Courier Number</b></label>
-                        <input type="text" id="receiver_mobile" class="form-control" placeholder="Sender Mobile Number">
+                        <input type="text" name="ref_number" id="ref_courier_number" class="form-control" placeholder="Sender Mobile Number">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12 text-center mt-3 mb-3">
-                        <button type="submit" class="btn btn-primary">Save Booking</button>
+                        <!-- <input type="button" class="btn btn-success" value="Book Shipment" id="bookshipment"> -->
+                        <button type="submit" class="btn btn-success">Save Booking</button>
                     </div>
                 </div>
             </form>
+        </div>
+        <div class="col-md-6 mt-3">
+            <h4 class="alert alert-primary text-center">Booked shipment details</h4>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">C.N. number</th>
+                            <th scope="col">Destination</th>
+                            <th scope="col">By Courier</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in today_bookings %}
+                        <tr>
+                            <td>{{ booking.c_note_number }}</td>
+                            <td>{{ booking.to_destination }}</td>
+                            <td>{{ booking.ref_courier_name }}</td>
+                            <td>
+                                <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="{{ booking.id }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="text-start">
+                    <p>Total <b>{{ total_bookings }}</b> shipment booked today.</p>
+                </div>
+
+            </div>
 
         </div>
     </div>
 </div>
 
+{% include 'booking_ajax.html' %}
+
+<script>
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('datetime').value = now.toISOString().slice(0, 16);
+</script>
+
+<!-- https://stackoverflow.com/questions/1317714/how-can-i-filter-a-date-of-a-datetimefield-in-django -->
 
 {% endblock content %}

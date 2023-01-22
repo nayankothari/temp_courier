@@ -10,6 +10,9 @@ OFFICE_NETWORKS = (("Franchise", "Franchise"), ("R O", "R O"))
 class Country(models.Model):
     country_name = models.CharField(max_length=256, null=True, blank=False)
 
+    class Meta:
+        verbose_name_plural = "Country"
+
     def __str__(self):
         return self.country_name
 
@@ -17,50 +20,90 @@ class Country(models.Model):
 class State(models.Model):
     state_name = models.CharField(max_length=256, null=False, blank=False)
 
+    class Meta:
+        verbose_name_plural = "State"
+
     def __str__(self):
         return self.state_name
 
+
 class Token(models.Model):
-    token = models.CharField(max_length=500)
+    token = models.CharField(max_length=500)    
+    
+    class Meta:
+        verbose_name_plural = "Token"
 
     def __str__(self):
         return self.token
 
+
 class ParcelStatus(models.Model):
     name = models.CharField(max_length=256)
 
+    class Meta:
+        verbose_name_plural = "Parcel status"
+
     def __str__(self):
         return self.name
+
 
 class Destination(models.Model):
     name = models.CharField(max_length=256)
 
+    class Meta:
+        verbose_name_plural = "Destination"
+
     def __str__(self):
         return self.name
+
+
+class PartyAccounts(models.Model):
+    party_name = models.CharField(max_length=256, null=True, blank=False)
+    mobile_number = models.CharField(max_length=25, null=True, blank=False)
+    password = models.CharField(max_length=16, null=True, blank=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
+    opening_balance = models.FloatField(blank=True, null=True, default=0.0)    
+
+    class Meta:
+        verbose_name_plural = "Party master"
+
+    def __str__(self):
+        return self.party_name
+
 
 class RefCourier(models.Model):
     name = models.CharField(max_length=500)
     link = models.CharField(max_length=1000)
     type = models.CharField(max_length=50, choices=REF_COURIER_TYPE, default="External")
+    if_multiple = models.BooleanField(default=True, null=True)
+    multi_name = models.CharField(max_length=350, null=True, blank=True)
+    multi_link = models.CharField(max_length=350, null=True, blank=True)
+    final_link = models.CharField(max_length=350, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Ref. couriers"
 
     def __str__(self):
         return self.name
 
 class Booking(models.Model):
     doc_date = models.DateTimeField(default=datetime.now)    
+    party_name = models.ForeignKey(PartyAccounts, on_delete=models.CASCADE, null=True, blank=False)
     c_note_number = models.BigIntegerField(unique=True)    
     from_destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="from_destination", default=1)
     to_destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="to_destination", default=1)
     sender_name = models.CharField(max_length=256, null=True, blank=True)
-    sender_mobile = models.BigIntegerField()
+    sender_mobile = models.CharField(max_length=15, blank=True, null=True)
     receiver_name = models.CharField(max_length=256, null=True, blank=True)
-    receiver_mobile_number = models.BigIntegerField()
+    receiver_mobile_number = models.CharField(max_length=256, null=True, blank=False)
     ref_courier_name = models.ForeignKey(RefCourier, on_delete=models.CASCADE)
     ref_courier_number = models.CharField(max_length=50, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     
+    class Meta:
+        verbose_name_plural = "Booking"
 
     def __str__(self):
         return str(self.c_note_number)
@@ -74,6 +117,9 @@ class Trackinghistory(models.Model):
     d_to = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="destination_out")
     status = models.ForeignKey(ParcelStatus, on_delete=models.CASCADE, related_name="status")
     remarks = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Tracking history"
 
     def __str__(self):
         return str(self.c_note_number)
@@ -93,7 +139,10 @@ class BranchNetwork(models.Model):
     address = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=256, choices=OFFICE_NETWORKS)
 
-    def __str__(self):
+    class Meta:
+        verbose_name_plural = "Branch network master"
+
+    def __str__(self):  
         return self.branch_name
 
 
@@ -104,6 +153,9 @@ class contactus(models.Model):
     mobile_number = models.CharField(max_length=15, blank=True)
     message = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+    
+    class Meta:
+        verbose_name_plural = "Contact us"
 
     def __str__(self):
         return self.name
