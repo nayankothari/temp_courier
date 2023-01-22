@@ -213,7 +213,7 @@ def save_booking(request):
                 ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user)                    
                 booking_obj.save()            
                 request.session["success"] = "success"
-                messages.success(request, "Document booked Successfully.")
+                messages.success(request, "Shipment booked Successfully.")
                 return redirect("bookings")
             else:
                 messages.error(request, 'C Note Already exists')            
@@ -233,7 +233,7 @@ def save_booking(request):
             booking_obj.user=request.user                    
             booking_obj.save()            
             request.session["success"] = "success"
-            messages.success(request, "Document updated Successfully.")
+            messages.success(request, "Shipment updated Successfully.")
             return redirect("bookings")
         # print("party_name: ", party_name, "booking_datetine:", booking_datetime,
         # "c_note_number: ", c_note_number, "from_dest: ", from_dest,
@@ -245,9 +245,9 @@ def save_booking(request):
 def edit_data_retrive(request):
     if request.method == "POST":
         id = request.POST.get("id")        
-        data = Booking.objects.filter(pk=id).values("id", "doc_date", "party_name__party_name", "c_note_number", 
-        "from_destination", "to_destination__name", "sender_name", "sender_mobile", "receiver_name", "receiver_mobile_number",
-        "ref_courier_name__name", "ref_courier_number")              
+        data = Booking.objects.filter(pk=id).values("id", "doc_date", "party_name", "c_note_number", 
+        "from_destination", "to_destination", "sender_name", "sender_mobile", "receiver_name", "receiver_mobile_number",
+        "ref_courier_name", "ref_courier_number")              
         return JsonResponse({"data": list(data)})
 
 
