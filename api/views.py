@@ -191,6 +191,7 @@ def save_booking(request):
         c_note_number = request.POST.get("cnotenumber")
         existing_c_note = Booking.objects.filter(c_note_number=c_note_number)
         request.session["success"] = None
+        request.session["next_c_note"] = ""
         party_name = request.POST.get("party")        
         party_name = PartyAccounts.objects.get(id=party_name)
         booking_datetime = request.POST.get("datetime")        
@@ -213,6 +214,10 @@ def save_booking(request):
                 ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user)                    
                 booking_obj.save()            
                 request.session["success"] = "success"
+                try:
+                    request.session["next_c_note"] = int(c_note_number) + 1
+                except:
+                    pass
                 messages.success(request, "Shipment booked Successfully.")
                 return redirect("bookings")
             else:
