@@ -8,7 +8,11 @@
 
 .table-responsive {
     margin-top: -10px;
-    max-height: 470px !important;
+    max-height: 450px !important;
+}
+
+.back_color {
+    background-color: rgba(240, 230, 240, 0.628);
 }
 
 @media only screen and (max-width: 768px) {

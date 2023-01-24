@@ -257,5 +257,49 @@ def edit_data_retrive(request):
 
 
 @login_required(login_url="login_auth")
+def advance_search_by_date(request):
+    if request.method == "POST":
+        from_date =  request.POST.get("from_date")
+        to_date =  request.POST.get("to_date")
+
+        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
+        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()        
+        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user).values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")
+        if data:            
+            return JsonResponse({"status": 1, "data": list(data)})
+        else:
+            return JsonResponse({"ststua": 0})
+    else:
+        return JsonResponse({"ststua": 0})
+
+
+@login_required(login_url="login_auth")
+def advance_search_by_c_note(request):
+    if request.method == "POST":
+        c_note_number =  request.POST.get("c_note_number")                
+        data = Booking.objects.filter(c_note_number=c_note_number, user=request.user).values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")
+        if data:            
+            return JsonResponse({"status": 1, "data": list(data)})
+        else:
+            return JsonResponse({"ststua": 0})
+    else:
+        return JsonResponse({"ststua": 0})
+
+
+@login_required(login_url="login_auth")
+def advance_search_for_ref_number(request):
+    if request.method == "POST":
+        ref_number =  request.POST.get("ref_number")                
+        data = Booking.objects.filter(ref_courier_number=ref_number, user=request.user).values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")
+        if data:            
+            return JsonResponse({"status": 1, "data": list(data)})
+        else:
+            return JsonResponse({"ststua": 0})
+    else:
+        return JsonResponse({"ststua": 0})
+
+
+
+@login_required(login_url="login_auth")
 def tracking_history(request):
     return render(request, "tracking_history.html")

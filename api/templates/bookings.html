@@ -1,6 +1,6 @@
 {% extends 'base.html' %}{% load static %}{% block title %}Booking{% endblock title %}{% block content %}
 
-<div class="container mt-5">
+<div class="container mt-5 back_color">
     <div class="row mt-5">
         <div class="col-md-6 mt-3 border-dark">
             <h4 class="alert alert-primary text-center">Book your shipment</h4>
@@ -33,7 +33,7 @@
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="cnotenumber"><b>C. Note number</b></label>
-                        <input type="text" name="cnotenumber" id="cnotenumber" class="form-control" value="{{ request.session.next_c_note }}" autofocus required>
+                        <input type="text" name="cnotenumber" id="cnotenumber" class="form-control" value="{{ request.session.next_c_note }}" onfocus="let value = this.value; this.value = null; this.value=value" autofocus required>
                         <!-- placeholder="C. N. Number"> -->
                     </div>
                 </div>
@@ -107,7 +107,7 @@
         <div class="col-md-6 mt-3">
             <h4 class="alert alert-primary text-center">Booked shipment details</h4>
             <div class="table-responsive">
-                <table class="table table-hover table-bordered table-sm">
+                <table class="table table-hover table-bordered table-sm booked_data">
                     <thead>
                         <tr>
                             <th scope="col">C.N. number</th>
@@ -116,7 +116,7 @@
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tbody">
                         {% for booking in today_bookings %}
                         <tr>
                             <td>{{ booking.c_note_number }}</td>
@@ -129,13 +129,63 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <div class="text-start">
-                    <p>Total <b>{{ total_bookings }}</b> shipment booked today.</p>
-                </div>
-
+            </div>
+            <div class="text-start">
+                <p>Total <b>{{ total_bookings }}</b> shipment booked today.</p>
             </div>
 
         </div>
+    </div>
+    <!-- Advance filters -->
+    <div class="row text-center">
+        <hr>
+        <h3 class="text-center"><b>Advance Filters</b></h3>
+        <form action="" method="post" class="g-3">
+            {% csrf_token %}
+            <div class="row justify-content-evenly mx-2 border border-1 p-2">
+                <div class="col-md-4">
+                    <label for="datetime"><b>From Date</b></label>
+                    <input type="date" id="from_datetime" name="from_datetime" class="form-control" name="date-field" />
+                </div>
+                <div class="col-md-4">
+                    <label for="datetime"><b>To Date</b></label>
+                    <input type="date" id="to_datetime" name="to_datetime" class="form-control" name="date-field" />
+                </div>
+                <div class="col-md-2 mt-4 d-grid gap-2 mb-3">
+                    <input type="button" id="date_search_btn" class="btn btn-success date_search_btn" value="Search">
+                </div>
+            </div>
+        </form>
+        <div class="col-md-6 mt-2">
+            <form action="" method="post" class="g-3">
+                {% csrf_token %}
+                <div class="row justify-content-evenly mx-1 border border-1 p-2">
+                    <div class="col-md-8">
+                        <label for="c_note_search"><b>C Note Number</b></label>
+                        <input type="text" id="c_note_search" name="c_note_search" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mt-4 d-grid gap-2 mb-3">
+                        <input type="button" id="c_note_search_btn" class="btn btn-success c_note_search_btn" value="Search">
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="col-md-6 mt-2">
+            <form action="" method="post" class="g-3">
+                {% csrf_token %}
+                <div class="row justify-content-evenly mx-1 border border-1 p-2">
+                    <div class="col-md-8">
+                        <label for="ref_num_search"><b>Ref. Number</b></label>
+                        <input type="text" id="ref_num_search" name="ref_num_search" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mt-4 d-grid gap-2 mb-3">
+                        <input type="button" id="ref_num_search_search_btn" class="btn btn-success ref_num_search_search_btn" value="Search">
+                    </div>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 
@@ -145,6 +195,8 @@
     var now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('datetime').value = now.toISOString().slice(0, 16);
+    document.getElementById('from_datetime').valueAsDate = new Date();
+    document.getElementById('to_datetime').valueAsDate = new Date();
 </script>
 
 <!-- https://stackoverflow.com/questions/1317714/how-can-i-filter-a-date-of-a-datetimefield-in-django -->
