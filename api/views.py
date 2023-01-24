@@ -4,6 +4,7 @@ Some of basic django imports that help to render and filter data from database.
 import base64
 import requests
 import datetime
+from datetime import timedelta
 from django.db.models import Q
 from .models import Booking, Trackinghistory
 from django.shortcuts import render, redirect
@@ -263,8 +264,9 @@ def advance_search_by_date(request):
         to_date =  request.POST.get("to_date")
 
         from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
-        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()        
-        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user).values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")
+        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
+        to_date = to_date + timedelta(days=1)        
+        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user).values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")        
         if data:            
             return JsonResponse({"status": 1, "data": list(data)})
         else:

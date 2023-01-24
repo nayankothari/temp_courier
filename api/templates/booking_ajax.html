@@ -52,7 +52,7 @@
                 if (data.status == 1) {
                     let new_data = data.data;
                     for (i = 0; i < new_data.length; i++) {
-                        output += "<tr><td>" + new_data[i].c_note_number + "</td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
+                        output += "<tr><td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
                         $("#tbody").html(output);
                     }
                     document.querySelectorAll('.booked_data')[0].focus();
@@ -84,7 +84,7 @@
                     if (data.status == 1) {
                         let new_data = data.data;
                         for (i = 0; i < new_data.length; i++) {
-                            output += "<tr><td>" + new_data[i].c_note_number + "</td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
+                            output += "<tr><td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
                             $("#tbody").html(output);
                         }
                         document.querySelectorAll('.booked_data')[0].focus();
@@ -118,7 +118,7 @@
                     if (data.status == 1) {
                         let new_data = data.data;
                         for (i = 0; i < new_data.length; i++) {
-                            output += "<tr><td>" + new_data[i].c_note_number + "</td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
+                            output += "<tr><td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
                             $("#tbody").html(output);
                         }
                         document.querySelectorAll('.booked_data')[0].focus();
