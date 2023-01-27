@@ -67,7 +67,7 @@ def tracking(request, tracking_number):
                             url = booking_details.ref_courier_name.multi_link
                             url = url.format(booking_details.ref_courier_number)                            
                         else:
-                            url = booking_details.ref_courier_name.final_link                                                                                                                        
+                            url = str(booking_details.ref_courier_name.final_link).format(booking_details.ref_courier_number)                                                                                                                        
                         url = f'For latest updates click on this Ref No. <a href="{url}" target="_blank">{booking_details.c_note_number}</a>'                                                                                                
                         tracking_history["Date"] = ""
                         tracking_history["Location"] = ""

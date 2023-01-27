@@ -24,9 +24,9 @@ import requests
 import time
 
 
-
-res = requests.post(url=test_data.get("Tirupati") + "241100164235", headers={"content-type": "application/json"})
-print(res.json())
+url = "https://pushpakcourier.net/query.php"
+res = requests.post(url=url, headers={"content-type": "application/json"}, data={"trackcode": 151874420, "IDType": "Doc_No"})
+print(res.text)
 
 
 # https://www.tracktry.com/index_ajax.php?tracknumber=392227081439&lang=en
