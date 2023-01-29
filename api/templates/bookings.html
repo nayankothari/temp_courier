@@ -19,7 +19,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 {% endif %} {% endfor %}
-                <label for="party"><b>Party Ledger</b></label>
+                <label for="party"><b>Party Ledger</b>
+                    <span class="red_color">*</span>
+                </label>
                 <select class="form-select control-label" name="party" id="party" aria-label="Default select example" required>
                 {% for party in parties %}                    
                     <option value="{{ party.id }}">{{ party.party_name }}</option>
@@ -28,11 +30,15 @@
                 <!-- </div> -->
                 <div class="row">
                     <div class="col-md-6 mt-2">
-                        <label for="datetime"><b>Booking Date</b></label>
+                        <label for="datetime"><b>Booking Date</b>
+                            <span class="red_color">*</span>
+                        </label>
                         <input type="datetime-local" id="datetime" name="datetime" class="form-control" name="date-field" />
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="cnotenumber"><b>C. Note number</b></label>
+                        <label for="cnotenumber"><b>C. Note number</b>
+                            <span class="red_color">*</span>
+                        </label>
                         <input type="text" name="cnotenumber" id="cnotenumber" class="form-control" value="{{ request.session.next_c_note }}" onfocus="let value = this.value; this.value = null; this.value=value" autofocus required>
                         <!-- placeholder="C. N. Number"> -->
                     </div>
@@ -40,7 +46,9 @@
                 <!-- for From, To destination -->
                 <div class="row">
                     <div class="col-md-6 mt-2">
-                        <label for="from_destination"><b>From Destination</b></label>
+                        <label for="from_destination"><b>From Destination</b>
+                            <span class="red_color">*</span>
+                        </label>
                         <select class="form-select" name="from_destination" id="from_destination" aria-label="Default select example" required>
                             {% for dest in destinations %}
                             <!-- <option selected>Open this select menu</option> -->
@@ -49,7 +57,9 @@
                         </select>
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="to_destination"><b>To Destination</b></label>
+                        <label for="to_destination"><b>To Destination</b>
+                            <span class="red_color">*</span>
+                        </label>
                         <select class="form-select" name="todest" id="to_destination" aria-label="Default select example" required>
                             {% for dest in destinations %}
                             <!-- <option selected>Open this select menu</option> -->
@@ -77,14 +87,18 @@
                         <!-- placeholder="Receiver/Party Name"> -->
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="receiver_mobile"><b>Receiver Mobile</b></label>
+                        <label for="receiver_mobile"><b>Receiver Mobile</b>
+                            <span class="red_color">*</span>
+                        </label>
                         <input type="text" name="r_number" id="receiver_mobile" class="form-control" required>
                         <!-- placeholder="Receiver Mobile Number"> -->
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mt-2">
-                        <label for="from_destination"><b>Ref. Courier Name</b></label>
+                        <label for="from_destination"><b>Ref. Courier Name</b>
+                            <span class="red_color">*</span>
+                        </label>
                         <select class="form-select" name="ref_courier" id="ref_courier_name" aria-label="Default select example" required>
                             {% for ref_courier in ref_courier_name %}
                             <option value="{{ ref_courier.id }}">{{ ref_courier.name }}</option>
@@ -105,7 +119,7 @@
             </form>
         </div>
         <div class="col-md-6 mt-3">
-            <h4 class="alert alert-primary text-center">Booked shipment details</h4>
+            <h4 class="alert alert-primary text-center" tabindex="0">Booked shipment details</h4>
             <div class="table-responsive">
                 <table class="table table-hover table-bordered table-sm booked_data">
                     <thead>
@@ -140,7 +154,7 @@
     <div class="row text-center">
         <hr>
         <h3 class="text-center"><b>Advance Filters</b></h3>
-        <form method="post" class="g-3">
+        <form method="post" class="g-3" id="datewise_form">
             {% csrf_token %}
             <div class="row justify-content-evenly mx-2 border border-1 p-2">
                 <div class="col-md-4">
@@ -157,30 +171,32 @@
             </div>
         </form>
         <div class="col-md-6 mt-2">
-            <form method="post" class="g-3">
+            <form method="post" class="g-3" id="c_note_wise_search">
                 {% csrf_token %}
                 <div class="row justify-content-evenly mx-1 border border-1 p-2">
                     <div class="col-md-8">
                         <label for="c_note_search"><b>C Note Number</b></label>
-                        <input type="text" id="c_note_search" name="c_note_search" class="form-control" />
+                        <input type="text" id="c_note_search" name="c_note_search" class="form-control" required />
                     </div>
                     <div class="col-md-3 mt-4 d-grid gap-2 mb-3">
-                        <input type="button" id="c_note_search_btn" class="btn btn-success c_note_search_btn" value="Search">
+                        <!-- <input type="button" id="c_note_search_btn" class="btn btn-success c_note_search_btn" value="Search"> -->
+                        <button type="submit" id="c_note_search_btn" class="btn btn-success c_note_search_btn">Search</button>
                     </div>
                 </div>
             </form>
 
         </div>
         <div class="col-md-6 mt-2">
-            <form method="post" class="g-3">
+            <form method="post" class="g-3" id="ref_num_search_frm">
                 {% csrf_token %}
                 <div class="row justify-content-evenly mx-1 border border-1 p-2">
                     <div class="col-md-8">
                         <label for="ref_num_search"><b>Ref. Number</b></label>
-                        <input type="text" id="ref_num_search" name="ref_num_search" class="form-control" />
+                        <input type="text" id="ref_num_search" name="ref_num_search" class="form-control" required/>
                     </div>
                     <div class="col-md-3 mt-4 d-grid gap-2 mb-3">
-                        <input type="button" id="ref_num_search_search_btn" class="btn btn-success ref_num_search_search_btn" value="Search">
+                        <!-- <input type="button" id="ref_num_search_search_btn" class="btn btn-success ref_num_search_search_btn" value="Search"> -->
+                        <button type="submit" id="ref_num_search_search_btn" class="btn btn-success ref_num_search_search_btn">Search</button>
                     </div>
                 </div>
             </form>

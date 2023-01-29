@@ -301,6 +301,77 @@ def advance_search_for_ref_number(request):
         return JsonResponse({"ststua": 0})
 
 
+@login_required(login_url="login_auth")
+def part_master(request):
+    parties = PartyAccounts.objects.filter(user=request.user)
+    total_parties = len(parties)
+    context = {"parties": parties, "total_parties": total_parties}
+    return render(request, "party_master.html", context)
+
+
+@login_required(login_url="login_auth")
+def save_parties(request):
+    if request.method == "POST":
+        id_of = request.POST.get("id")
+        party_name = request.POST.get("party_name")
+        mobile_number = request.POST.get("mobile_number")
+        password = request.POST.get("password")
+        opening_balance = request.POST.get("opening_balance")
+        request.session["success"] = None
+        if id_of:
+            party = PartyAccounts(id=id_of, party_name=party_name, mobile_number=mobile_number, user=request.user, 
+            opening_balance=opening_balance, password=password)
+            party.save()
+            messages.success(request, "Party Details updated succsessfully.")
+            request.session["success"] = "success"
+        else:
+            available_party = PartyAccounts.objects.filter(mobile_number=mobile_number)
+            if available_party:
+                messages.error(request, "Party number already exists.")
+            else:
+                party = PartyAccounts(party_name=party_name, mobile_number=mobile_number, user=request.user, 
+                opening_balance=opening_balance, password=password)
+                party.save()
+                messages.success(request, "Party Details added succsessfully.")
+                request.session["success"] = "success"
+
+        parties = PartyAccounts.objects.filter(user=request.user)
+        total_parties = len(parties)
+        context = {"parties": parties, "total_parties": total_parties}  
+
+        return redirect("part_master")
+
+    else:
+        return redirect("part_master")
+
+@login_required(login_url="login_auth")
+def edit_party_details(request):
+    if request.method == "POST":
+        id = request.POST.get("id")        
+        try:
+            data = PartyAccounts.objects.get(id=id)
+            data = {"id": data.id, "party_name": data.party_name, "mobile_number": data.mobile_number, "password": data.password,
+             "opening_balance": data.opening_balance}
+            return JsonResponse({"status": 1, "data": data})
+        except Exception as e:
+            print(e)
+            return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def delete_party_detail(request):
+    id_of = request.POST.get("id")
+    try:
+        data = PartyAccounts.objects.get(id=id_of)
+        data.delete()        
+        data = PartyAccounts.objects.values()      
+        total_parties = len(data)        
+        return JsonResponse({"status": 1, "data": list(data), "total_parties": total_parties})
+
+    except Exception as e:
+        print(e)
+    
+
 
 @login_required(login_url="login_auth")
 def tracking_history(request):
