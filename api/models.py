@@ -76,6 +76,7 @@ class RefCourier(models.Model):
     link = models.CharField(max_length=1000)
     type = models.CharField(max_length=50, choices=REF_COURIER_TYPE, default="External")
     if_multiple = models.BooleanField(default=True, null=True)
+    selenium = models.BooleanField(default=True, null=True)
     multi_name = models.CharField(max_length=350, null=True, blank=True)
     multi_link = models.CharField(max_length=350, null=True, blank=True)
     final_link = models.CharField(max_length=350, null=True, blank=True)

@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import delete_party_detail, edit_party_details, network, save_parties, services, about_us
+from .views import delete_party_detail, edit_party_details, network, save_parties, services, about_us, tracking_history_in, tracking_history_out
 from .views import home, tracking, contactUs
 from .views import login_auth, dashboard, logout, edit_data_retrive
-from .views import bookings, tracking_history, save_booking, part_master
+from .views import bookings, save_booking, part_master
 from .views import advance_search_by_date, advance_search_by_c_note, advance_search_for_ref_number
 
 
@@ -17,8 +17,7 @@ urlpatterns = [
     path(r"login_auth", login_auth, name="login_auth"),
     path(r"logout", logout, name="logout"),
     path(r"dashboard", dashboard, name="dashboard"),
-    path(r"bookings", bookings, name="bookings"),
-    path(r"tracking_history", tracking_history, name="tracking_history"),
+    path(r"bookings", bookings, name="bookings"),    
     path(r"save_booking", save_booking, name="save_booking"), 
     path(r"edit_data_retrive", edit_data_retrive, name="edit_data_retrive"),     
     path(r"advance_search_by_date", advance_search_by_date, name="advance_search_by_date"),     
@@ -28,4 +27,6 @@ urlpatterns = [
     path(r"save_parties", save_parties, name="save_parties"),        
     path(r"edit_party_details", edit_party_details, name="edit_party_details"),        
     path(r"delete_party_detail", delete_party_detail, name="delete_party_detail"),            
+    path(r"tracking_history_in", tracking_history_in, name="tracking_history_in"),
+    path(r"tracking_history_out", tracking_history_out, name="tracking_history_out"),
 ]

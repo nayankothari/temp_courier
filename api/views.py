@@ -4,6 +4,7 @@ Some of basic django imports that help to render and filter data from database.
 import base64
 import requests
 import datetime
+import test_api
 from datetime import timedelta
 from django.db.models import Q
 from .models import Booking, Trackinghistory
@@ -63,12 +64,20 @@ def tracking(request, tracking_number):
                                     int("a")      
                                                   
                     except Exception as e:                                                
-                        if booking_details.ref_courier_name.if_multiple:
+                        selenium = False
+                        if booking_details.ref_courier_name.if_multiple:                                                                                    
                             url = booking_details.ref_courier_name.multi_link
                             url = url.format(booking_details.ref_courier_number)                            
+                        else:              
+                            # Check in database if selenium service is enable
+                            # if selenium in database:
+                            #     selenium = True                                         
+                            selenium = True
+                            url = str(booking_details.ref_courier_name.final_link).format(booking_details.ref_courier_number)                                                                                                                                                    
+                        if selenium:                            
+                            url = f'For latest updates click on this Ref No. <a id="sele_data" class="text-primary sele_data_1" data-sid="{url}" >{booking_details.c_note_number}</a>'
                         else:
-                            url = str(booking_details.ref_courier_name.final_link).format(booking_details.ref_courier_number)                                                                                                                        
-                        url = f'For latest updates click on this Ref No. <a href="{url}" target="_blank">{booking_details.c_note_number}</a>'                                                                                                
+                            url = f'For latest updates click on this Ref No. <a href="{url}" target="_blank">{booking_details.c_note_number}</a>'
                         tracking_history["Date"] = ""
                         tracking_history["Location"] = ""
                         tracking_history["CheckpointState"] = ""
@@ -374,5 +383,9 @@ def delete_party_detail(request):
 
 
 @login_required(login_url="login_auth")
-def tracking_history(request):
+def tracking_history_in(request):
+    return render(request, "tracking_history.html")
+
+@login_required(login_url="login_auth")
+def tracking_history_out(request):
     return render(request, "tracking_history.html")

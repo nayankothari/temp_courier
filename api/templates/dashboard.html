@@ -4,7 +4,15 @@
     <div class="row justify-content-center">
         <div class="col-md-6 text-center">
             <a href="{% url 'bookings' %}" class="text-decoration-none btn btn-outline-dark mt-3"><b>Booking</b></a>
-            <a href="{% url 'tracking_history' %}" class="text-decoration-none btn btn-outline-dark mt-3" target="_blank"><b>Tracking</b></a>
+
+            <!-- <a href="url 'tracking_history'" class="text-decoration-none btn btn-outline-dark mt-3" target="_blank"><b>Tracking</b></a> -->
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-dark mt-3 dropdown-toggle nav_login_btn mx-0" data-bs-toggle="dropdown" aria-expanded="false">Tracking</button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'tracking_history_in' %}">In</a></li>
+                    <li><a class="dropdown-item" href="{% url 'tracking_history_out' %}">Out</a></li>
+                </ul>
+            </div>
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-dark mt-3 dropdown-toggle nav_login_btn mx-0" data-bs-toggle="dropdown" aria-expanded="false">More</button>
                 <ul class="dropdown-menu">
