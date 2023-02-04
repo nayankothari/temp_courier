@@ -1,6 +1,15 @@
 <script>
     $("table").on("click", ".sele_data_1", function() {
-        let url = $(this).attr("data-sid");
-        alert(url);
-    })
+        let new_url = $(this).attr("data-sid");
+        let final_url = 'track_internal/' + new_url;
+        $.ajax({
+            url: final_url,
+            method: "GET",
+            dataType: "json",
+            success: function(data) {
+                console.log(data);
+            },
+        });
+
+    });
 </script>

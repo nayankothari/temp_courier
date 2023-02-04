@@ -68,12 +68,11 @@ def tracking(request, tracking_number):
                         if booking_details.ref_courier_name.if_multiple:                                                                                    
                             url = booking_details.ref_courier_name.multi_link
                             url = url.format(booking_details.ref_courier_number)                            
-                        else:              
-                            # Check in database if selenium service is enable
-                            # if selenium in database:
-                            #     selenium = True                                         
-                            selenium = True
-                            url = str(booking_details.ref_courier_name.final_link).format(booking_details.ref_courier_number)                                                                                                                                                    
+                        else:                                                                                 
+                            if booking_details.ref_courier_name.selenium:
+                                selenium = True
+                                url = str(booking_details.ref_courier_name.multi_name) + "UUUU" + str(booking_details.ref_courier_number)
+
                         if selenium:                            
                             url = f'For latest updates click on this Ref No. <a id="sele_data" class="text-primary sele_data_1" data-sid="{url}" >{booking_details.c_note_number}</a>'
                         else:
@@ -86,10 +85,20 @@ def tracking(request, tracking_number):
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
                 "last_status": last_status})   
 
-        return redirect("home")
-    except Exception as e:                       
+        return redirect("home")        
+    except Exception as e:   
+        print(e)                    
         return redirect("home")
 
+
+def tracking_with_selenium(request, details):
+    final_data = str(details).split("UUUU")
+    courier = final_data[0]
+    doc_number = final_data[1]
+    print(courier, doc_number)
+    data = test_api.get_search_details(courier=courier, doc_number=doc_number)
+    
+    return JsonResponse({"status": 1, "data": data})
 
 
 def contactUs(request):    

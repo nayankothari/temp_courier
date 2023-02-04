@@ -2,7 +2,7 @@ from django.urls import path
 from .views import delete_party_detail, edit_party_details, network, save_parties, services, about_us, tracking_history_in, tracking_history_out
 from .views import home, tracking, contactUs
 from .views import login_auth, dashboard, logout, edit_data_retrive
-from .views import bookings, save_booking, part_master
+from .views import bookings, save_booking, part_master, tracking_with_selenium
 from .views import advance_search_by_date, advance_search_by_c_note, advance_search_for_ref_number
 
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path(r"", home, name="home"),
     path(r"tracking/", home, name="only_tracking"),
     path(r"tracking/<str:tracking_number>", tracking, name="tracking_page"),    
+    path(r"tracking/track_internal/<str:details>", tracking_with_selenium),    
     path(r"contact_us", contactUs, name="ContactUS"),    
     path(r"network", network, name="network"),
     path(r"services", services, name="services"),  
