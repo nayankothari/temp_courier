@@ -4,10 +4,11 @@ Some of basic django imports that help to render and filter data from database.
 import base64
 import requests
 import datetime
-import test_api
+# import test_api
+from .test_api import get_search_details
 from datetime import timedelta
 from django.db.models import Q
-from .models import Booking, Trackinghistory
+from .models import Booking, ParcelStatus, Trackinghistory, UserAdditionalDetails
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from .models import contactus, Token, BranchNetwork, Destination
@@ -96,7 +97,7 @@ def tracking_with_selenium(request, details):
     courier = final_data[0]
     doc_number = final_data[1]
     print(courier, doc_number)
-    data = test_api.get_search_details(courier=courier, doc_number=doc_number)
+    data = get_search_details(courier=courier, doc_number=doc_number)
     
     return JsonResponse({"status": 1, "data": data})
 
@@ -393,7 +394,81 @@ def delete_party_detail(request):
 
 @login_required(login_url="login_auth")
 def tracking_history_in(request):
-    return render(request, "tracking_history.html")
+    destinations = Destination.objects.all()
+    today_date = datetime.date.today()      
+    today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date).order_by("-last_updated_datetime")
+    context = {"destinations": destinations, "doc_in": today_in}            
+    
+    return render(request, "tracking_history.html", context=context)
+
+
+@login_required(login_url="login_auth")
+def save_input_load(request):
+    if request.method == "POST":
+        id_of = request.POST.get("id_of")                
+        date = request.POST.get("date")
+        from_destination = request.POST.get("from_destination")        
+        c_note_number = request.POST.get("c_note_number")
+        remarks = request.POST.get("remarks")
+        try:
+            c_note_number_booking = Booking.objects.get(c_note_number=c_note_number)                 
+            user = request.user
+            try:
+                status = ParcelStatus.objects.get(name__icontains="IN")        
+                try:
+                    to_destination = UserAdditionalDetails.objects.get(user=request.user)                
+                    to_destination = to_destination.destination
+                    try:                        
+                        from_destination = Destination.objects.get(id=from_destination)                        
+                        if id_of:
+                            saved_data = Trackinghistory.objects.get(id=id_of)
+                            saved_data.c_note_number = c_note_number_booking
+                            saved_data.remarks = remarks
+                            saved_data.d_from = from_destination
+                            saved_data.in_out_datetime = date
+                            saved_data.save()  
+                            print("tracking data updated.")                          
+                        else:
+                            Trackinghistory.objects.create(c_note_number=c_note_number_booking, in_out_datetime=date,
+                                    d_from=from_destination, d_to=to_destination, status=status, remarks=remarks, user=user)                                                
+                        data = Trackinghistory.objects.values()
+                        today_date = datetime.date.today()      
+                        today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date).order_by("-last_updated_datetime")
+                        today_in = list(today_in.values("id", "c_note_number__c_note_number", "d_from__name", "remarks"))
+                        return JsonResponse({"status": 1, "data": today_in})
+                    except Exception as e:
+                        print(e)
+                        return JsonResponse({"status": 0, "message": "From destination Not found."}) 
+                except Exception as e:                    
+                    return JsonResponse({"status": 0, "message": "User destination Not found."}) 
+            except:
+                return JsonResponse({"status": 0, "message": "Status Not found."})            
+        
+        except:            
+            return JsonResponse({"status": 0, "message": "C Note Number Not found."})
+
+
+        return JsonResponse({"status": 1})
+
+@login_required(login_url="login_auth")
+def load_in_delete(request):
+    if request.method == "POST":
+        id_of = request.POST.get("id_of")
+        data = Trackinghistory.objects.get(id=id_of)
+        data.delete()        
+        return JsonResponse({"status": 1})
+    else:
+        return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def load_in_edit(request):
+    if request.method == "POST":        
+        id_of = request.POST.get("id_of")
+        data = Trackinghistory.objects.filter(id=id_of).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")                            
+        return JsonResponse({"status": 1, "data": list(data)})       
+
+
 
 @login_required(login_url="login_auth")
 def tracking_history_out(request):

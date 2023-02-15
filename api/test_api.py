@@ -47,12 +47,6 @@
 # lists = soup.find_all("div", class_="Tracking-result")
 # print(lists)
 
-
-import os
-import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "courier.settings")
-django.setup()
-
 import time
 import warnings
 import pandas as pd

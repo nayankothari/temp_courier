@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.models import User
 
 
@@ -118,6 +119,7 @@ class Trackinghistory(models.Model):
     d_to = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="destination_out")
     status = models.ForeignKey(ParcelStatus, on_delete=models.CASCADE, related_name="status")
     remarks = models.TextField(blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
 
     class Meta:
         verbose_name_plural = "Tracking history"
@@ -160,3 +162,24 @@ class contactus(models.Model):
 
     def __str__(self):
         return self.name
+
+
+def new_date():
+    expired_date = datetime.now() + timedelta(days=365)
+    return expired_date
+
+class UserAdditionalDetails(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    alias = models.CharField(max_length=256, null=True, blank=True)
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE, null=True)
+    is_active = models.BooleanField(null=True, blank=False, default=True)
+    purchase_date = models.DateTimeField(default=datetime.now)    
+    licence_expire_date = models.DateTimeField(default=new_date)
+
+    class Meta:
+        verbose_name_plural = "User Additional Details"
+
+    def __str__(self):
+        return self.alias
+
+

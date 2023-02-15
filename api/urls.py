@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import delete_party_detail, edit_party_details, network, save_parties, services, about_us, tracking_history_in, tracking_history_out
+from .views import delete_party_detail, edit_party_details, load_in_edit, network, save_parties, services, about_us, tracking_history_in, tracking_history_out
 from .views import home, tracking, contactUs
 from .views import login_auth, dashboard, logout, edit_data_retrive
 from .views import bookings, save_booking, part_master, tracking_with_selenium
 from .views import advance_search_by_date, advance_search_by_c_note, advance_search_for_ref_number
-
+from .views import save_input_load, load_in_delete
 
 urlpatterns = [    
     path(r"", home, name="home"),
@@ -29,5 +29,9 @@ urlpatterns = [
     path(r"edit_party_details", edit_party_details, name="edit_party_details"),        
     path(r"delete_party_detail", delete_party_detail, name="delete_party_detail"),            
     path(r"tracking_history_in", tracking_history_in, name="tracking_history_in"),
-    path(r"tracking_history_out", tracking_history_out, name="tracking_history_out"),
+    path(r"tracking_history_out", tracking_history_out, name="tracking_history_out"),    
+    path(r"save_input_load", save_input_load, name="save_input_load"),
+    path(r"delete_input_load", load_in_delete, name="delete_input_load"),    
+    path(r"load_in_edit", load_in_edit, name="load_in_edit"),
+
 ]
