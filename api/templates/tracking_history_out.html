@@ -1,0 +1,91 @@
+{% extends 'base.html' %}{% block title %}Tracking history{% endblock title %}{% block content %}
+
+<div class="container mt-5">
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h4 class="alert alert-primary mt-3 text-center">Load Output</h4>
+            <form method="POST" action="" id="form1">
+                {% csrf_token %}
+                <input type="hidden" id="id_of">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="datetime"><b>Load out date</b>
+                            <span class="red_color">*</span>
+                        </label>
+                        <input type="datetime-local" id="datetime" name="datetime" class="form-control" name="date-field" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="from_destination"><b>To Destination</b>
+                            <span class="red_color">*</span>
+                        </label>
+                        <select class="form-select" name="from_destination" id="from_destination" aria-label="Default select example" required>
+                            {% for dest in destinations %}
+                            <!-- <option selected>Open this select menu</option> -->
+                            <option value="{{ dest.id }}">{{ dest.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <label for="c_note_number"><b>C. Note Number</b>
+                            <span class="red_color">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="c_note_number" aria-describedby="CNoteNumber">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <label for="remarks">Remarks</label>
+                        <textarea class="form-control" name="remarks" id="remarks" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="row px-4 mt-4">
+                    <!-- <div class="col-md-12"> -->
+                    <button type="submit" class="btn btn-success" class="save_btn" id="save_btn">Save</button>
+                    <!-- </div> -->
+                </div>
+
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h4 class="alert alert-primary mt-3 text-center">Output Load Details</h4>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-sm booked_data">
+                    <thead>
+                        <tr>
+                            <th scope="col">C.N. number</th>
+                            <th scope="col">To destination</th>
+                            <th scope="col">Remarks</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        {% for doc in doc_in %}
+                        <tr>
+                            <td><a class="text-decoration-none" href="{% url 'tracking_page' doc.c_note_number %}" target="_blank">{{ doc.c_note_number }}</a></td>
+                            <td>{{ doc.d_from }}</td>
+                            <td>{{ doc.remarks }}</td>
+                            <td>
+                                <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="{{ doc.id }}">
+                                <input type="button" class="btn btn-danger btn-sm delete-btn" id="delete_booking" value="Delete" data-sid="{{ doc.id }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+<script>
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('datetime').value = now.toISOString().slice(0, 16);
+</script>
+{% include 'tracking_out_ajax.html' %} {% endblock content %}

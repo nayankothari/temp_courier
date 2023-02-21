@@ -389,16 +389,16 @@ def delete_party_detail(request):
 
     except Exception as e:
         print(e)
-    
+
 
 
 @login_required(login_url="login_auth")
 def tracking_history_in(request):
     destinations = Destination.objects.all()
-    today_date = datetime.date.today()      
-    today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date).order_by("-last_updated_datetime")
-    context = {"destinations": destinations, "doc_in": today_in}            
-    
+    today_date = datetime.date.today()    
+    status = ParcelStatus.objects.get(name__icontains="IN")  
+    today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
+    context = {"destinations": destinations, "doc_in": today_in}    
     return render(request, "tracking_history.html", context=context)
 
 
@@ -426,8 +426,7 @@ def save_input_load(request):
                             saved_data.remarks = remarks
                             saved_data.d_from = from_destination
                             saved_data.in_out_datetime = date
-                            saved_data.save()  
-                            print("tracking data updated.")                          
+                            saved_data.save()                                               
                         else:
                             Trackinghistory.objects.create(c_note_number=c_note_number_booking, in_out_datetime=date,
                                     d_from=from_destination, d_to=to_destination, status=status, remarks=remarks, user=user)                                                
@@ -436,8 +435,7 @@ def save_input_load(request):
                         today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date).order_by("-last_updated_datetime")
                         today_in = list(today_in.values("id", "c_note_number__c_note_number", "d_from__name", "remarks"))
                         return JsonResponse({"status": 1, "data": today_in})
-                    except Exception as e:
-                        print(e)
+                    except Exception as e:                        
                         return JsonResponse({"status": 0, "message": "From destination Not found."}) 
                 except Exception as e:                    
                     return JsonResponse({"status": 0, "message": "User destination Not found."}) 
@@ -448,7 +446,7 @@ def save_input_load(request):
             return JsonResponse({"status": 0, "message": "C Note Number Not found."})
 
 
-        return JsonResponse({"status": 1})
+    return JsonResponse({"status": 0})
 
 @login_required(login_url="login_auth")
 def load_in_delete(request):
@@ -472,4 +470,9 @@ def load_in_edit(request):
 
 @login_required(login_url="login_auth")
 def tracking_history_out(request):
-    return render(request, "tracking_history.html")
+    destinations = Destination.objects.all()
+    today_date = datetime.date.today()    
+    status = ParcelStatus.objects.filter(name="OUT")[0]
+    today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
+    context = {"destinations": destinations, "doc_in": today_in}    
+    return render(request, "tracking_history_out.html", context=context)    

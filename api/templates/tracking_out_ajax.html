@@ -1,0 +1,121 @@
+<script>
+    // For tracking document using selenium.
+    $("table").on("click", ".sele_data_1", function() {
+        let new_url = $(this).attr("data-sid");
+        let final_url = 'track_internal/' + new_url;
+        $(this).html("Fetching details...")
+        let output = "";
+        let my_this = this;
+        $.ajax({
+            url: final_url,
+            method: "GET",
+            dataType: "json",
+            success: function(data) {
+                let final_data = data.data;
+                if (data.status == 1) {
+                    output += "<tr> <th class='tracking_head' colspan='5'>Tracking Details</th></tr><tr><th>Date</th><th>From</th> <th>To</th><th>Status</th></tr>"
+                    for (i = 0; i < final_data.length; i++) {
+                        output += "<tr><td>" + final_data[i].Date + "</td><td>" + final_data[i].Location + "</td><td>" +
+                            final_data[i].Activity + "</td><td>" + final_data[i].CheckpointState + "</td></tr>";
+
+                    }
+                    $("#collected_tbody").html(output);
+                }
+            },
+        });
+
+    });
+
+    // Save Load input -------------------------------
+    $("#save_btn").click(function(e) {
+        e.preventDefault();
+        let id_of = $("#id_of").val();
+        let date = $("#datetime").val();
+        let from_destination = $("#from_destination").val();
+        let c_note_number = $("#c_note_number").val();
+        let remarks = $("#remarks").val();
+        let token = $("input[name='csrfmiddlewaretoken']").val();
+        let output = "";
+        let final_data = {
+            id_of: id_of,
+            date: date,
+            from_destination: from_destination,
+            c_note_number: c_note_number,
+            remarks: remarks,
+            csrfmiddlewaretoken: token,
+        };
+        $.ajax({
+            url: "{% url 'save_input_load' %}",
+            method: "POST",
+            dataType: "json",
+            data: final_data,
+            success: function(data) {
+                if (data.status == 1) {
+                    let new_data = data.data;
+                    for (let i = 0; i < new_data.length; i++) {
+                        output += "<tr><td><a class='text-decoration-none' href=/tracking_page/" + new_data[i].c_note_number__c_note_number + "target='_blank'>" + new_data[i].c_note_number__c_note_number + "</a></td><td>" + new_data[i].d_from__name + "</td><td>" + new_data[i].remarks + "</td><td><input type='button' class='btn btn-warning btn-sm edit-btn' id='edit_booking' value='Edit' data-sid=" + new_data[i].id + "> <input type='button' class='btn btn-danger btn-sm delete-btn' id='delete_booking' value='Delete' data-sid=" + new_data[i].id + "></td></tr>"
+                    }
+                    $("#tbody").html(output);
+                    $("#c_note_number").val("");
+                    $("#remarks").val("");
+                    $("#id_of").val("");
+                    $("#c_note_number").focus();
+                } else {
+                    alert(data.message);
+                }
+            },
+        });
+    });
+
+    // delete load input
+    $("table").on("click", ".delete-btn", function() {
+        let id_of = $(this).attr("data-sid");
+        let token = $("input[name='csrfmiddlewaretoken']").val();
+        let final_data = {
+            id_of: id_of,
+            csrfmiddlewaretoken: token,
+        }
+        let my_this = this;
+        $.ajax({
+            url: "{% url 'delete_input_load' %}",
+            method: "POST",
+            dataType: "json",
+            data: final_data,
+            success: function(data) {
+                if (data.status == 1) {
+                    $(my_this).closest("tr").fadeOut();
+                } else {
+                    alert("unable to delete data, please refresh page.")
+                }
+            },
+        });
+    })
+
+    // Edit load input
+    $("table").on("click", ".edit-btn", function() {
+        let id_of = $(this).attr("data-sid");
+        let token = $("input[name='csrfmiddlewaretoken']").val();
+        let my_data = {
+            id_of: id_of,
+            csrfmiddlewaretoken: token
+        }
+        $.ajax({
+            url: "load_in_edit",
+            method: "POST",
+            dataType: "json",
+            data: my_data,
+            success: function(data) {
+                if (data.status == 1) {
+                    let new_data = data.data[0]
+                    $("#id_of").val(new_data.id);
+                    $("#datetime").val(new_data.in_out_datetime);
+                    $("#from_destination").val(new_data.d_from).change();
+                    $("#c_note_number").val(new_data.c_note_number__c_note_number);
+                    $("#remarks").val(new_data.remarks);
+                } else {
+                    alert("data not retrive from server.")
+                }
+            }
+        })
+    })
+</script>
