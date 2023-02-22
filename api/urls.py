@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import delete_party_detail, edit_party_details, load_in_edit, network, save_parties, services, about_us, tracking_history_in, tracking_history_out
+from .views import advance_search_by_c_note_load_in, edit_party_details, load_in_edit, network, save_parties, services
+from .views import delete_party_detail, about_us, tracking_history_in, tracking_history_out
 from .views import home, tracking, contactUs
 from .views import login_auth, dashboard, logout, edit_data_retrive
 from .views import bookings, save_booking, part_master, tracking_with_selenium
@@ -33,5 +34,6 @@ urlpatterns = [
     path(r"save_input_load", save_input_load, name="save_input_load"),
     path(r"delete_input_load", load_in_delete, name="delete_input_load"),    
     path(r"load_in_edit", load_in_edit, name="load_in_edit"),
+    path(r"advance_search_by_c_note_load_in", advance_search_by_c_note_load_in, name="advance_search_by_c_note_load_in")
 
 ]

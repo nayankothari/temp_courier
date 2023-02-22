@@ -414,7 +414,7 @@ def save_input_load(request):
             c_note_number_booking = Booking.objects.get(c_note_number=c_note_number)                 
             user = request.user
             try:
-                status = ParcelStatus.objects.get(name__icontains="IN")        
+                status = ParcelStatus.objects.get(name="IN")        
                 try:
                     to_destination = UserAdditionalDetails.objects.get(user=request.user)                
                     to_destination = to_destination.destination
@@ -465,6 +465,18 @@ def load_in_edit(request):
         id_of = request.POST.get("id_of")
         data = Trackinghistory.objects.filter(id=id_of).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")                            
         return JsonResponse({"status": 1, "data": list(data)})       
+
+@login_required(login_url="login_auth")
+def advance_search_by_c_note_load_in(request):
+    if request.method == "POST":
+        c_note_number = request.POST.get("c_note_number")
+        try:
+            status = ParcelStatus.objects.get(name="IN")            
+            c_note_number = Booking.objects.get(c_note_number=c_note_number)   
+            data = Trackinghistory.objects.filter(user=request.user, c_note_number=c_note_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")        
+            return JsonResponse({"status": 1, "data": list(data)})    
+        except:
+            return JsonResponse({"status": 0})    
 
 
 
