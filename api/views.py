@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
+import threading
 
 
 today_date = datetime.datetime.now().strftime("%Y")
@@ -93,13 +94,15 @@ def tracking(request, tracking_number):
 
 
 def tracking_with_selenium(request, details):
+    # def start_in_thread():
     final_data = str(details).split("UUUU")
     courier = final_data[0]
     doc_number = final_data[1]
     print(courier, doc_number)
     data = get_search_details(courier=courier, doc_number=doc_number)
-    
+
     return JsonResponse({"status": 1, "data": data})
+    # threading.Thread(target=start_in_thread).start()
 
 
 def contactUs(request):    
@@ -112,7 +115,8 @@ def contactUs(request):
         if name and email and country and pincode:            
             contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message)
             contact_obj.save()
-            return_message = "Request submitted successfully."                   
+            return_message = "Request submitted successfully."       
+
             return render(request, "contactus.html", {"return_message": return_message})
         else:
             print("Pending...")
@@ -130,9 +134,11 @@ def network(request):
             if data:                                              
                 message = None
                 context = {"head_offices": head_offices, "message": None, "data": data}
+
                 return render(request, "network.html", context=context)
             else:
                 context = {"head_offices": head_offices, "message": 1}
+
                 return render(request, "network.html", context=context)
         
         elif "by_area" in request.POST and request.POST.get("area_name"):
@@ -292,7 +298,7 @@ def advance_search_by_date(request):
             return JsonResponse({"ststua": 0})
     else:
         return JsonResponse({"ststua": 0})
-
+        
 
 @login_required(login_url="login_auth")
 def advance_search_by_c_note(request):
@@ -466,6 +472,7 @@ def load_in_edit(request):
         data = Trackinghistory.objects.filter(id=id_of).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")                            
         return JsonResponse({"status": 1, "data": list(data)})       
 
+
 @login_required(login_url="login_auth")
 def advance_search_by_c_note_load_in(request):
     if request.method == "POST":
@@ -476,8 +483,35 @@ def advance_search_by_c_note_load_in(request):
             data = Trackinghistory.objects.filter(user=request.user, c_note_number=c_note_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")        
             return JsonResponse({"status": 1, "data": list(data)})    
         except:
-            return JsonResponse({"status": 0})    
+            return JsonResponse({"status": 0})
 
+
+@login_required(login_url="login_auth")
+def advance_search_by_ref_num_load_in(request):
+    if request.method == "POST":
+        ref_number = request.POST.get("ref_number")
+        try:
+            status = ParcelStatus.objects.get(name="IN")            
+            ref_number = Booking.objects.get(ref_courier_number=ref_number)   
+            data = Trackinghistory.objects.filter(user=request.user, c_note_number=ref_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")                    
+            return JsonResponse({"status": 1, "data": list(data)})    
+        except:
+            return JsonResponse({"status": 0})
+
+@login_required(login_url="login_auth")
+def advance_search_load_in_by_date(request):
+    if request.method == "POST":
+        from_date = request.POST.get("from_date")
+        to_date = request.POST.get("to_date")
+        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
+        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
+        to_date = to_date + timedelta(days=1)
+        status = ParcelStatus.objects.get(name="IN")        
+        data = Trackinghistory.objects.filter(in_out_datetime__range=(from_date, to_date), user=request.user,
+                                              status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")        
+        return JsonResponse({"status": 1, "data": list(data)})
+    else:
+        return JsonResponse({"status": 0})
 
 
 @login_required(login_url="login_auth")
