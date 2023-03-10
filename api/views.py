@@ -97,8 +97,7 @@ def tracking_with_selenium(request, details):
     # def start_in_thread():
     final_data = str(details).split("UUUU")
     courier = final_data[0]
-    doc_number = final_data[1]
-    print(courier, doc_number)
+    doc_number = final_data[1]    
     data = get_search_details(courier=courier, doc_number=doc_number)
 
     return JsonResponse({"status": 1, "data": data})
@@ -195,6 +194,7 @@ def dashboard(request):
     
     return render(request, "dashboard.html")
 
+# ###############################3 Dashboard details #####################################
 
 @login_required(login_url="login_auth")
 def bookings(request):    
@@ -326,6 +326,8 @@ def advance_search_for_ref_number(request):
         return JsonResponse({"ststua": 0})
 
 
+# ############################# Party Details start ###################################################
+
 @login_required(login_url="login_auth")
 def part_master(request):
     parties = PartyAccounts.objects.filter(user=request.user)
@@ -397,12 +399,13 @@ def delete_party_detail(request):
         print(e)
 
 
+# ############################## TRACKING HOSTORY IN start ##########################################
 
 @login_required(login_url="login_auth")
 def tracking_history_in(request):
     destinations = Destination.objects.all()
     today_date = datetime.date.today()    
-    status = ParcelStatus.objects.get(name__icontains="IN")  
+    status = ParcelStatus.objects.get(name="IN")  
     today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
     context = {"destinations": destinations, "doc_in": today_in}    
     return render(request, "tracking_history.html", context=context)
@@ -430,15 +433,15 @@ def save_input_load(request):
                             saved_data = Trackinghistory.objects.get(id=id_of)
                             saved_data.c_note_number = c_note_number_booking
                             saved_data.remarks = remarks
-                            saved_data.d_from = from_destination
+                            saved_data.d_from = to_destination
                             saved_data.in_out_datetime = date
                             saved_data.save()                                               
                         else:
                             Trackinghistory.objects.create(c_note_number=c_note_number_booking, in_out_datetime=date,
-                                    d_from=from_destination, d_to=to_destination, status=status, remarks=remarks, user=user)                                                
-                        data = Trackinghistory.objects.values()
+                                    d_from=to_destination, d_to=to_destination, status=status, remarks=remarks, user=user)                                                
+                        # data = Trackinghistory.objects.values()
                         today_date = datetime.date.today()      
-                        today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date).order_by("-last_updated_datetime")
+                        today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
                         today_in = list(today_in.values("id", "c_note_number__c_note_number", "d_from__name", "remarks"))
                         return JsonResponse({"status": 1, "data": today_in})
                     except Exception as e:                        
@@ -469,7 +472,7 @@ def load_in_delete(request):
 def load_in_edit(request):
     if request.method == "POST":        
         id_of = request.POST.get("id_of")
-        data = Trackinghistory.objects.filter(id=id_of).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")                            
+        data = Trackinghistory.objects.filter(id=id_of).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks", "d_to")                            
         return JsonResponse({"status": 1, "data": list(data)})       
 
 
@@ -480,7 +483,7 @@ def advance_search_by_c_note_load_in(request):
         try:
             status = ParcelStatus.objects.get(name="IN")            
             c_note_number = Booking.objects.get(c_note_number=c_note_number)   
-            data = Trackinghistory.objects.filter(user=request.user, c_note_number=c_note_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")        
+            data = Trackinghistory.objects.filter(user=request.user, c_note_number=c_note_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")        
             return JsonResponse({"status": 1, "data": list(data)})    
         except:
             return JsonResponse({"status": 0})
@@ -493,10 +496,11 @@ def advance_search_by_ref_num_load_in(request):
         try:
             status = ParcelStatus.objects.get(name="IN")            
             ref_number = Booking.objects.get(ref_courier_number=ref_number)   
-            data = Trackinghistory.objects.filter(user=request.user, c_note_number=ref_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")                    
+            data = Trackinghistory.objects.filter(user=request.user, c_note_number=ref_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")                    
             return JsonResponse({"status": 1, "data": list(data)})    
         except:
             return JsonResponse({"status": 0})
+
 
 @login_required(login_url="login_auth")
 def advance_search_load_in_by_date(request):
@@ -508,17 +512,105 @@ def advance_search_load_in_by_date(request):
         to_date = to_date + timedelta(days=1)
         status = ParcelStatus.objects.get(name="IN")        
         data = Trackinghistory.objects.filter(in_out_datetime__range=(from_date, to_date), user=request.user,
-                                              status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from", "remarks")        
+                                              status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")        
         return JsonResponse({"status": 1, "data": list(data)})
     else:
         return JsonResponse({"status": 0})
 
+# ##################################### Tracking history OUT start #######################################
 
 @login_required(login_url="login_auth")
 def tracking_history_out(request):
     destinations = Destination.objects.all()
     today_date = datetime.date.today()    
-    status = ParcelStatus.objects.filter(name="OUT")[0]
+    status = ParcelStatus.objects.get(name="OUT")
     today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
     context = {"destinations": destinations, "doc_in": today_in}    
-    return render(request, "tracking_history_out.html", context=context)    
+    return render(request, "tracking_history_out.html", context=context)
+
+
+@login_required(login_url="login_auth")
+def save_output_load(request):
+    if request.method == "POST":
+        id_of = request.POST.get("id_of")                
+        date = request.POST.get("date")
+        from_destination = request.POST.get("from_destination")        
+        c_note_number = request.POST.get("c_note_number")
+        remarks = request.POST.get("remarks")
+        try:
+            c_note_number_booking = Booking.objects.get(c_note_number=c_note_number)                 
+            user = request.user
+            try:
+                status = ParcelStatus.objects.get(name="OUT")        
+                try:
+                    to_destination = UserAdditionalDetails.objects.get(user=request.user)                
+                    to_destination = to_destination.destination
+                    try:                        
+                        from_destination = Destination.objects.get(id=from_destination)                        
+                        if id_of:
+                            saved_data = Trackinghistory.objects.get(id=id_of)
+                            saved_data.c_note_number = c_note_number_booking
+                            saved_data.remarks = remarks
+                            saved_data.d_to = from_destination
+                            saved_data.in_out_datetime = date
+                            saved_data.save()                                               
+                        else:
+                            Trackinghistory.objects.create(c_note_number=c_note_number_booking, in_out_datetime=date,
+                                    d_from=to_destination, d_to=from_destination, status=status, remarks=remarks, user=user)                                                
+                        # data = Trackinghistory.objects.values()
+                        today_date = datetime.date.today()      
+                        today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
+                        today_in = list(today_in.values("id", "c_note_number__c_note_number", "d_to__name", "remarks"))
+                        return JsonResponse({"status": 1, "data": today_in})
+                    except Exception as e:                        
+                        return JsonResponse({"status": 0, "message": "From destination Not found."}) 
+                except Exception as e:                    
+                    return JsonResponse({"status": 0, "message": "User destination Not found."}) 
+            except:
+                return JsonResponse({"status": 0, "message": "Status Not found."})            
+        
+        except:            
+            return JsonResponse({"status": 0, "message": "C Note Number Not found."})
+
+    return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def advance_search_by_c_note_load_out(request):
+    if request.method == "POST":
+        c_note_number = request.POST.get("c_note_number")
+        try:
+            status = ParcelStatus.objects.get(name="OUT")            
+            c_note_number = Booking.objects.get(c_note_number=c_note_number)   
+            data = Trackinghistory.objects.filter(user=request.user, c_note_number=c_note_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")        
+            return JsonResponse({"status": 1, "data": list(data)})    
+        except:
+            return JsonResponse({"status": 0})
+
+@login_required(login_url="login_auth")
+def advance_search_by_ref_num_load_out(request):
+    if request.method == "POST":
+        ref_number = request.POST.get("ref_number")
+        try:
+            status = ParcelStatus.objects.get(name="OUT")            
+            ref_number = Booking.objects.get(ref_courier_number=ref_number)   
+            data = Trackinghistory.objects.filter(user=request.user, c_note_number=ref_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")                    
+            return JsonResponse({"status": 1, "data": list(data)})    
+        except:
+            return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def advance_search_load_out_by_date(request):
+    if request.method == "POST":
+        from_date = request.POST.get("from_date")
+        to_date = request.POST.get("to_date")
+        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
+        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
+        to_date = to_date + timedelta(days=1)
+        status = ParcelStatus.objects.get(name="OUT")        
+        data = Trackinghistory.objects.filter(in_out_datetime__range=(from_date, to_date), user=request.user,
+                                              status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")        
+        return JsonResponse({"status": 1, "data": list(data)})
+    else:
+        return JsonResponse({"status": 0})

@@ -1,9 +1,9 @@
-{% extends 'base.html' %}{% block title %}Tracking history{% endblock title %}{% block content %}
+{% extends 'base.html' %}{% block title %}Load OUT{% endblock title %}{% block content %}
 
 <div class="container mt-5 back_color">
     <div class="row mt-5">
         <div class="col-md-6">
-            <h4 class="alert alert-primary mt-3 text-center">Load Output</h4>
+            <h4 class="alert alert-primary mt-3 text-center" tabindex="0">Load Output</h4>
             <form method="POST" action="" id="form1">
                 {% csrf_token %}
                 <input type="hidden" id="id_of">
@@ -65,7 +65,7 @@
                         {% for doc in doc_in %}
                         <tr>
                             <td><a class="text-decoration-none" href="{% url 'tracking_page' doc.c_note_number %}" target="_blank">{{ doc.c_note_number }}</a></td>
-                            <td>{{ doc.d_from }}</td>
+                            <td>{{ doc.d_to }}</td>
                             <td>{{ doc.remarks }}</td>
                             <td>
                                 <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="{{ doc.id }}">
@@ -95,7 +95,7 @@
                     <input type="date" id="to_datetime" name="to_datetime" class="form-control" name="date-field" />
                 </div>
                 <div class="col-md-2 mt-4 d-grid gap-2 mb-3">
-                    <input type="button" id="date_search_btn" class="btn btn-success date_search_btn" value="Search">
+                    <input type="submit" id="date_search_btn" class="btn btn-success date_search_btn" value="Search">
                 </div>
             </div>
         </form>

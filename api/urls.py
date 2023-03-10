@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import advance_search_by_c_note_load_in, advance_search_by_ref_num_load_in, edit_party_details, load_in_edit, network, save_parties, services
+from .views import advance_search_by_c_note_load_in, advance_search_by_c_note_load_out, advance_search_by_ref_num_load_in, advance_search_by_ref_num_load_out, advance_search_load_out_by_date, edit_party_details, load_in_edit, network, save_output_load, save_parties, services
 from .views import delete_party_detail, about_us, tracking_history_in, tracking_history_out
 from .views import home, tracking, contactUs
 from .views import login_auth, dashboard, logout, edit_data_retrive
@@ -37,5 +37,8 @@ urlpatterns = [
     path(r"advance_search_by_c_note_load_in", advance_search_by_c_note_load_in, name="advance_search_by_c_note_load_in"),
     path(r"advance_search_by_ref_num_load_in", advance_search_by_ref_num_load_in, name="advance_search_by_ref_num_load_in"),
     path(r"advance_search_load_in_by_date", advance_search_load_in_by_date, name="advance_search_load_in_by_date"),     
-
+    path(r"save_output_load", save_output_load, name="save_output_load"),     
+    path(r"advance_search_by_c_note_load_out", advance_search_by_c_note_load_out, name="advance_search_by_c_note_load_out"),
+    path(r"advance_search_by_ref_num_load_out", advance_search_by_ref_num_load_out, name="advance_search_by_ref_num_load_out"),
+    path(r"advance_search_load_out_by_date", advance_search_load_out_by_date, name="advance_search_load_out_by_date"),     
 ]
