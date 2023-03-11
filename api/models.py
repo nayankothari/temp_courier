@@ -180,6 +180,6 @@ class UserAdditionalDetails(models.Model):
         verbose_name_plural = "User Additional Details"
 
     def __str__(self):
-        return self.alias
+        return str(self.user.username)
 
 
