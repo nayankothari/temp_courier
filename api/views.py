@@ -8,7 +8,7 @@ import datetime
 from .test_api import get_search_details
 from datetime import timedelta
 from django.db.models import Q
-from .models import Booking, ParcelStatus, Trackinghistory, UserAdditionalDetails
+from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from .models import contactus, Token, BranchNetwork, Destination
@@ -200,12 +200,14 @@ def dashboard(request):
 def bookings(request):    
     destinations = Destination.objects.all()    
     ref_courier_name = RefCourier.objects.all()    
+    booking_type = BookingType.objects.all()
     parties = PartyAccounts.objects.filter(user=request.user)
     today_date = datetime.date.today()    
     today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
     context = {"destinations": destinations, 
                "ref_courier_name": ref_courier_name,
                "parties": parties, "today_bookings": today_bookings,
+               "booking_type": booking_type,
                "total_bookings": len(today_bookings)}                
     return render(request, "bookings.html", context=context)
 
@@ -218,8 +220,10 @@ def save_booking(request):
         existing_c_note = Booking.objects.filter(c_note_number=c_note_number)
         request.session["success"] = None
         request.session["next_c_note"] = ""
-        party_name = request.POST.get("party")        
+        party_name = request.POST.get("party")              
         party_name = PartyAccounts.objects.get(id=party_name)
+        booking_type = request.POST.get("bookingtype")  
+        booking_type = BookingType.objects.get(id=booking_type)
         booking_datetime = request.POST.get("datetime")        
         from_dest = request.POST.get("from_destination")
         from_dest = Destination.objects.get(id=from_dest)
@@ -235,7 +239,7 @@ def save_booking(request):
         if not update_id:            
             if not existing_c_note:                            
                 booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
-                c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest,
+                c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
                 sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
                 ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user)                    
                 booking_obj.save()            
@@ -252,6 +256,7 @@ def save_booking(request):
             booking_obj = Booking.objects.get(id=update_id)            
             booking_obj.doc_date = booking_datetime
             booking_obj.party_name = party_name
+            booking_obj.booking_type = booking_type
             booking_obj.c_note_number = c_note_number
             booking_obj.from_destination = from_dest
             booking_obj.to_destination = to_dest
@@ -278,7 +283,8 @@ def edit_data_retrive(request):
         id = request.POST.get("id")        
         data = Booking.objects.filter(pk=id).values("id", "doc_date", "party_name", "c_note_number", 
         "from_destination", "to_destination", "sender_name", "sender_mobile", "receiver_name", "receiver_mobile_number",
-        "ref_courier_name", "ref_courier_number")              
+        "ref_courier_name", "ref_courier_number", "booking_type")              
+        print(data)
         return JsonResponse({"data": list(data)})
 
 

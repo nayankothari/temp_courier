@@ -87,6 +87,17 @@ class RefCourier(models.Model):
 
     def __str__(self):
         return self.name
+    
+class BookingType(models.Model):
+    booking_type = models.CharField(max_length=256, null=True, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Booking type"
+
+    def __str__(self):
+        return str(self.booking_type)
 
 class Booking(models.Model):
     doc_date = models.DateTimeField(default=datetime.now)    
@@ -94,6 +105,7 @@ class Booking(models.Model):
     c_note_number = models.BigIntegerField(unique=True)    
     from_destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="from_destination", default=1)
     to_destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="to_destination", default=1)
+    booking_type = models.ForeignKey(BookingType, on_delete=models.CASCADE, related_name="booking_types", null=True, default=1)
     sender_name = models.CharField(max_length=256, null=True, blank=True)
     sender_mobile = models.CharField(max_length=15, blank=True, null=True)
     receiver_name = models.CharField(max_length=256, null=True, blank=True)

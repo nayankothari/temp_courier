@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Destination, RefCourier, Booking
 from .models import Trackinghistory, ParcelStatus, BranchNetwork
 from .models import contactus, State, Token, Country, PartyAccounts
-from .models import UserAdditionalDetails
+from .models import UserAdditionalDetails, BookingType
 
 class AdminTracking(admin.ModelAdmin):
     list_display = ['c_note_number', 'in_out_datetime', 'd_from', 'd_to', 'status']
@@ -24,4 +24,5 @@ admin.site.register(Token)
 admin.site.register(Country)
 admin.site.register(PartyAccounts)
 admin.site.register(UserAdditionalDetails)
+admin.site.register(BookingType)
 

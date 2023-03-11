@@ -19,21 +19,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 {% endif %} {% endfor %}
-                <label for="party"><b>Party Ledger</b>
-                    <span class="red_color">*</span>
-                </label>
-                <select class="form-select control-label" name="party" id="party" aria-label="Default select example" required>
-                {% for party in parties %}                    
-                    <option value="{{ party.id }}">{{ party.party_name }}</option>
-                {% endfor %}
-                    </select>
-                <!-- </div> -->
                 <div class="row">
+                    <div class="col-md-6 mt-2">
+                        <label for="party"><b>Party Ledger</b>
+                            <span class="red_color">*</span>
+                        </label>
+                        <select class="form-select control-label" name="party" id="party" aria-label="Default select example" required>
+                        {% for party in parties %}                    
+                            <option value="{{ party.id }}">{{ party.party_name }}</option>
+                        {% endfor %}
+                            </select>
+                    </div>
                     <div class="col-md-6 mt-2">
                         <label for="datetime"><b>Booking Date</b>
                             <span class="red_color">*</span>
                         </label>
                         <input type="datetime-local" id="datetime" name="datetime" class="form-control" name="date-field" />
+                    </div>
+                </div>
+                <!-- </div> -->
+                <div class="row">
+                    <div class="col-md-6 mt-2">
+                        <label for="party"><b>Booking type</b>
+                            <span class="red_color">*</span>
+                        </label>
+                        <select class="form-select control-label" name="bookingtype" id="bookingtype" aria-label="Default select example" required>
+                        {% for book_by in booking_type %}                    
+                            <option value="{{ book_by.id }}">{{ book_by.booking_type }}</option>
+                        {% endfor %}
+                            </select>
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="cnotenumber"><b>C. Note number</b>
