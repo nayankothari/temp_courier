@@ -85,7 +85,7 @@ def tracking(request, tracking_number):
                         tracking_history["Activity"] = url
                         tracking_history = [tracking_history,]
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
-                "last_status": last_status})   
+                "last_status": last_status, "today_date": today_date})   
 
         return redirect("home")        
     except Exception as e:   
@@ -116,12 +116,12 @@ def contactUs(request):
             contact_obj.save()
             return_message = "Request submitted successfully."       
 
-            return render(request, "contactus.html", {"return_message": return_message})
+            return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})
         else:
             print("Pending...")
 
 
-    return render(request, "contactus.html")
+    return render(request, "contactus.html", {"today_date": today_date})
 
 def network(request):
     message = 1    
@@ -132,11 +132,11 @@ def network(request):
             data = BranchNetwork.objects.filter(pincode=pincode)          
             if data:                                              
                 message = None
-                context = {"head_offices": head_offices, "message": None, "data": data}
+                context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
 
                 return render(request, "network.html", context=context)
             else:
-                context = {"head_offices": head_offices, "message": 1}
+                context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
 
                 return render(request, "network.html", context=context)
         
@@ -147,27 +147,27 @@ def network(request):
             data = BranchNetwork.objects.filter(ques)
             if data:                                              
                 message = None
-                context = {"head_offices": head_offices, "message": None, "data": data}
+                context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
                 return render(request, "network.html", context=context)
             else:
-                context = {"head_offices": head_offices, "message": 1}
+                context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
                 return render(request, "network.html", context=context)            
         
         else:
-            context = {"head_offices": head_offices, "message": 1}
+            context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
             return render(request, "network.html", context=context)
 
     message = None
-    context = {"head_offices": head_offices, "message": message}
+    context = {"head_offices": head_offices, "message": message, "today_date": today_date}
     return render(request, "network.html", context=context)
 
 
 def services(request):
-    return render(request, "services.html")
+    return render(request, "services.html", {"today_date": today_date})
 
 
 def about_us(request):
-    return render(request, "aboutus.html")
+    return render(request, "aboutus.html", {"today_date": today_date})
 
 
 def login_auth(request):
@@ -179,9 +179,9 @@ def login_auth(request):
             auth.login(request, user)
             return redirect("dashboard")
         else:
-            context = {"message": "Invalid credentials !"}
+            context = {"message": "Invalid credentials !", "today_date": today_date}
             return render(request, "login.html", context)
-    return render(request, "login.html")
+    return render(request, "login.html", {"today_date": today_date})
 
 
 def logout(request):
@@ -614,3 +614,7 @@ def advance_search_load_out_by_date(request):
         return JsonResponse({"status": 1, "data": list(data)})
     else:
         return JsonResponse({"status": 0})
+
+
+# ####################### DRS start here ###########################
+ 
