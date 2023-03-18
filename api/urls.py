@@ -6,6 +6,7 @@ from .views import login_auth, dashboard, logout, edit_data_retrive
 from .views import bookings, save_booking, part_master, tracking_with_selenium
 from .views import advance_search_by_date, advance_search_by_c_note, advance_search_for_ref_number
 from .views import save_input_load, load_in_delete, advance_search_load_in_by_date
+from .views import area_master, save_area_master, edit_area_details, delete_area_detail
 
 urlpatterns = [    
     path(r"", home, name="home"),
@@ -40,5 +41,9 @@ urlpatterns = [
     path(r"save_output_load", save_output_load, name="save_output_load"),     
     path(r"advance_search_by_c_note_load_out", advance_search_by_c_note_load_out, name="advance_search_by_c_note_load_out"),
     path(r"advance_search_by_ref_num_load_out", advance_search_by_ref_num_load_out, name="advance_search_by_ref_num_load_out"),
-    path(r"advance_search_load_out_by_date", advance_search_load_out_by_date, name="advance_search_load_out_by_date"),     
+    path(r"advance_search_load_out_by_date", advance_search_load_out_by_date, name="advance_search_load_out_by_date"),
+    path(r"area_master", area_master, name="area_master"),
+    path(r"save_area_master", save_area_master, name="save_area_master"),
+    path(r"edit_area_details", edit_area_details, name="edit_area_details"),
+    path(r"delete_area_detail", delete_area_detail, name="delete_area_detail")
 ]

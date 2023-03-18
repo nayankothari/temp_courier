@@ -12,12 +12,12 @@ from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdd
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from .models import contactus, Token, BranchNetwork, Destination
-from .models import RefCourier, PartyAccounts
+from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
-import threading
+
 
 
 today_date = datetime.datetime.now().strftime("%Y")
@@ -84,6 +84,7 @@ def tracking(request, tracking_number):
                         tracking_history["CheckpointState"] = ""
                         tracking_history["Activity"] = url
                         tracking_history = [tracking_history,]
+                
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
                 "last_status": last_status, "today_date": today_date})   
 
@@ -184,6 +185,7 @@ def login_auth(request):
     return render(request, "login.html", {"today_date": today_date})
 
 
+@login_required(login_url="login_auth")
 def logout(request):
     auth.logout(request)
     return redirect("login_auth")
@@ -236,12 +238,15 @@ def save_booking(request):
         ref_courier = request.POST.get("ref_courier")        
         ref_courier = RefCourier.objects.get(id=ref_courier)
         ref_number = request.POST.get("ref_number")
+        remarks = request.POST.get("remarks")
+        amount = request.POST.get("amount")
+        weight = request.POST.get("weight")
         if not update_id:            
             if not existing_c_note:                            
                 booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
                 c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
                 sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
-                ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user)                    
+                ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, amount=amount, weight=weight)                    
                 booking_obj.save()            
                 request.session["success"] = "success"
                 try:
@@ -266,6 +271,9 @@ def save_booking(request):
             booking_obj.receiver_mobile_number = r_number
             booking_obj.ref_courier_name = ref_courier
             booking_obj.ref_courier_number = ref_number 
+            booking_obj.remarks = remarks
+            booking_obj.amount = amount
+            booking_obj.weight = weight
             booking_obj.user=request.user                    
             booking_obj.save()            
             request.session["success"] = "success"
@@ -283,8 +291,7 @@ def edit_data_retrive(request):
         id = request.POST.get("id")        
         data = Booking.objects.filter(pk=id).values("id", "doc_date", "party_name", "c_note_number", 
         "from_destination", "to_destination", "sender_name", "sender_mobile", "receiver_name", "receiver_mobile_number",
-        "ref_courier_name", "ref_courier_number", "booking_type")              
-        print(data)
+        "ref_courier_name", "ref_courier_number", "booking_type", "amount", "remarks", "weight")                      
         return JsonResponse({"data": list(data)})
 
 
@@ -368,9 +375,9 @@ def save_parties(request):
                 messages.success(request, "Party Details added succsessfully.")
                 request.session["success"] = "success"
 
-        parties = PartyAccounts.objects.filter(user=request.user)
-        total_parties = len(parties)
-        context = {"parties": parties, "total_parties": total_parties}  
+        # parties = PartyAccounts.objects.filter(user=request.user)
+        # total_parties = len(parties)
+        # context = {"parties": parties, "total_parties": total_parties}  
 
         return redirect("part_master")
 
@@ -397,7 +404,7 @@ def delete_party_detail(request):
     try:
         data = PartyAccounts.objects.get(id=id_of)
         data.delete()        
-        data = PartyAccounts.objects.values()      
+        data = PartyAccounts.objects.filter(user=request.user).values()      
         total_parties = len(data)        
         return JsonResponse({"status": 1, "data": list(data), "total_parties": total_parties})
 
@@ -622,5 +629,68 @@ def advance_search_load_out_by_date(request):
         return JsonResponse({"status": 0})
 
 
-# ####################### DRS start here ###########################
- 
+# ####################### Area master start here ########################### 
+
+@login_required(login_url="login_auth")
+def area_master(request):
+    areas = AreaMaster.objects.filter(user=request.user)
+    pincodes = BranchNetwork.objects.all()
+    total_areas = len(areas)
+    context = {"areas": areas, "total_areas": total_areas, "pincodes": pincodes}
+    return render(request, "area_master.html", context)    
+
+
+@login_required(login_url="login_auth")
+def save_area_master(request):    
+    if request.method == "POST":
+        id_of = request.POST.get("id")
+        area_name = request.POST.get("area_name")
+        pincode = request.POST.get("pincode")        
+        pincode = BranchNetwork.objects.get(id=pincode)                
+        request.session["success"] = None
+        if not id_of:
+            area_master = AreaMaster(area_name=area_name, pincode=pincode, user=request.user)
+            area_master.save()
+            messages.success(request, "Area Details added succsessfully.")
+            request.session["success"] = "success"
+        else:
+            area_master = AreaMaster(id=id_of, area_name=area_name, pincode=pincode, user=request.user)
+            area_master.save()
+            messages.success(request, "Area Details updated succsessfully.")
+            request.session["success"] = "success"            
+
+    return redirect("area_master")
+
+
+@login_required(login_url="login_auth")
+def edit_area_details(request):    
+    if request.method == "POST":  
+        try:      
+            id_of = request.POST.get("id")
+            area_details = AreaMaster.objects.get(id=id_of)        
+            data = {"id": area_details.id, "area_name": area_details.area_name, "pincode": area_details.pincode.id}                        
+            return JsonResponse({"status": 1, "data": data})
+        except Exception as e:
+            print(e)
+
+    return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def delete_area_detail(request):
+    if request.method == "POST":
+        try:
+            id_of = request.POST.get("id")
+            area_details = AreaMaster.objects.get(id=id_of)
+            area_details.delete()
+            area_details = AreaMaster.objects.filter(user=request.user).values("id", "area_name", "pincode__pincode")               
+            total_areas = len(area_details)        
+
+            return JsonResponse({"status": 1, "data": list(area_details), "total_areas": total_areas})
+        except Exception as e:
+            print(e)
+        
+        return JsonResponse({"status": 0})
+
+
+# ########################################### Delivery boy master ################################

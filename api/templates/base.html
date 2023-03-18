@@ -92,7 +92,18 @@
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-dark mt-3 dropdown-toggle nav_login_btn mx-0" data-bs-toggle="dropdown" aria-expanded="false">More</button>
                     <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'part_master' %}">Generate DRS</a></li>
+                        <li><a class="dropdown-item" href="{% url 'part_master' %}">Upload DRS</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="{% url 'part_master' %}">Party Master</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'area_master' %}">Area Master</a></li>
+                        <li><a class="dropdown-item" href="{% url 'part_master' %}">Delivery boy Master</a></li>
+
                     </ul>
                 </div>
             </div>

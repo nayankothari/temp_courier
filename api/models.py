@@ -99,6 +99,7 @@ class BookingType(models.Model):
     def __str__(self):
         return str(self.booking_type)
 
+
 class Booking(models.Model):
     doc_date = models.DateTimeField(default=datetime.now)    
     party_name = models.ForeignKey(PartyAccounts, on_delete=models.CASCADE, null=True, blank=False)
@@ -112,6 +113,9 @@ class Booking(models.Model):
     receiver_mobile_number = models.CharField(max_length=256, null=True, blank=False)
     ref_courier_name = models.ForeignKey(RefCourier, on_delete=models.CASCADE)
     ref_courier_number = models.CharField(max_length=50, blank=True)
+    weight = models.FloatField(blank=True, null=True)
+    amount = models.FloatField(blank=True, null=True)
+    remarks = models.TextField(max_length=550, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -146,7 +150,7 @@ class BranchNetwork(models.Model):
     office_number = models.BigIntegerField(null=True, blank=True)
     office_lane_line_number = models.CharField(max_length=25, null=True, blank=True)
     email = models.EmailField(max_length=256, blank=True, null=True)    
-    pincode = models.IntegerField()
+    pincode = models.IntegerField(unique=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=False)
     state = models.ForeignKey(State, on_delete=models.CASCADE, null=False, blank=False, default="")    
     zone = models.ForeignKey(Destination, on_delete=models.CASCADE)
@@ -180,6 +184,7 @@ def new_date():
     expired_date = datetime.now() + timedelta(days=365)
     return expired_date
 
+
 class UserAdditionalDetails(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     alias = models.CharField(max_length=256, null=True, blank=True)
@@ -195,3 +200,31 @@ class UserAdditionalDetails(models.Model):
         return str(self.user.username)
 
 
+class AreaMaster(models.Model):
+    area_name = models.CharField(max_length=350, blank=False, null=True)
+    pincode = models.ForeignKey(BranchNetwork, on_delete=models.CASCADE, blank=False, null=True, related_name="pin_code")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=True, related_name="user_details")
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Area Master"
+    
+    def __str__(self):
+        return self.area_name
+    
+
+class DeliveryBoyMaster(models.Model):
+    delivery_boy_name = models.CharField(max_length=256, blank=False, null=True)
+    mobile_number = models.CharField(max_length=15, blank=False, null=False)
+    alternate_number = models.CharField(max_length=15, blank=True, null=True)
+    email = models.CharField(max_length=50, blank=True, null=True)
+    area_name = models.ForeignKey(AreaMaster, on_delete=models.CASCADE ,blank=False, null=True, related_name="area_names")
+    pincode = models.ForeignKey(BranchNetwork, on_delete=models.CASCADE, blank=False, null=True, related_name="delivery_boy_pincode")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=True, related_name="user_detail")
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Delivery Boy Details"
+    
+    def __str__(self):
+        return self.delivery_boy_name
