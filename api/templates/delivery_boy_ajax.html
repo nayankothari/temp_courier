@@ -1,0 +1,67 @@
+<script>
+    // For edit delivery boy details
+    $("tbody").on("click", ".edit-btn", function() {
+        let id = $(this).attr("data-sid");
+        let toekn = $("input[name='csrfmiddlewaretoken']").val();
+        let json_data = {
+            id: id,
+            csrfmiddlewaretoken: toekn
+        }
+        $.ajax({
+            url: "{% url 'edit_delivery_boy_details' %}",
+            method: "POST",
+            dataType: "json",
+            data: json_data,
+            success: function(data) {
+                if (data.status == 1) {
+                    $("#delivery_boy_name").val(data.data.delivery_boy_name);
+                    $("#id").val(data.data.id);
+                    $("#mobile_number").val(data.data.mobile_number);
+                    $("#alternate_number").val(data.data.alternate_number);
+                    $("#email").val(data.data.email);
+                    $("#area").val(data.data.area_id).change();
+                }
+            }
+        })
+    })
+
+    //  for delete party details
+    $("tbody").on("click", ".del-btn", function() {
+        let sid = $(this).attr("data-sid");
+        $(".delete-btn").attr("data-sid", sid);
+        $('.modal').modal('show');
+    })
+
+    $("section").on("click", ".delete-btn", function(data) {
+        let id = $(this).attr("data-sid");
+        let token = $("input[name='csrfmiddlewaretoken']").val();
+        let json_data = {
+            id: id,
+            csrfmiddlewaretoken: token
+        }
+        let my_this = this;
+        let output = "";
+        let total_parties = "";
+        $.ajax({
+            url: "{% url 'delete_delivery_boy_detail' %}",
+            method: "POST",
+            dataType: "json",
+            data: json_data,
+            success: function(data) {
+                if (data.status == 1) {
+                    $('.modal').modal('toggle');
+                    let new_data = data.data.delivery_boys;
+                    for (i = 0; i < new_data.length; i++) {
+                        output += "<tr><td>" + new_data[i].delivery_boy_name + "</td><td>" + new_data[i].mobile_number + "</td><td>" + new_data[i].area_name__area_name +
+                            "</td><td> <input type='button' class='btn btn-warning btn-sm edit-btn' id='edit_party' value='Edit' data-sid=" +
+                            new_data[i].id + "> <input type='button' class='btn btn-danger btn-sm del-btn' id='delete_party' value='Delete' data-sid=" + new_data[i].id + "></td></tr>"
+                    }
+                    total_parties += "Total <b>" + data.data.total_boys + "</b> Delivery boys.";
+                    $("#tbody").html(output);
+                    $("#total_parties").html(total_parties);
+                }
+            }
+        })
+
+    })
+</script>

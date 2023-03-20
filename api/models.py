@@ -218,8 +218,7 @@ class DeliveryBoyMaster(models.Model):
     mobile_number = models.CharField(max_length=15, blank=False, null=False)
     alternate_number = models.CharField(max_length=15, blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)
-    area_name = models.ForeignKey(AreaMaster, on_delete=models.CASCADE ,blank=False, null=True, related_name="area_names")
-    pincode = models.ForeignKey(BranchNetwork, on_delete=models.CASCADE, blank=False, null=True, related_name="delivery_boy_pincode")
+    area_name = models.ForeignKey(AreaMaster, on_delete=models.CASCADE ,blank=False, null=True, related_name="area_names")    
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=True, related_name="user_detail")
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 

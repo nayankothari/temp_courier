@@ -694,3 +694,67 @@ def delete_area_detail(request):
 
 
 # ########################################### Delivery boy master ################################
+
+@login_required(login_url="login_auth")
+def delivery_boy_master(request):
+    area_details = AreaMaster.objects.filter(user=request.user).values("id", "area_name", "pincode__pincode")        
+    delivery_boys = DeliveryBoyMaster.objects.filter(user=request.user).values("id", "delivery_boy_name", "mobile_number", "area_name__area_name")    
+    total_boys = len(delivery_boys)
+    context={"area_details": area_details, "total_boys": total_boys, "delivery_boys": delivery_boys}
+    return render(request, "delivery_boy_master.html", context)
+
+@login_required(login_url="login_auth")
+def save_delivery_boy_details(request):
+    if request.method == "POST":
+        id_of = request.POST.get("id")
+        delivery_boy_name = request.POST.get("delivery_boy_name")
+        mobile_number = request.POST.get("mobile_number")
+        alternate_number = request.POST.get("alternate_number")
+        email = request.POST.get("email")
+        area = request.POST.get("area")
+        area = AreaMaster.objects.get(id=area)
+        request.session["success"] = None
+        if not id_of:
+            delivery_boy = DeliveryBoyMaster(delivery_boy_name=delivery_boy_name, mobile_number=mobile_number,
+                                             alternate_number=alternate_number, email=email, area_name=area, user=request.user)
+            delivery_boy.save()
+            messages.success(request, "Delivery boy added succsessfully.")
+            request.session["success"] = "success"
+        else:
+            delivery_boy = DeliveryBoyMaster(id=id_of, delivery_boy_name=delivery_boy_name, mobile_number=mobile_number,
+                                             alternate_number=alternate_number, email=email, area_name=area, user=request.user)
+            delivery_boy.save()
+            messages.success(request, "Delivery boy updated succsessfully.")
+            request.session["success"] = "success"        
+
+    return redirect("delivery_boy_master")
+
+
+@login_required(login_url="login_auth")
+def edit_delivery_boy_details(request):
+    if request.method == "POST":
+        try:
+            id_of = request.POST.get("id")            
+            data = DeliveryBoyMaster.objects.get(id=id_of)
+            data = {"id": data.id, "delivery_boy_name": data.delivery_boy_name, "mobile_number": data.mobile_number,
+                    "alternate_number": data.alternate_number, "email": data.email, "area_name": data.area_name.area_name, "area_id": data.area_name.id}                                    
+            return JsonResponse({"status": 1, "data": data})
+        except Exception as e:
+            print(e)
+    return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def delete_delivery_boy_detail(request):
+    if request.method == "POST":
+        try:
+            id_of = request.POST.get("id")
+            delivery_boy = DeliveryBoyMaster.objects.get(id=id_of)
+            delivery_boy.delete()
+            delivery_boys = DeliveryBoyMaster.objects.filter(user=request.user).values("id", "delivery_boy_name", "mobile_number", "area_name__area_name")    
+            total_boys = len(delivery_boys)
+            data = {"total_boys": total_boys, "delivery_boys": list(delivery_boys)}
+            return JsonResponse({"status": 1, "data": data})
+        except Exception as e:
+            print(e)
+        return JsonResponse({"status": 0})
