@@ -18,7 +18,6 @@
         </div>
     </div>
 </div>
-
 <section id="back_img">
     <div class="container-fluid">
         <div class="row justify-content-around first_section">
@@ -28,7 +27,7 @@
                 <p>With the years of experience in the industry, we understand the importance of delivering your goods on time, every time. At Airpost Xpress, we know that every customer is unique, which is why we offer customized solutions to meet your
                     specific needs. Our goal is to make shipping and logistics as easy and stress-free as possible for our customers.
                     <br><br>We offer a wide range of services, including:
-                    <ul>
+                    <ul class="scroll-animation">
                         <li>Local and international service</li>
                         <li>Scheduled delivery</li>
                         <li>Express delivery</li>
@@ -51,7 +50,7 @@
                 <img src="{%static 'img\second_img.jpg'%}" class="img-fluid" alt="">
                 <!-- <img src="{% static 'img/home_img.png' %}" class="img-fluid" alt="AIRPOST XPRESS"> -->
             </div>
-            <div class="col-md-6 mt-5">
+            <div class="scroll-animation col-md-6 mt-5">
                 <h1>Do You Want A Fast Service? Just Contact Us.</h1>
                 <p>If you're ready to experience the difference, we invite you to get in touch with us today. You can reach us by phone, email, or through our website to request a quote or learn more about our services.</p>
                 <div class="row justify-content-center">
@@ -65,7 +64,7 @@
     </div>
     <hr>
     <div class="container">
-        <div class="row justify-content-center mt-2">
+        <div class="row justify-content-center mt-2 scroll-animation">
             <h2 class="text-center mt-5"><b>Why Our Customer Choose Us.</b></h2>
             <div class="col-md-4 mt-5 text-center">
                 <h1 class="fafa_icon_font"><i class="bi bi-truck"></i></h1>
@@ -105,7 +104,7 @@
     </div>
 </section>
 <div class="container-fluid industries_serving_bg">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center scroll-animation">
         <div class="col-12 text-center mt-4">
             <h1 class="mb-5 mt-2">Industries We Serve</h1>
         </div>
@@ -162,6 +161,18 @@
             </div>
         </div>
     </div>
+    <script>
+        $(window).scroll(function() {
+            $('.scroll-animation').each(function() {
+                var position = $(this).offset().top;
+                var scroll = $(window).scrollTop();
+                var windowHeight = $(window).height();
+                if (scroll > position - windowHeight + 50) {
+                    $(this).addClass('animate');
+                }
+            });
+        });
+    </script>
 </div>
 <!-- <script type="text/javascript ">
     $(window).on('load', function() {

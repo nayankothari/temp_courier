@@ -412,7 +412,7 @@ def delete_party_detail(request):
         print(e)
 
 
-# ############################## TRACKING HOSTORY IN start ##########################################
+# ############################## TRACKING HISTORY IN start ##########################################
 
 @login_required(login_url="login_auth")
 def tracking_history_in(request):
@@ -758,3 +758,31 @@ def delete_delivery_boy_detail(request):
         except Exception as e:
             print(e)
         return JsonResponse({"status": 0})
+
+
+# ########################################## DRS Master ############################################
+@login_required(login_url="login_auth")
+def drs(request):
+    return render(request, "drs.html")
+
+
+@login_required(login_url="login_auth")
+def generate_drs(request):
+    area_names = AreaMaster.objects.filter(user=request.user)
+    delivery_boy_names = DeliveryBoyMaster.objects.filter(user=request.user)
+    origins = Destination.objects.all()    
+    context = {"area_names": area_names, "delivery_boy": delivery_boy_names, "origins": origins}
+    return render(request, "drs_generate.html", context=context)
+
+@login_required(login_url="login_auth")
+def doc_num_from_booking_to_drs(request):
+    if request.method == "POST":
+        doc_num = request.POST.get("docket_num")
+        if str(doc_num).isnumeric():
+            data = Booking.objects.filter(c_note_number=doc_num)     
+            if data.exists():
+                data = data.first()
+                data = {"name": data.receiver_name, "origin": data.from_destination.name}            
+                return JsonResponse({"status": 1, "data": data})
+            return JsonResponse({"status": 0})
+    return JsonResponse({"status": 0})

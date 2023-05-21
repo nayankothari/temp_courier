@@ -12,7 +12,7 @@
 }
 
 .back_color {
-    background-color: rgba(240, 230, 240, 0.628);
+    background-color: rgba(240, 230, 240, 0.628) !important;
 }
 
 .red_color {

@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib import admin
 from .views import advance_search_by_c_note_load_in, advance_search_by_c_note_load_out
 from .views import advance_search_by_ref_num_load_in, advance_search_by_ref_num_load_out, advance_search_load_out_by_date
 from .views import delivery_boy_master, edit_delivery_boy_details, edit_party_details, load_in_edit
@@ -10,7 +11,7 @@ from .views import bookings, save_booking, part_master, tracking_with_selenium
 from .views import advance_search_by_date, advance_search_by_c_note, advance_search_for_ref_number
 from .views import save_input_load, load_in_delete, advance_search_load_in_by_date
 from .views import area_master, save_area_master, edit_area_details, delete_area_detail
-from .views import delete_delivery_boy_detail
+from .views import delete_delivery_boy_detail, drs, generate_drs, doc_num_from_booking_to_drs
 
 urlpatterns = [    
     path(r"", home, name="home"),
@@ -53,5 +54,8 @@ urlpatterns = [
     path(r"delivery_boy_master", delivery_boy_master, name="delivery_boy_master"),
     path(r"save_delivery_boy_details", save_delivery_boy_details, name="save_delivery_boy_details"),
     path(r"edit_delivery_boy_details", edit_delivery_boy_details, name="edit_delivery_boy_details"),
-    path("delete_delivery_boy_detail", delete_delivery_boy_detail, name="delete_delivery_boy_detail")
+    path(r"delete_delivery_boy_detail", delete_delivery_boy_detail, name="delete_delivery_boy_detail"),
+    path(r"drs", drs, name="drs"),    
+    path(r"drs/generate_drs", generate_drs, name="generate_drs"),    
+    path(r"doc_num_from_booking_to_drs", doc_num_from_booking_to_drs, name="doc_num_from_booking_to_drs"),
 ]

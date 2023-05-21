@@ -26,7 +26,7 @@
     </div>
 </div>
 <div class="container mt-5">
-    <div class="row justify-content-evenly">
+    <div class="row justify-content-evenly scroll-animation">
         <div class="col-md-3 card-style mt-2 px-0 pt-0">
             <img src="{% static '\img\services.jpg' %}" alt="" class="img-fluid mt-2 img-border">
             <h5 class="mt-2">AIRPOST XPRESS SPECIAL</h5>
@@ -45,7 +45,7 @@
     </div>
 </div>
 <div class="container mt-3 mb-5">
-    <div class="row justify-content-evenly">
+    <div class="row justify-content-evenly scroll-animation">
         <div class="col-md-3 card-style2 mt-2 px-0 pt-0">
             <img src="{% static '\img\door_to_door.jpg' %}" alt="" class="img-fluid mt-2 img-border">
             <h5 class="mt-2">DOOR TO DOOR</h5>
@@ -66,7 +66,7 @@
 <hr>
 <div class="container">
     <div class="row">
-        <div class="col-md-6 mt-5">
+        <div class="col-md-6 mt-5 scroll-animation">
             <p class="service_p mt-2">COVID 19</p>
             <h2>Staying ahead of the</h2><br>
             <h2 class="service_covid">COVID 19 <span class="black_color">situation</span></h2>
@@ -77,11 +77,22 @@
                 we are committed to doing our part to support our communities and ensure that essential goods are delivered safely and efficiently. With our COVID-19 response services, you can have peace of mind knowing that your shipments are being handled
                 with the utmost care and attention to detail.</p>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 scroll-animation">
             <img src="{% static '\img\service_second.jpg' %}" alt="" class="img-fluid img_height">
         </div>
     </div>
 </div>
 
-
+<script>
+    $(window).scroll(function() {
+        $('.scroll-animation').each(function() {
+            var position = $(this).offset().top;
+            var scroll = $(window).scrollTop();
+            var windowHeight = $(window).height();
+            if (scroll > position - windowHeight + 50) {
+                $(this).addClass('animate');
+            }
+        });
+    });
+</script>
 {% endblock content %}

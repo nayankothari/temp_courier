@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 
 REF_COURIER_TYPE = (("External", "External"), ("Internal", "Internal"))
 OFFICE_NETWORKS = (("Franchise", "Franchise"), ("R O", "R O"))
+DRS_STATUS = (("Pending", "Pending"), ("Updated", "Updated"))
+
 
 class Country(models.Model):
     country_name = models.CharField(max_length=256, null=True, blank=False)
@@ -227,3 +229,44 @@ class DeliveryBoyMaster(models.Model):
     
     def __str__(self):
         return self.delivery_boy_name
+
+
+class DrsNoGenerator(models.Model):
+    drs_number = models.BigIntegerField(blank=False, null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
+
+    class Meta:
+        verbose_name_plural = "DRS No. Generator"
+    
+    def __str__(self):
+        return str(self.drs_number)
+
+class DrsMaster(models.Model):
+    drs_no = models.CharField(max_length=25, blank=False, null=True)
+    date = models.DateTimeField(blank=True, null=True)
+    area_name = models.ForeignKey(AreaMaster, on_delete=models.CASCADE ,blank=False, null=True)
+    deliveryboy_name = models.ForeignKey(DeliveryBoyMaster, on_delete=models.CASCADE ,blank=False, null=True)
+    status = models.CharField(max_length=25, choices=DRS_STATUS, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)    
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "DRS Master"
+    
+    def __str__(self):
+        return self.drs_no
+
+
+class DrsTransactionHistory(models.Model):
+    docket_number = models.CharField(max_length=40, blank=False, null=True)
+    origin = models.CharField(max_length=60, blank=True, null=True)
+    consignee_name = models.CharField(max_length=256, blank=True, null=True)
+    drs_number = models.CharField(max_length=40, blank=True, null=True)
+    status = models.ForeignKey(ParcelStatus, on_delete=models.CASCADE, blank=False, null=True)
+
+    class Meta:
+        verbose_name_plural = "DRS Transaction History"
+    
+    def __str__(self):
+        return self.docket_number

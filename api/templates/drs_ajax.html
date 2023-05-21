@@ -1,0 +1,68 @@
+<script>
+    var dateInput = document.getElementById('datetime');
+    var date = new Date();
+    var formattedDate = date.toISOString().split('T')[0];
+    dateInput.value = formattedDate;
+
+    $('#docket_number').focus();
+
+    // ####################  Get data by docket number only ######################
+    $(document).ready(function() {
+        $('#docket_number').on('keydown', function(event) {
+            if (event.keyCode === 13 || event.keyCode === 9) {
+                event.preventDefault();
+                var docket_num = $(this).val();
+                let csr = $("input[name=csrfmiddlewaretoken").val();
+                let drs_doc_data = {
+                    'docket_num': docket_num,
+                    'csrfmiddlewaretoken': csr
+                }
+                $.ajax({
+                    url: "{% url 'doc_num_from_booking_to_drs' %}",
+                    type: "POST",
+                    data: drs_doc_data,
+                    success: function(response) {
+                        if (response.status == 1) {
+                            let data = response.data;
+                            $("#docket_number").val("");
+                            var row = '<tr><td>' + docket_num + '</td><td>' + data.name + '</td><td>' + data.origin + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                            $('#DrsTable tbody').prepend(row);
+                        } else {
+                            $('#origin').focus();
+                        };
+                    }
+                });
+            }
+        });
+    });
+
+
+    // ##################### For delete drs details by html onle ######################
+
+    $('#DrsTable').on('click', '.deleteButton', function() {
+        $(this).closest('tr').remove();
+        $('#docket_number').focus();
+    });
+
+
+    // ################## Insert default values bu consignee name entry #######################
+    $(document).ready(function() {
+        $('#con_name').on('keydown', function(event) {
+            if (event.keyCode === 13 || event.keyCode === 9) {
+                event.preventDefault();
+                var doc_num = $("#docket_number").val();
+                if (doc_num != "") {
+                    var origin = $("#origin option:selected").text();
+                    var con_name = $("#con_name").val();
+                    var row = '<tr><td>' + doc_num + '</td><td>' + origin + '</td><td>' + con_name + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                    $('#DrsTable tbody').prepend(row);
+                    $("#docket_number").val("");
+                    $("#con_name").val("");
+                    $('#docket_number').focus();
+                } else {
+                    alert("Insert Docket number");
+                }
+            }
+        })
+    })
+</script>

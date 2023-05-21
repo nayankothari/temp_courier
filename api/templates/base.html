@@ -59,6 +59,7 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
+                                <li><a class="dropdown-item" href="superadminlogin/">Admin login</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                             </ul>
                         </div>
@@ -76,14 +77,14 @@
     </nav>
 
     {% if user.is_authenticated %}
-    <div class="container mt-5 alert alert-dark">
+    <div class="container mt-5 alert alert-dark back_color">
         <div class="row justify-content-center">
             <div class="col-md-6 text-center">
                 <a href="{% url 'bookings' %}" class="text-decoration-none btn btn-outline-dark mt-3"><b>Booking</b></a>
 
                 <!-- <a href="url 'tracking_history'" class="text-decoration-none btn btn-outline-dark mt-3" target="_blank"><b>Tracking</b></a> -->
                 <div class="btn-group">
-                    <button type="button" class="btn btn-outline-dark mt-3 dropdown-toggle nav_login_btn mx-0" data-bs-toggle="dropdown" aria-expanded="false">Tracking</button>
+                    <button type="button" class="btn btn-outline-dark mt-3 dropdown-toggle nav_login_btn mx-0" data-bs-toggle="dropdown" aria-expanded="false">Load</button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'tracking_history_out' %}">Load Out</a></li>
                         <li><a class="dropdown-item" href="{% url 'tracking_history_in' %}">Load In</a></li>
@@ -92,8 +93,7 @@
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-dark mt-3 dropdown-toggle nav_login_btn mx-0" data-bs-toggle="dropdown" aria-expanded="false">More</button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'part_master' %}">Generate DRS</a></li>
-                        <li><a class="dropdown-item" href="{% url 'part_master' %}">Upload DRS</a></li>
+                        <li><a class="dropdown-item" href="{% url 'drs' %}">DRS</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
