@@ -61,8 +61,43 @@
                     $('#docket_number').focus();
                 } else {
                     alert("Insert Docket number");
+                    $('#docket_number').focus();
                 }
             }
         })
-    })
+    });
+
+    // ################################## Save DRS Details ####################################
+    $("#save_drs").click(function() {
+        var drs_history = [];
+        $('#DrsTable tr').each(function() {
+            var rowData = [];
+
+            $(this).find('th, td').each(function() {
+                rowData.push($(this).text());
+            });
+            drs_history.push(rowData);
+        });
+        let csr = $("input[name=csrfmiddlewaretoken").val();
+        let drs_date = $("#datetime").val();
+        let area_name = $("#area_name").val();
+        let delivery_boy_name = $("#delivery_boy").val();
+
+        let drs_doc_data_final = {
+            "drs_history": JSON.stringify(drs_history),
+            "csrfmiddlewaretoken": csr,
+            "drs_date": drs_date,
+            "area_name": area_name,
+            "delivery_boy_name": delivery_boy_name
+        }
+        $.ajax({
+            url: "{% url 'save_drs_details' %}",
+            type: "POST",
+            data: drs_doc_data_final,
+            success: function(response) {
+                console.log(response.status);
+            }
+        });
+
+    });
 </script>

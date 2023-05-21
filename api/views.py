@@ -786,3 +786,22 @@ def doc_num_from_booking_to_drs(request):
                 return JsonResponse({"status": 1, "data": data})
             return JsonResponse({"status": 0})
     return JsonResponse({"status": 0})
+
+@login_required(login_url="login_auth")
+def save_drs_details(request):
+    if request.method == "POST":
+        try:
+            drs_history = request.POST.get("drs_history")
+            area_name = request.POST.get("area_name")        
+            area_name = AreaMaster.objects.get(id=area_name)        
+            delivery_boy = request.POST.get("delivery_boy_name")        
+            delivery_boy = DeliveryBoyMaster.objects.get(id=delivery_boy)
+            print(area_name, delivery_boy)
+            drs_date = request.POST.get("drs_date")        
+        
+
+
+            return JsonResponse({"status": 1})
+        except:
+            return JsonResponse({"status": 0, "message": "select correct details from header."})
+    return JsonResponse({"status": 0})
