@@ -1,6 +1,7 @@
 """
 Some of basic django imports that help to render and filter data from database.
 """
+import ast
 import base64
 import requests
 import datetime
@@ -8,6 +9,7 @@ import datetime
 from .test_api import get_search_details
 from datetime import timedelta
 from django.db.models import Q
+from django.db.models import Max
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
@@ -17,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 # from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
+from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 
 
 
@@ -763,7 +766,20 @@ def delete_delivery_boy_detail(request):
 # ########################################## DRS Master ############################################
 @login_required(login_url="login_auth")
 def drs(request):
-    return render(request, "drs.html")
+    drs_setails = []
+    details = DrsMaster.objects.filter(user=request.user, status="Pending")        
+    for i in details:
+        temp_dict = {}
+        total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no).count()
+        temp_dict["id"] = i.id
+        temp_dict["date"] = i.date
+        temp_dict["drs_no"] = i.drs_no
+        temp_dict["deliveryboy_name"] = i.deliveryboy_name.delivery_boy_name
+        temp_dict["total_docs"] = total_docs
+        drs_setails.append(temp_dict)
+
+    context = {"drs_details": drs_setails}    
+    return render(request, "drs.html", context=context)
 
 
 @login_required(login_url="login_auth")
@@ -792,14 +808,34 @@ def save_drs_details(request):
     if request.method == "POST":
         try:
             drs_history = request.POST.get("drs_history")
+            drs_history = ast.literal_eval(drs_history)
+            if not drs_history[1:]:
+                return JsonResponse({"status": 0, "message": "Empty DRS can't be save."})
+            
             area_name = request.POST.get("area_name")        
             area_name = AreaMaster.objects.get(id=area_name)        
             delivery_boy = request.POST.get("delivery_boy_name")        
-            delivery_boy = DeliveryBoyMaster.objects.get(id=delivery_boy)
-            print(area_name, delivery_boy)
+            delivery_boy = DeliveryBoyMaster.objects.get(id=delivery_boy)            
             drs_date = request.POST.get("drs_date")        
-        
+            parcel_status = ParcelStatus.objects.get(name="OUT FOR DELIVERY")
 
+            max_saved_drs_numnber = DrsNoGenerator.objects.filter(user=request.user).aggregate(drs_number=Max("drs_number"))
+            if not max_saved_drs_numnber.get("drs_number"):
+                max_saved_drs_numnber = 1
+            else:
+                max_saved_drs_numnber = max_saved_drs_numnber.get("drs_number") + 1     
+
+            
+            DrsNoGenerator(user=request.user, drs_number=max_saved_drs_numnber).save()
+
+            DrsMaster(drs_no=max_saved_drs_numnber, date=drs_date, area_name=area_name, 
+                      deliveryboy_name=delivery_boy, status="Pending", user=request.user).save()            
+            
+            instances_to_create = []
+            for i in drs_history[1:]:
+                instance = DrsTransactionHistory(docket_number=i[0], origin=i[2], consignee_name=i[1], drs_number=max_saved_drs_numnber, status=parcel_status)
+                instances_to_create.append(instance)            
+            DrsTransactionHistory.objects.bulk_create(instances_to_create)            
 
             return JsonResponse({"status": 1})
         except:

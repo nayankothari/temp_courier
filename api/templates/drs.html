@@ -31,14 +31,16 @@
                                         <th>Action</th>
                                         <th>Status</th>
                                     </tr>
+                                    {% for drs in drs_details %}
                                     <tr>
-                                        <td>2023-05-21</td>
-                                        <td>123456</td>
-                                        <td>Ram kumar</td>
-                                        <td>15</td>
+                                        <td>{{ drs.date|date:"d-b-Y" }}</td>
+                                        <td>{{ drs.drs_no }}</td>
+                                        <td>{{ drs.deliveryboy_name }}</td>
+                                        <td>{{ drs.total_docs }}</td>
                                         <td>edit, update, delete, print</td>
                                         <td>Pending</td>
                                     </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>

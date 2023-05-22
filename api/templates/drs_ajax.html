@@ -95,7 +95,11 @@
             type: "POST",
             data: drs_doc_data_final,
             success: function(response) {
-                console.log(response.status);
+                if (response.status == 1) {
+                    window.location.href = '/drs'
+                } else {
+                    alert(response.message);
+                };
             }
         });
 
