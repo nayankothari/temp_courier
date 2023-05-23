@@ -766,8 +766,10 @@ def delete_delivery_boy_detail(request):
 # ########################################## DRS Master ############################################
 @login_required(login_url="login_auth")
 def drs(request):
-    drs_setails = []
-    details = DrsMaster.objects.filter(user=request.user, status="Pending")        
+    drs_details = []
+    today_drs_details_list = []
+    today = datetime.date.today()
+    details = DrsMaster.objects.filter(user=request.user, status="Pending")            
     for i in details:
         temp_dict = {}
         total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no).count()
@@ -776,9 +778,21 @@ def drs(request):
         temp_dict["drs_no"] = i.drs_no
         temp_dict["deliveryboy_name"] = i.deliveryboy_name.delivery_boy_name
         temp_dict["total_docs"] = total_docs
-        drs_setails.append(temp_dict)
+        drs_details.append(temp_dict)
+    
+    today_drs_details = DrsMaster.objects.filter(user=request.user, date=today)    
+    for i in today_drs_details:
+        temp_dict = {}
+        total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no).count()
+        temp_dict["id"] = i.id
+        temp_dict["date"] = i.date
+        temp_dict["drs_no"] = i.drs_no
+        temp_dict["deliveryboy_name"] = i.deliveryboy_name.delivery_boy_name
+        temp_dict["total_docs"] = total_docs
+        temp_dict["status"] = i.status
+        today_drs_details_list.append(temp_dict)
 
-    context = {"drs_details": drs_setails}    
+    context = {"drs_details": drs_details, "today_drs_details": today_drs_details_list}    
     return render(request, "drs.html", context=context)
 
 

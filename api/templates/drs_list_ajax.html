@@ -1,0 +1,15 @@
+<script>
+    // ########################### For delete DRS ################################
+    $("#table-1").on("click", ".deleteButton", function() {
+        let sid = $(this).attr("data-sid");
+        $("#confirmDelete").attr("data-sid", sid);
+    });
+
+
+    $("#confirmDelete").click(function() {
+        var sid = $(this).data("sid");
+        console.log(sid);
+
+        $('#deleteModal').modal('hide');
+    });
+</script>
