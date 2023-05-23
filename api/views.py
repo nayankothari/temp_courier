@@ -768,11 +768,11 @@ def delete_delivery_boy_detail(request):
 def drs(request):
     drs_details = []
     today_drs_details_list = []
-    today = datetime.date.today()
+    today = datetime.date.today() - timedelta(days=1)
     details = DrsMaster.objects.filter(user=request.user, status="Pending")            
     for i in details:
         temp_dict = {}
-        total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no).count()
+        total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no, user=request.user).count()
         temp_dict["id"] = i.id
         temp_dict["date"] = i.date
         temp_dict["drs_no"] = i.drs_no
@@ -780,10 +780,10 @@ def drs(request):
         temp_dict["total_docs"] = total_docs
         drs_details.append(temp_dict)
     
-    today_drs_details = DrsMaster.objects.filter(user=request.user, date=today)    
+    today_drs_details = DrsMaster.objects.filter(user=request.user, date__gte=today)    
     for i in today_drs_details:
         temp_dict = {}
-        total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no).count()
+        total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no, user=request.user).count()
         temp_dict["id"] = i.id
         temp_dict["date"] = i.date
         temp_dict["drs_no"] = i.drs_no
@@ -847,7 +847,7 @@ def save_drs_details(request):
             
             instances_to_create = []
             for i in drs_history[1:]:
-                instance = DrsTransactionHistory(docket_number=i[0], origin=i[2], consignee_name=i[1], drs_number=max_saved_drs_numnber, status=parcel_status)
+                instance = DrsTransactionHistory(docket_number=i[0], origin=i[2], consignee_name=i[1], drs_number=max_saved_drs_numnber, status=parcel_status, user=request.user)
                 instances_to_create.append(instance)            
             DrsTransactionHistory.objects.bulk_create(instances_to_create)            
 
@@ -855,3 +855,20 @@ def save_drs_details(request):
         except:
             return JsonResponse({"status": 0, "message": "select correct details from header."})
     return JsonResponse({"status": 0})
+
+@login_required(login_url="login_auth")
+def delete_drs_details(request):
+    if request.method == "POST":
+        try:
+            sid = request.POST.get("sid")
+            data = DrsMaster.objects.get(id=sid, user=request.user)
+            data.delete()
+            drs_number = data.drs_no
+            data1 = DrsTransactionHistory.objects.filter(drs_number=drs_number, user=request.user)
+            data1.delete()
+            return JsonResponse({"status": 1})
+        except:
+            return JsonResponse({"status": 0, "message": "DRS not get deleted."})
+    return JsonResponse({"status": 0, "message": "DRS not get deleted."})
+
+

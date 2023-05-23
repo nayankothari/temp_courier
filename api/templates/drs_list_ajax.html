@@ -8,8 +8,23 @@
 
     $("#confirmDelete").click(function() {
         var sid = $(this).data("sid");
-        console.log(sid);
-
-        $('#deleteModal').modal('hide');
+        let token = $("input[name='csrfmiddlewaretoken']").val();
+        let json_data = {
+            sid: sid,
+            csrfmiddlewaretoken: token
+        }
+        $.ajax({
+            url: "{% url 'delete_drs_details' %}",
+            type: "POST",
+            data: json_data,
+            success: function(response) {
+                if (response.status == 1) {
+                    window.location.href = '/drs'
+                } else {
+                    alert(response.message);
+                };
+            }
+        });
+        window.location.href = '/drs'
     });
 </script>

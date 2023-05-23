@@ -264,6 +264,7 @@ class DrsTransactionHistory(models.Model):
     consignee_name = models.CharField(max_length=256, blank=True, null=True)
     drs_number = models.CharField(max_length=40, blank=True, null=True)
     status = models.ForeignKey(ParcelStatus, on_delete=models.CASCADE, blank=False, null=True)
+    user = models.ForeignKey(User, models.CASCADE, blank=False, null=True)
 
     class Meta:
         verbose_name_plural = "DRS Transaction History"
