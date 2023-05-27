@@ -59,6 +59,15 @@ class Destination(models.Model):
     def __str__(self):
         return self.name
 
+class Reasons(models.Model):
+    name = models.CharField(max_length=560, blank=False, null=True)
+
+    class Meta:
+        verbose_name_plural = "Reasons"
+    
+    def __str__(self):
+        return self.name    
+
 
 class PartyAccounts(models.Model):
     party_name = models.CharField(max_length=256, null=True, blank=False)

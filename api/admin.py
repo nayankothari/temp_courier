@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Destination, RefCourier, Booking
 from .models import Trackinghistory, ParcelStatus, BranchNetwork
-from .models import contactus, State, Token, Country, PartyAccounts
+from .models import contactus, State, Token, Country, PartyAccounts, Reasons
 from .models import UserAdditionalDetails, BookingType, DeliveryBoyMaster, AreaMaster
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 
@@ -32,3 +32,4 @@ admin.site.register(AreaMaster)
 admin.site.register(DrsNoGenerator)
 admin.site.register(DrsMaster)
 admin.site.register(DrsTransactionHistory)
+admin.site.register(Reasons)

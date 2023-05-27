@@ -869,7 +869,7 @@ def save_drs_details(request):
             
             instances_to_create = []
             for i in drs_history[1:]:
-                instance = DrsTransactionHistory(docket_number=i[0], origin=i[2], consignee_name=i[1], drs_number=max_saved_drs_numnber, status=parcel_status, user=request.user)
+                instance = DrsTransactionHistory(docket_number=i[0], origin=i[1], consignee_name=i[2], drs_number=max_saved_drs_numnber, status=parcel_status, user=request.user)
                 instances_to_create.append(instance)            
             DrsTransactionHistory.objects.bulk_create(instances_to_create)            
 
@@ -933,15 +933,19 @@ def delete_drs_details(request):
 
 @login_required(login_url="login_auth")
 def upload_drs(request, drs_number):
-    try:
-        print(drs_number)
-        header = DrsMaster.objects.filter(user=request.user, drs_no=drs_number)                                            
-        print(header)
+    try:        
+        header = DrsMaster.objects.filter(user=request.user, drs_no=drs_number)                                                    
         if header.exists():
             if header[0].status == "Pending":
                 header = header[0]
-                # print(header.date, header.drs_no)                
-            return render(request, "drs_upload.html")
+                delivered_status = ParcelStatus.objects.get(name="DELIVERED")
+                all_parcel_status = ParcelStatus.objects.all()
+                drs_history = DrsTransactionHistory.objects.filter(user=request.user, drs_number=header.drs_no)
+                context = {"header": header, "delivered_status": delivered_status, "all_parcel_status": all_parcel_status,
+                            "drs_history": drs_history}
+                return render(request, "drs_upload.html", context=context)
+            else:
+                return redirect("drs")                
         else:
             return redirect("drs")
     except Exception as e:

@@ -5,13 +5,13 @@
         <div class="card mt-4">
             <div class="col-12">
                 <div class="card-header">
-                    Edit DRS
+                    Upload DRS
                 </div>
                 <div class="card-body">
                     <form action="" method="post">
                         {% csrf_token %}
                         <div class="row justify-content-center">
-                            <p class="text-center text-decoration-underline"><b>DRS No. {{ drs_number }}</b></p>
+                            <p class="text-center text-decoration-underline"><b>DRS No. {{ header.drs_no }}</b></p>
                             <div class="col-md-4">
                                 <label for="datetime"><b>DRS Date</b>
                                     <span class="red_color">*</span>
@@ -22,46 +22,18 @@
                                 <label for="area_name"><b>Area Name</b>
                                     <span class="red_color">*</span>
                                 </label>
-                                <select class="form-select control-label" name="area_name" id="area_name" aria-label="Area Name" required>            
-                                    {% for area in area_names %}
-                                    <option value="{{ area.id }}">{{ area.area_name }}</option>            
-                                    {% endfor %}
+                                <select class="form-select control-label" name="area_name" id="area_name" aria-label="Area Name" required>                                                
+                                    <option value="{{ header.area_name.id }}">{{ header.area_name }}</option>                                                
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label for="delivery_boy"><b>Delivery boy</b>
                                     <span class="red_color">*</span>
                                 </label>
-                                <select class="form-select control-label" name="delivery_boy" id="delivery_boy" aria-label="Area Name" required>            
-                                    {% for boy in delivery_boy %}
-                                    <option value="{{ boy.id }}">{{ boy.delivery_boy_name }}</option>
-                                    {% endfor %}
-                                </select>
-
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row mt-2">
-                            <div class="col-md-4">
-                                <label for="docket_number"><b>Docket No.</b></label>
-                                <input type="text" name="docket_number" id="docket_number" class="form-control">
-                            </div>
-
-                            <div class="col-md-4">
-                                <label for="origin"><b>Origin:</b></label>
-                                <select class="form-select control-label" id="origin" name="origin">
-                                    {% for des in origins %}
-                                    <option value="{{ des.id }}">{{ des.name }}</option>      
-                                    {% endfor %}              
+                                <select class="form-select control-label" name="delivery_boy" id="delivery_boy" aria-label="Area Name" required>                                                
+                                    <option value="{{ header.deliveryboy_name.id }}">{{ header.deliveryboy_name }}</option>                                    
                                 </select>
                             </div>
-                            <div class="col-md-4 form-group align-self-center">
-                                <label for="con_name"><b>Consignee Name</b></label>
-                                <input type="text" name="con_name" id="con_name" class="form-control">
-                            </div>
-                            <!-- <div class="col-md-1 text-center mt-4">
-                                <button type="button" class="btn btn-primary">Add</button>
-                            </div> -->
                         </div>
                     </form>
                 </div>
@@ -82,16 +54,27 @@
                                     <th scope="col">Docket No.</th>
                                     <th scope="col">Origin</th>
                                     <th scope="col">Consignee Name</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Reason</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody">
-                                {% for drs in drs_details %}
+                                {% for drs in drs_history %}
                                 <tr>
                                     <td>{{ drs.docket_number }}</td>
                                     <td>{{ drs.origin }}</td>
                                     <td>{{ drs.consignee_name }}</td>
-                                    <td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td>
+                                    <td>
+                                        <select class="form-select control-label" name="parcel_status" id="parcel_status" aria-label="Area Name" required>
+                                            {% for status in all_parcel_status %}                                                
+                                            <option value="{{ status.id }}">{{ status.name }}</option>                                            
+                                            {% endfor %}  
+                                            <option selected="selected" value="{{ delivered_status.id }}">{{ delivered_status.name }}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="reason" id="reason" class="form-control">
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -107,4 +90,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $("#datetime").val("{{ header.date|date:'Y-m-d' }}");
+    });
+</script>
+
 {% endblock content %}
