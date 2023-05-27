@@ -1,5 +1,6 @@
 from django.urls import path
 from django.contrib import admin
+from .views import upload_drs_details
 from .views import advance_search_by_c_note_load_in, advance_search_by_c_note_load_out
 from .views import advance_search_by_ref_num_load_in, advance_search_by_ref_num_load_out, advance_search_load_out_by_date
 from .views import delivery_boy_master, edit_delivery_boy_details, edit_party_details, load_in_edit
@@ -63,4 +64,5 @@ urlpatterns = [
     path(r"edit_drs_details/<str:drs_number>", edit_drs_details, name="edit_drs_details"),
     path(r"save_edited_drs_details", save_edited_drs_details, name="save_edited_drs_details"),
     path(r"upload_drs/<str:drs_number>", upload_drs, name="upload_drs"),
+    path(r"upload_drs_details", upload_drs_details, name="upload_drs_details")
 ]

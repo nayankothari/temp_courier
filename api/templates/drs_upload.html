@@ -65,7 +65,7 @@
                                     <td>{{ drs.origin }}</td>
                                     <td>{{ drs.consignee_name }}</td>
                                     <td>
-                                        <select class="form-select control-label" name="parcel_status" id="parcel_status" aria-label="Area Name" required>
+                                        <select class="form-select control-label status_select" name="parcel_status" id="parcel_status" aria-label="Area Name" required>
                                             {% for status in all_parcel_status %}                                                
                                             <option value="{{ status.id }}">{{ status.name }}</option>                                            
                                             {% endfor %}  
@@ -73,7 +73,12 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="text" name="reason" id="reason" class="form-control">
+                                        <input type="text" list="reasons" class="reason_input" />
+                                        <datalist id="reasons">
+                                            {% for reason in reasons %}
+                                            <option>{{ reason.name }}</option>                                            
+                                            {% endfor %}
+                                        </datalist>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -94,6 +99,49 @@
 <script>
     $(document).ready(function() {
         $("#datetime").val("{{ header.date|date:'Y-m-d' }}");
+    });
+
+    // ################################## Save DRS Details ####################################
+    $("#save_drs").click(function() {
+        var drs_history = [];
+        $('#DrsTable tr').each(function() {
+            var rowData = [];
+            $(this).find('th, td').each(function() {
+                rowData.push($(this).text());
+                let status_val = $(this).find(".status_select").val();
+                if (status_val) {
+                    rowData.push(status_val);
+                };
+                let reason = $(this).find(".reason_input").val();
+                if (reason) {
+                    rowData.push(reason);
+                };
+            });
+            rowData.splice(3, 1);
+            rowData.splice(4, 1);
+            rowData.push("");
+            drs_history.push(rowData);
+        });
+        let csr = $("input[name=csrfmiddlewaretoken").val();
+        let drs_date = $("#datetime").val();
+        let drs_doc_data_final = {
+            "drs_history": JSON.stringify(drs_history),
+            "csrfmiddlewaretoken": csr,
+            "drs_date": drs_date,
+            "drs_number": "{{ header.drs_no }}"
+        }
+        $.ajax({
+            url: "{% url 'upload_drs_details' %}",
+            type: "POST",
+            data: drs_doc_data_final,
+            success: function(response) {
+                if (response.status == 1) {
+                    window.location.href = '/drs'
+                } else {
+                    alert(response.message);
+                };
+            }
+        });
     });
 </script>
 

@@ -20,6 +20,7 @@ from django.contrib import messages
 # from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
+from .models import Reasons
 
 
 
@@ -88,6 +89,12 @@ def tracking(request, tracking_number):
                         tracking_history["Activity"] = url
                         tracking_history = [tracking_history,]
                 
+                else:                    
+                    final_status = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")[0]
+                    if final_status.exists():
+                        for i in final_status:
+                            print(i.status, i.reason, i.created_at)
+
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
                 "last_status": last_status, "today_date": today_date})   
 
@@ -940,9 +947,10 @@ def upload_drs(request, drs_number):
                 header = header[0]
                 delivered_status = ParcelStatus.objects.get(name="DELIVERED")
                 all_parcel_status = ParcelStatus.objects.all()
+                reasons = Reasons.objects.all()
                 drs_history = DrsTransactionHistory.objects.filter(user=request.user, drs_number=header.drs_no)
                 context = {"header": header, "delivered_status": delivered_status, "all_parcel_status": all_parcel_status,
-                            "drs_history": drs_history}
+                            "drs_history": drs_history, "reasons": reasons}
                 return render(request, "drs_upload.html", context=context)
             else:
                 return redirect("drs")                
@@ -951,3 +959,32 @@ def upload_drs(request, drs_number):
     except Exception as e:
         print(e)
         return redirect("drs")
+
+
+@login_required(login_url="login_auth")
+def upload_drs_details(request):
+    if request.method == "POST":
+        try:
+            drs_history = request.POST.get("drs_history")
+            drs_history = ast.literal_eval(drs_history)
+            if not drs_history[1:]:
+                return JsonResponse({"status": 0, "message": "Empty DRS can't be upload."})
+            drs_number = request.POST.get("drs_number")
+            header = DrsMaster.objects.get(drs_no=drs_number, user=request.user)
+            header.status = "Updated"
+            header.save()
+
+            DrsTransactionHistory.objects.filter(user=request.user, drs_number=drs_number).delete()            
+
+            instances_to_create = []
+            for i in drs_history[1:]:
+                parcel_status = ParcelStatus.objects.get(id=i[3])                
+                instance = DrsTransactionHistory(docket_number=i[0], origin=i[1], consignee_name=i[2], drs_number=drs_number, status=parcel_status, user=request.user, reason=i[4])
+                instances_to_create.append(instance)
+            DrsTransactionHistory.objects.bulk_create(instances_to_create) 
+
+            return JsonResponse({"status": 1})
+        except:
+            return JsonResponse({"status": 0, "message": "select correct details from header."})
+    return JsonResponse({"status": 0})
+
