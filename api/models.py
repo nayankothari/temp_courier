@@ -262,9 +262,12 @@ class DrsTransactionHistory(models.Model):
     docket_number = models.CharField(max_length=40, blank=False, null=True)
     origin = models.CharField(max_length=60, blank=True, null=True)
     consignee_name = models.CharField(max_length=256, blank=True, null=True)
-    drs_number = models.CharField(max_length=40, blank=True, null=True)
+    drs_number = models.CharField(max_length=40, blank=True, null=True)    
     status = models.ForeignKey(ParcelStatus, on_delete=models.CASCADE, blank=False, null=True)
+    reason = models.TextField(max_length=500, blank=True, null=True)
     user = models.ForeignKey(User, models.CASCADE, blank=False, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)    
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "DRS Transaction History"

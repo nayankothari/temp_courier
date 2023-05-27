@@ -27,4 +27,11 @@
         });
         window.location.href = '/drs'
     });
+
+    // ############################ Edit DRS redirection ###############################
+    $("tbody").on("click", ".editButton", function() {
+        let sid = $(this).attr("data-sid");
+        var edit_url = "{% url 'edit_drs_details' drs_number='sid_value' %}".replace('sid_value', sid);
+        window.location.href = edit_url;
+    });
 </script>

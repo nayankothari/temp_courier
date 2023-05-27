@@ -4,7 +4,7 @@
     var formattedDate = date.toISOString().split('T')[0];
     dateInput.value = formattedDate;
 
-    $('#docket_number').focus();
+    $('#area_name').focus();
 
     // ####################  Get data by docket number only ######################
     $(document).ready(function() {
@@ -45,7 +45,7 @@
     });
 
 
-    // ################## Insert default values bu consignee name entry #######################
+    // ################## Insert default values by consignee name entry #######################
     $(document).ready(function() {
         $('#con_name').on('keydown', function(event) {
             if (event.keyCode === 13 || event.keyCode === 9) {

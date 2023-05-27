@@ -1,0 +1,220 @@
+{% extends 'base.html' %}{% block title %}Edit DRS{% endblock title %}{% load static %}{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="card mt-4">
+            <div class="col-12">
+                <div class="card-header">
+                    Edit DRS
+                </div>
+                <div class="card-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <div class="row justify-content-center">
+                            <p class="text-center text-decoration-underline"><b>DRS No. {{ drs_number }}</b></p>
+                            <div class="col-md-4">
+                                <label for="datetime"><b>DRS Date</b>
+                                    <span class="red_color">*</span>
+                                </label>
+                                <input type="date" id="datetime" name="datetime" class="form-control" name="date-field" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="area_name"><b>Area Name</b>
+                                    <span class="red_color">*</span>
+                                </label>
+                                <select class="form-select control-label" name="area_name" id="area_name" aria-label="Area Name" required>            
+                                    {% for area in area_names %}
+                                    <option value="{{ area.id }}">{{ area.area_name }}</option>            
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="delivery_boy"><b>Delivery boy</b>
+                                    <span class="red_color">*</span>
+                                </label>
+                                <select class="form-select control-label" name="delivery_boy" id="delivery_boy" aria-label="Area Name" required>            
+                                    {% for boy in delivery_boy %}
+                                    <option value="{{ boy.id }}">{{ boy.delivery_boy_name }}</option>
+                                    {% endfor %}
+                                </select>
+
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row mt-2">
+                            <div class="col-md-4">
+                                <label for="docket_number"><b>Docket No.</b></label>
+                                <input type="text" name="docket_number" id="docket_number" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="origin"><b>Origin:</b></label>
+                                <select class="form-select control-label" id="origin" name="origin">
+                                    {% for des in origins %}
+                                    <option value="{{ des.id }}">{{ des.name }}</option>      
+                                    {% endfor %}              
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group align-self-center">
+                                <label for="con_name"><b>Consignee Name</b></label>
+                                <input type="text" name="con_name" id="con_name" class="form-control">
+                            </div>
+                            <!-- <div class="col-md-1 text-center mt-4">
+                                <button type="button" class="btn btn-primary">Add</button>
+                            </div> -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="card mt-4">
+            <div class="col-12">
+                <div class="card-header">
+                    DRS Details
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="DrsTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Docket No.</th>
+                                    <th scope="col">Origin</th>
+                                    <th scope="col">Consignee Name</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                {% for drs in drs_details %}
+                                <tr>
+                                    <td>{{ drs.docket_number }}</td>
+                                    <td>{{ drs.origin }}</td>
+                                    <td>{{ drs.consignee_name }}</td>
+                                    <td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-12 text-center mb-3">
+            <button type="button" class="btn btn-success" id="save_drs">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- ########################################## Load jquery here ##########################  -->
+<script>
+    $(document).ready(function() {
+        $("#area_name").val("{{ headers.area_name.id }}").change();
+        $("#delivery_boy").val("{{ headers.deliveryboy_name.id }}").change();
+        $("#datetime").val("{{ headers.date|date:'Y-m-d' }}");
+    });
+
+    $('#area_name').focus();
+
+    // ##################### For delete drs details by html onle ######################
+
+    $('#DrsTable').on('click', '.deleteButton', function() {
+        $(this).closest('tr').remove();
+        $('#docket_number').focus();
+    });
+
+
+    // ####################  Get data by docket number only ######################
+    $(document).ready(function() {
+        $('#docket_number').on('keydown', function(event) {
+            if (event.keyCode === 13 || event.keyCode === 9) {
+                event.preventDefault();
+                var docket_num = $(this).val();
+                let csr = $("input[name=csrfmiddlewaretoken").val();
+                let drs_doc_data = {
+                    'docket_num': docket_num,
+                    'csrfmiddlewaretoken': csr
+                }
+                $.ajax({
+                    url: "{% url 'doc_num_from_booking_to_drs' %}",
+                    type: "POST",
+                    data: drs_doc_data,
+                    success: function(response) {
+                        if (response.status == 1) {
+                            let data = response.data;
+                            $("#docket_number").val("");
+                            var row = '<tr><td>' + docket_num + '</td><td>' + data.name + '</td><td>' + data.origin + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                            $('#DrsTable tbody').prepend(row);
+                        } else {
+                            $('#origin').focus();
+                        };
+                    }
+                });
+            }
+        });
+    });
+
+
+    // ################## Insert default values by consignee name entry #######################
+    $(document).ready(function() {
+        $('#con_name').on('keydown', function(event) {
+            if (event.keyCode === 13 || event.keyCode === 9) {
+                event.preventDefault();
+                var doc_num = $("#docket_number").val();
+                if (doc_num != "") {
+                    var origin = $("#origin option:selected").text();
+                    var con_name = $("#con_name").val();
+                    var row = '<tr><td>' + doc_num + '</td><td>' + origin + '</td><td>' + con_name + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                    $('#DrsTable tbody').prepend(row);
+                    $("#docket_number").val("");
+                    $("#con_name").val("");
+                    $('#docket_number').focus();
+                } else {
+                    alert("Insert Docket number");
+                    $('#docket_number').focus();
+                }
+            }
+        })
+    });
+
+
+    // ################################## Save Edited DRS Details ####################################
+    $("#save_drs").click(function() {
+        var drs_history = [];
+        $('#DrsTable tr').each(function() {
+            var rowData = [];
+            $(this).find('th, td').each(function() {
+                rowData.push($(this).text());
+            });
+            drs_history.push(rowData);
+        });
+        let csr = $("input[name=csrfmiddlewaretoken").val();
+        let drs_date = $("#datetime").val();
+        let area_name = $("#area_name").val();
+        let delivery_boy_name = $("#delivery_boy").val();
+        let drs_number_new = "{{ drs_number }}"
+        let drs_doc_data_final = {
+            "drs_history": JSON.stringify(drs_history),
+            "csrfmiddlewaretoken": csr,
+            "drs_date": drs_date,
+            "area_name": area_name,
+            "delivery_boy_name": delivery_boy_name,
+            "drs_number_new": drs_number_new
+        }
+        $.ajax({
+            url: "{% url 'save_edited_drs_details' %}",
+            type: "POST",
+            data: drs_doc_data_final,
+            success: function(response) {
+                if (response.status == 1) {
+                    window.location.href = '/drs'
+                } else {
+                    alert(response.message);
+                };
+            }
+        });
+    });
+</script>
+{% endblock content %}

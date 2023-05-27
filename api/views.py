@@ -769,7 +769,7 @@ def drs(request):
     drs_details = []
     today_drs_details_list = []
     today = datetime.date.today() - timedelta(days=1)
-    details = DrsMaster.objects.filter(user=request.user, status="Pending")            
+    details = DrsMaster.objects.filter(user=request.user, status="Pending").order_by('-date', 'drs_no')
     for i in details:
         temp_dict = {}
         total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no, user=request.user).count()
@@ -780,7 +780,7 @@ def drs(request):
         temp_dict["total_docs"] = total_docs
         drs_details.append(temp_dict)
     
-    today_drs_details = DrsMaster.objects.filter(user=request.user, date__gte=today)    
+    today_drs_details = DrsMaster.objects.filter(user=request.user, date__gte=today).order_by('-date', 'drs_no')
     for i in today_drs_details:
         temp_dict = {}
         total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no, user=request.user).count()
@@ -803,6 +803,30 @@ def generate_drs(request):
     origins = Destination.objects.all()    
     context = {"area_names": area_names, "delivery_boy": delivery_boy_names, "origins": origins}
     return render(request, "drs_generate.html", context=context)
+
+@login_required(login_url="login_auth")
+def edit_drs_details(request, drs_number):
+    try:
+        print(drs_number)
+        header = DrsMaster.objects.filter(user=request.user, drs_no=drs_number)                                    
+        print(header)
+        if header.exists():
+            if header[0].status == "Pending":
+                drs_details = DrsTransactionHistory.objects.filter(user=request.user, drs_number=drs_number)            
+                header = header[0]
+                area_names = AreaMaster.objects.filter(user=request.user)
+                delivery_boy_names = DeliveryBoyMaster.objects.filter(user=request.user)
+                origins = Destination.objects.all()
+                context = {"headers": header, "drs_details": drs_details, "drs_number": drs_number, "area_names": area_names,
+                            "delivery_boy": delivery_boy_names, "origins": origins}
+                return render(request, "edit_drs_details.html", context=context)
+            else:
+                return redirect("drs")    
+        else:
+            return redirect("drs")    
+    except Exception as e:
+        print(e)
+        return redirect("drs")
 
 @login_required(login_url="login_auth")
 def doc_num_from_booking_to_drs(request):
@@ -849,6 +873,44 @@ def save_drs_details(request):
             for i in drs_history[1:]:
                 instance = DrsTransactionHistory(docket_number=i[0], origin=i[2], consignee_name=i[1], drs_number=max_saved_drs_numnber, status=parcel_status, user=request.user)
                 instances_to_create.append(instance)            
+            DrsTransactionHistory.objects.bulk_create(instances_to_create)            
+
+            return JsonResponse({"status": 1})
+        except:
+            return JsonResponse({"status": 0, "message": "select correct details from header."})
+    return JsonResponse({"status": 0})
+
+@login_required(login_url="login_auth")
+def save_edited_drs_details(request):
+    if request.method == "POST":
+        try:
+            drs_history = request.POST.get("drs_history")
+            drs_history = ast.literal_eval(drs_history)
+            if not drs_history[1:]:
+                return JsonResponse({"status": 0, "message": "Empty DRS can't be save."})
+            
+            area_name = request.POST.get("area_name")        
+            area_name = AreaMaster.objects.get(id=area_name)        
+            delivery_boy = request.POST.get("delivery_boy_name")        
+            delivery_boy = DeliveryBoyMaster.objects.get(id=delivery_boy)            
+            drs_date = request.POST.get("drs_date")        
+            parcel_status = ParcelStatus.objects.get(name="OUT FOR DELIVERY")
+
+            max_saved_drs_numnber = request.POST.get("drs_number_new")
+            
+            # Delete Existing DRS details.
+            DrsMaster.objects.get(user=request.user, drs_no=max_saved_drs_numnber).delete()                                
+            
+            # Save New DRS Details.
+            DrsMaster(drs_no=max_saved_drs_numnber, date=drs_date, area_name=area_name, 
+                      deliveryboy_name=delivery_boy, status="Pending", user=request.user).save()            
+            
+            instances_to_create = []
+            for i in drs_history[1:]:
+                instance = DrsTransactionHistory(docket_number=i[0], origin=i[2], consignee_name=i[1], drs_number=max_saved_drs_numnber, status=parcel_status, user=request.user)
+                instances_to_create.append(instance)      
+
+            DrsTransactionHistory.objects.filter(user=request.user, drs_number=max_saved_drs_numnber).delete()
             DrsTransactionHistory.objects.bulk_create(instances_to_create)            
 
             return JsonResponse({"status": 1})
