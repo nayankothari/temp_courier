@@ -769,7 +769,7 @@ def drs(request):
     drs_details = []
     today_drs_details_list = []
     today = datetime.date.today() - timedelta(days=1)
-    details = DrsMaster.objects.filter(user=request.user, status="Pending").order_by('-date', 'drs_no')
+    details = DrsMaster.objects.filter(user=request.user, status="Pending").order_by('-date', '-drs_no')
     for i in details:
         temp_dict = {}
         total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no, user=request.user).count()
@@ -780,7 +780,7 @@ def drs(request):
         temp_dict["total_docs"] = total_docs
         drs_details.append(temp_dict)
     
-    today_drs_details = DrsMaster.objects.filter(user=request.user, date__gte=today).order_by('-date', 'drs_no')
+    today_drs_details = DrsMaster.objects.filter(user=request.user, date__gte=today).order_by('-date', '-drs_no')
     for i in today_drs_details:
         temp_dict = {}
         total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no, user=request.user).count()
