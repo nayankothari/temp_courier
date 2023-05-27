@@ -806,10 +806,8 @@ def generate_drs(request):
 
 @login_required(login_url="login_auth")
 def edit_drs_details(request, drs_number):
-    try:
-        print(drs_number)
-        header = DrsMaster.objects.filter(user=request.user, drs_no=drs_number)                                    
-        print(header)
+    try:        
+        header = DrsMaster.objects.filter(user=request.user, drs_no=drs_number)                                            
         if header.exists():
             if header[0].status == "Pending":
                 drs_details = DrsTransactionHistory.objects.filter(user=request.user, drs_number=drs_number)            
