@@ -931,4 +931,19 @@ def delete_drs_details(request):
             return JsonResponse({"status": 0, "message": "DRS not get deleted."})
     return JsonResponse({"status": 0, "message": "DRS not get deleted."})
 
-
+@login_required(login_url="login_auth")
+def upload_drs(request, drs_number):
+    try:
+        print(drs_number)
+        header = DrsMaster.objects.filter(user=request.user, drs_no=drs_number)                                            
+        print(header)
+        if header.exists():
+            if header[0].status == "Pending":
+                header = header[0]
+                # print(header.date, header.drs_no)                
+            return render(request, "drs_upload.html")
+        else:
+            return redirect("drs")
+    except Exception as e:
+        print(e)
+        return redirect("drs")

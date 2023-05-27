@@ -5,7 +5,7 @@ from .views import advance_search_by_ref_num_load_in, advance_search_by_ref_num_
 from .views import delivery_boy_master, edit_delivery_boy_details, edit_party_details, load_in_edit
 from .views import network, save_delivery_boy_details, save_output_load, save_parties, services
 from .views import delete_party_detail, about_us, tracking_history_in, tracking_history_out
-from .views import home, tracking, contactUs, save_drs_details, delete_drs_details
+from .views import home, tracking, contactUs, save_drs_details, delete_drs_details, upload_drs
 from .views import login_auth, dashboard, logout, edit_data_retrive, edit_drs_details
 from .views import bookings, save_booking, part_master, tracking_with_selenium, save_edited_drs_details
 from .views import advance_search_by_date, advance_search_by_c_note, advance_search_for_ref_number
@@ -62,4 +62,5 @@ urlpatterns = [
     path(r"delete_drs_details", delete_drs_details, name="delete_drs_details"),
     path(r"edit_drs_details/<str:drs_number>", edit_drs_details, name="edit_drs_details"),
     path(r"save_edited_drs_details", save_edited_drs_details, name="save_edited_drs_details"),
+    path(r"upload_drs/<str:drs_number>", upload_drs, name="upload_drs"),
 ]

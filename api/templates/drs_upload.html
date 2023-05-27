@@ -1,16 +1,17 @@
-{% extends 'base.html' %}{% block title %} Generate DRS {% endblock title %}{% load static %}{% block content %}
+{% extends 'base.html' %}{% block title %}Upload DRS{% endblock title %}{% load static %}{% block content %}
 
 <div class="container back_color">
     <div class="row">
         <div class="card mt-4">
             <div class="col-12">
                 <div class="card-header">
-                    Generate DRS
+                    Edit DRS
                 </div>
                 <div class="card-body">
                     <form action="" method="post">
                         {% csrf_token %}
                         <div class="row justify-content-center">
+                            <p class="text-center text-decoration-underline"><b>DRS No. {{ drs_number }}</b></p>
                             <div class="col-md-4">
                                 <label for="datetime"><b>DRS Date</b>
                                     <span class="red_color">*</span>
@@ -85,6 +86,14 @@
                                 </tr>
                             </thead>
                             <tbody id="tbody">
+                                {% for drs in drs_details %}
+                                <tr>
+                                    <td>{{ drs.docket_number }}</td>
+                                    <td>{{ drs.origin }}</td>
+                                    <td>{{ drs.consignee_name }}</td>
+                                    <td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -98,4 +107,4 @@
         </div>
     </div>
 </div>
-{% include 'drs_ajax.html' %} {% endblock content %}
+{% endblock content %}

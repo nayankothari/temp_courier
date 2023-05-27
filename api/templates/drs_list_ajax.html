@@ -34,4 +34,10 @@
         var edit_url = "{% url 'edit_drs_details' drs_number='sid_value' %}".replace('sid_value', sid);
         window.location.href = edit_url;
     });
+
+    $("tbody").on("click", ".uploadButton", function() {
+        let sid = $(this).attr("data-sid");
+        var edit_url = "{% url 'upload_drs' drs_number='sid_value' %}".replace('sid_value', sid);
+        window.location.href = edit_url;
+    });
 </script>
