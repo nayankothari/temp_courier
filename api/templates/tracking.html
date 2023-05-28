@@ -87,7 +87,19 @@
                             <td></td>
                             {% endif %}
                         </tr>
-                        {% endfor %}
+                        {% endfor %} {% if drs_details == 1 %}
+                        <tr>
+                            <td>{{ date|date:"Y-m-d" }}</td>
+                            <td>{{ track_his.d_from }}</td>
+                            <td>{{ track_his.d_to }}</td>
+                            <td><b>{{ status }}</b></td>
+                            {% if reason %}
+                            <td>{{ reason }}</td>
+                            {% else %}
+                            <td>{{ reason }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

@@ -39,18 +39,19 @@ def home(request):
 
 def tracking(request, tracking_number):    
     try:            
-        tracking_number = int(tracking_number)        
+        tracking_number = int(tracking_number)            
         if tracking_number:
-            data = Booking.objects.filter(c_note_number=tracking_number)            
-            if data:
-                booking_details = data[0]                    
-                tracking_history = Trackinghistory.objects.filter(c_note_number=booking_details).order_by('-in_out_datetime')                                                                                        
+            data = Booking.objects.filter(c_note_number=tracking_number)                        
+            if data.exists():
+                booking_details = data[0]                                    
+                tracking_history = Trackinghistory.objects.filter(c_note_number=booking_details).order_by('-in_out_datetime')                
                 # print(booking_details.c_note_number, booking_details.from_destination,
                 # booking_details.to_destination, booking_details.doc_date.strftime("%d-%b-%Y %H:%M %p"), booking_details.receiver_name)                                    
+                if_drs = None
                 last_status = "Shipment information sent to Airpost Xpress"
-                if tracking_history:                    
+                if tracking_history.exists():                    
                     last_status = str(tracking_history[0].status) + " - " + str(tracking_history[0].d_to)
-                
+
                 if booking_details.ref_courier_name.type != 'Internal':
                     tracking_history = {}
                     token_obj = Token.objects.all().values()
@@ -90,13 +91,19 @@ def tracking(request, tracking_number):
                         tracking_history = [tracking_history,]
                 
                 else:                    
-                    final_status = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")[0]
+                    final_status = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")
                     if final_status.exists():
-                        for i in final_status:
-                            print(i.status, i.reason, i.created_at)
-
+                        final_status = final_status[0]     
+                        if_drs = 1                        
+                        last_status = final_status.status       
+                        reason = ""
+                        if final_status.reason:
+                            reason = final_status.reason                                            
+                        return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
+                    "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, "reason": reason, "date": final_status.created_at})
+                
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
-                "last_status": last_status, "today_date": today_date})   
+                "last_status": last_status, "today_date": today_date, "drs_details": if_drs})   
 
         return redirect("home")        
     except Exception as e:   
