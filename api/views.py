@@ -995,3 +995,14 @@ def upload_drs_details(request):
             return JsonResponse({"status": 0, "message": "select correct details from header."})
     return JsonResponse({"status": 0})
 
+
+@login_required(login_url="login_auth")
+def print_drs(request, drs_number):    
+    try:
+        drs_header = DrsMaster.objects.get(drs_no=drs_number, user=request.user)
+        drs_transaction = DrsTransactionHistory.objects.filter(drs_number=drs_number)        
+        return render(request, "drs_print.html", context={"drs_heaser": drs_header, "drs_history": drs_transaction})
+    
+    except Exception as e:
+        print(e)
+        return redirect("drs")
