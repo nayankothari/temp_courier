@@ -1,0 +1,80 @@
+{% extends 'base.html' %}{% load static %}{% block title %}View DRS{% endblock title %}{% block content %}
+
+<div class="container back_color">
+    <div class="row">
+        <div class="card mt-4">
+            <div class="col-12">
+                <div class="card-header">
+                    View DRS
+                </div>
+                <div class="card-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <div class="row justify-content-center">
+                            <p class="text-center text-decoration-underline"><b>DRS No. {{ header.drs_no }}</b></p>
+                            <div class="col-md-4">
+                                <label for="datetime"><b>DRS Date</b>
+                                    <span class="red_color">*</span>
+                                </label>
+                                <input type="text" id="datetime" name="datetime" class="form-control" value="{{ header.date|date:'Y-m-d' }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="area_name"><b>Area Name</b>
+                                    <span class="red_color">*</span>
+                                </label>
+                                <select class="form-select control-label" name="area_name" id="area_name" aria-label="Area Name" required>                                                
+                                    <option value="{{ header.area_name.id }}">{{ header.area_name }}</option>                                                
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="delivery_boy"><b>Delivery boy</b>
+                                    <span class="red_color">*</span>
+                                </label>
+                                <select class="form-select control-label" name="delivery_boy" id="delivery_boy" aria-label="Area Name" required>                                                
+                                    <option value="{{ header.deliveryboy_name.id }}">{{ header.deliveryboy_name }}</option>                                    
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="card mt-4">
+            <div class="col-12">
+                <div class="card-header">
+                    DRS Details
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="DrsTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Docket No.</th>
+                                    <th scope="col">Origin</th>
+                                    <th scope="col">Consignee Name</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                {% for drs in history %}
+                                <tr>
+                                    <td>{{ drs.docket_number }}</td>
+                                    <td>{{ drs.origin }}</td>
+                                    <td>{{ drs.consignee_name }}</td>
+                                    <td>{{ drs.status }}</td>
+                                    <td>{{ drs.reason }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

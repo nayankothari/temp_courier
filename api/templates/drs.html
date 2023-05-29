@@ -32,7 +32,7 @@
         <div class="col-md-6">
             <form action="" method="POST">
                 {% csrf_token %}
-                <a href="{% url 'generate_drs' %}" class="btn btn-success float-end mb-2">Generate New DRS</a>
+                <a href="{% url 'generate_drs' %}" class="btn btn-success float-end mb-2 mt-2">Generate New DRS</a>
             </form>
         </div>
     </div>
@@ -102,7 +102,11 @@
                                         <td>{{ drs.deliveryboy_name }}</td>
                                         <td>{{ drs.total_docs }}</td>
                                         <td>{{ drs.status }}</td>
-                                        <td><button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid="{{ drs.drs_no }}" title="Print DRS"><i class="bi bi-printer"></i></button></td>
+                                        {% if drs.status == 'Pending' %}
+                                        <td></td>
+                                        {% else %}
+                                        <td><button type='button' id='view_button' class='border-0 bg-transparent text-primary viewButton' data-sid="{{ drs.drs_no }}" title="View DRS"><i class="bi bi-eye"></i></button></td>
+                                        {% endif %}
                                     </tr>
                                     {% endfor %}
                                 </tbody>

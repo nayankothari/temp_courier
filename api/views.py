@@ -1000,7 +1000,7 @@ def upload_drs_details(request):
 def print_drs(request, drs_number):    
     try:
         drs_header = DrsMaster.objects.get(drs_no=drs_number, user=request.user)
-        drs_transaction = DrsTransactionHistory.objects.filter(drs_number=drs_number)     
+        drs_transaction = DrsTransactionHistory.objects.filter(drs_number=drs_number, user=request.user)     
         address = BranchNetwork.objects.get(user=request.user).address           
         return render(request, "drs_print.html", context={"drs_heaser": drs_header, "drs_history": drs_transaction, "address": address})
     
@@ -1008,3 +1008,14 @@ def print_drs(request, drs_number):
         print(e)
         return redirect("drs")
 
+@login_required(login_url="login_auth")
+def view_drs(request, drs_number):
+    try:
+        drs_details = DrsMaster.objects.get(user=request.user, drs_no=drs_number)
+        if drs_details.status == "Updated":
+            drs_history = DrsTransactionHistory.objects.filter(user=request.user, drs_number=drs_number)            
+            return render(request, "drs_view.html", context={"header": drs_details, "history": drs_history}) 
+        return redirect("drs")
+    except Exception as e:
+        print(e)
+        return redirect("drs")

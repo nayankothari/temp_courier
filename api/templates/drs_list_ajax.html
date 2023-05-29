@@ -47,4 +47,10 @@
         var edit_url = "{% url 'print_drs' drs_number='sid_value' %}".replace('sid_value', sid);
         window.open(edit_url, "_blank")
     });
+    // ############################ View DRS redirection ###############################
+    $("tbody").on("click", ".viewButton", function() {
+        let sid = $(this).attr("data-sid");
+        var edit_url = "{% url 'view_drs' drs_number='sid_value' %}".replace('sid_value', sid);
+        window.open(edit_url, "_blank")
+    });
 </script>
