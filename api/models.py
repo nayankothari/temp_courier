@@ -156,6 +156,7 @@ class Trackinghistory(models.Model):
 
 
 class BranchNetwork(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=True)
     branch_name = models.CharField(max_length=256)
     branch_incharge_number = models.BigIntegerField()
     office_number = models.BigIntegerField(null=True, blank=True)

@@ -17,47 +17,60 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <title>Airpost Xpress | Print Preview</title>
+
+    <style>
+        .custom-row-height {
+            height: 60px !important;
+        }
+    </style>
+
 </head>
 
 <body>
     <div class="container">
         <div class="row">
-            <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <th style="width:30%;" rowspan="2">
-                            <div class="col-md-3">
-                                <img src="{% static 'img/airpost_logo.png' %}" alt="Airpost Xpress" class="img-fluid" id="nav_img_">
-                            </div>
-                        </th>
-                        <th style="font-weight: normal;"><b>DRS NO:</b> {{ drs_heaser.drs_no }} <br><b>Area:</b> {{drs_heaser.area_name}} </th>
-                        <th style="font-weight: normal;"><b>Date:</b> {{ drs_heaser.date|date:"Y-m-d" }}<br><b>Del. Boy:</b> {{ drs_heaser.deliveryboy_name }}</th>
-                    </tr>
-                </tbody>
-                <div class="col-12">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Center</th>
-                                <th scope="col">Docket No.</th>
-                                <th scope="col">Consignee Name</th>
-                                <th scope="col">Sign-Ph No./Stamp</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for drs in drs_history %}
-                            <tr>
-                                <th scope="row">1</th>
-                                <td class="w-25">{{ drs.consignee_name }}</td>
-                                <td>{{ drs.docket_number }}</td>
-                                <td>{{ drs.origin }}</td>
-                                <td></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td style="width:30%;">
+                                <div class="col-md-3">
+                                    <img src="{% static 'img/airpost_logo.png' %}" alt="Airpost Xpress" class="img-fluid" id="nav_img_">
+                                </div>
+                            </td>
+                            <td style="font-weight: normal;"><b>DRS No:</b> {{ drs_heaser.drs_no }} <br><b>Area:</b> {{drs_heaser.area_name}} </td>
+                            <td style="font-weight: normal;"><b>Date:</b> {{ drs_heaser.date|date:"Y-m-d" }}<br><b>Del. boy:</b> {{ drs_heaser.deliveryboy_name }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: center;">{{ address }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Center</th>
+                            <th scope="col">Docket No.</th>
+                            <th scope="col">Consignee Name</th>
+                            <th scope="col">Sign-Ph No./Stamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for drs in drs_history %}
+                        <tr class="custom-row-height">
+                            <th scope="row">{{ forloop.counter }}.</th>
+                            <td class="w-25">{{ drs.origin }}</td>
+                            <td>{{ drs.docket_number }}</td>
+                            <td>{{ drs.consignee_name }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

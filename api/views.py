@@ -919,7 +919,7 @@ def save_edited_drs_details(request):
             
             instances_to_create = []
             for i in drs_history[1:]:
-                instance = DrsTransactionHistory(docket_number=i[0], origin=i[2], consignee_name=i[1], drs_number=max_saved_drs_numnber, status=parcel_status, user=request.user)
+                instance = DrsTransactionHistory(docket_number=i[0], origin=i[1], consignee_name=i[2], drs_number=max_saved_drs_numnber, status=parcel_status, user=request.user)
                 instances_to_create.append(instance)      
 
             DrsTransactionHistory.objects.filter(user=request.user, drs_number=max_saved_drs_numnber).delete()
@@ -1000,9 +1000,11 @@ def upload_drs_details(request):
 def print_drs(request, drs_number):    
     try:
         drs_header = DrsMaster.objects.get(drs_no=drs_number, user=request.user)
-        drs_transaction = DrsTransactionHistory.objects.filter(drs_number=drs_number)        
-        return render(request, "drs_print.html", context={"drs_heaser": drs_header, "drs_history": drs_transaction})
+        drs_transaction = DrsTransactionHistory.objects.filter(drs_number=drs_number)     
+        address = BranchNetwork.objects.get(user=request.user).address           
+        return render(request, "drs_print.html", context={"drs_heaser": drs_header, "drs_history": drs_transaction, "address": address})
     
     except Exception as e:
         print(e)
         return redirect("drs")
+

@@ -25,7 +25,7 @@
                         if (response.status == 1) {
                             let data = response.data;
                             $("#docket_number").val("");
-                            var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td>' + data.name + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                            var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td> <input type="text" class="form-control con_name" value="' + data.name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                             $('#DrsTable tbody').prepend(row);
                         } else {
                             $('#origin').focus();
@@ -54,7 +54,7 @@
                 if (doc_num != "") {
                     var origin = $("#origin option:selected").text();
                     var con_name = $("#con_name").val();
-                    var row = '<tr><td>' + doc_num + '</td><td>' + origin + '</td><td>' + con_name + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                    var row = '<tr><td>' + doc_num + '</td><td>' + origin + '</td><td> <input type="text" class="form-control con_name" value="' + con_name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                     $('#DrsTable tbody').prepend(row);
                     $("#docket_number").val("");
                     $("#con_name").val("");
@@ -75,7 +75,13 @@
 
             $(this).find('th, td').each(function() {
                 rowData.push($(this).text());
+                let con_names = $(this).find(".con_name").val();
+                if (con_names) {
+                    rowData.push(con_names);
+                };
             });
+            rowData.push("");
+            rowData.splice(2, 1);
             drs_history.push(rowData);
         });
         let csr = $("input[name=csrfmiddlewaretoken").val();

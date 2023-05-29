@@ -93,6 +93,7 @@
                                         <th>Delivery boy</th>
                                         <th>Qty</th>
                                         <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                     {% for drs in today_drs_details %}
                                     <tr>
@@ -101,6 +102,7 @@
                                         <td>{{ drs.deliveryboy_name }}</td>
                                         <td>{{ drs.total_docs }}</td>
                                         <td>{{ drs.status }}</td>
+                                        <td><button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid="{{ drs.drs_no }}" title="Print DRS"><i class="bi bi-printer"></i></button></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
