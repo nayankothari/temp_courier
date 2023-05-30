@@ -62,10 +62,10 @@
                         {% for drs in drs_history %}
                         <tr class="custom-row-height">
                             <th scope="row">{{ forloop.counter }}.</th>
-                            <td class="w-25">{{ drs.origin }}</td>
-                            <td>{{ drs.docket_number }}</td>
-                            <td>{{ drs.consignee_name }}</td>
-                            <td></td>
+                            <td class="w-22">{{ drs.origin }}</td>
+                            <td class="w-22">{{ drs.docket_number }}</td>
+                            <td class="w-29">{{ drs.consignee_name }}</td>
+                            <td class="w-18"></td>
                         </tr>
                         {% endfor %}
                     </tbody>

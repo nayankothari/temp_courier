@@ -5,23 +5,21 @@ import ast
 import base64
 import requests
 import datetime
-# import test_api
-from .test_api import get_search_details
-from datetime import timedelta
-from django.db.models import Q
-from django.db.models import Max
-from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User, auth
-from .models import contactus, Token, BranchNetwork, Destination
-from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-# from django.http import HttpResponse, HttpResponseRedirect
-from django.http import JsonResponse
-from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import Reasons
-
+from datetime import timedelta
+from django.db.models import Max
+from django.contrib import messages
+from django.http import JsonResponse
+from django.db.models import Q, Count
+from .test_api import get_search_details
+from django.shortcuts import render, redirect
+from django.db.models.functions import Substr
+from django.contrib.auth.models import User, auth
+from django.contrib.auth.decorators import login_required
+from .models import contactus, Token, BranchNetwork, Destination
+from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
+from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
+from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
 
 
 today_date = datetime.datetime.now().strftime("%Y")
@@ -240,13 +238,17 @@ def save_booking(request):
         request.session["success"] = None
         request.session["next_c_note"] = ""
         party_name = request.POST.get("party")              
-        party_name = PartyAccounts.objects.get(id=party_name)
+        request.session["party_name"] = party_name
+        party_name = PartyAccounts.objects.get(id=party_name)    
         booking_type = request.POST.get("bookingtype")  
+        request.session["booking_type"] = booking_type
         booking_type = BookingType.objects.get(id=booking_type)
         booking_datetime = request.POST.get("datetime")        
         from_dest = request.POST.get("from_destination")
+        request.session["from_dest"] = from_dest
         from_dest = Destination.objects.get(id=from_dest)
         to_dest = request.POST.get("todest")
+        request.session["to_dest"] = to_dest
         to_dest = Destination.objects.get(id=to_dest)
         s_name = request.POST.get("s_name")
         s_number = request.POST.get("s_number")
@@ -1016,6 +1018,15 @@ def view_drs(request, drs_number):
             drs_history = DrsTransactionHistory.objects.filter(user=request.user, drs_number=drs_number)            
             return render(request, "drs_view.html", context={"header": drs_details, "history": drs_history}) 
         return redirect("drs")
-    except Exception as e:
-        print(e)
+    except Exception as e:        
         return redirect("drs")
+
+@login_required(login_url="login_auth")
+def manifest_show(request):
+    today = datetime.date.today() #- timedelta(days=1)
+    status = ParcelStatus.objects.get(name="OUT")    
+    data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__gt=today).annotate(date_substr=Substr('in_out_datetime', 1, 10)).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")        
+    return render(request, "manifest.html", context={"details": data})
+
+
+

@@ -138,6 +138,15 @@
             })
         }
     })
+
+
+    // Setup session objects
+    if ("{{ request.session.from_dest }}") {
+        $("#from_destination").val("{{ request.session.from_dest }}").change();
+        $("#party").val("{{ request.session.party_name }}").change();
+        $("#bookingtype").val("{{ request.session.booking_type }}").change();
+        $("#to_destination").val("{{ request.session.to_dest }}").change();
+    };
 </script>
 
 <!-- https://trackcourier.io/api/v1/get_checkpoints_table/{}/ups/ -->

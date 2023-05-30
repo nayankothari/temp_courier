@@ -13,6 +13,7 @@ from .views import advance_search_by_date, advance_search_by_c_note, advance_sea
 from .views import save_input_load, load_in_delete, advance_search_load_in_by_date, view_drs
 from .views import area_master, save_area_master, edit_area_details, delete_area_detail
 from .views import delete_delivery_boy_detail, drs, generate_drs, doc_num_from_booking_to_drs
+from .views import manifest_show
 
 urlpatterns = [    
     path(r"", home, name="home"),
@@ -67,4 +68,5 @@ urlpatterns = [
     path(r"upload_drs_details", upload_drs_details, name="upload_drs_details"),
     path(r"print_drs/<str:drs_number>", print_drs, name="print_drs"),
     path(r"view_drs/<str:drs_number>", view_drs, name="view_drs"),
+    path(r"manifest_show", manifest_show, name="manifest_show"),
 ]

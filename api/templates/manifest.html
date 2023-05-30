@@ -1,0 +1,43 @@
+{% extends 'base.html' %}{% load static %}{% block title %}Manifest{% endblock title %}{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="card mt-4">
+            <div class="col-12">
+                <div class="card-header">
+                    Manifest Details
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="DrsTable">
+                            <thead>
+                                <tr>
+                                    <th>Sr. No</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Destination</th>
+                                    <th scope="col">Qty.</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                {% for mf in details %}
+                                <tr>
+                                    <td>{{ forloop.counter }}.</td>
+                                    <td>{{ mf.date_substr }}</td>
+                                    <td>{{ mf.d_to__name }}</td>
+                                    <td>{{ mf.child_count }}</td>
+                                    <td>
+                                        <button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid="{{ mf.d_to__id }}/{{ mf.date_substr }}" title="Print DRS"><i class="bi bi-printer"></i></button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
