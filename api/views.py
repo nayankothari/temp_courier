@@ -1022,6 +1022,47 @@ def view_drs(request, drs_number):
         return redirect("drs")
 
 @login_required(login_url="login_auth")
+def search_drs_by_num_date(request):
+    if request.method == "POST":
+        drs_num = request.POST.get("drs_num")
+        drs_date = request.POST.get("drs_date")
+        if drs_num:
+            details = DrsMaster.objects.filter(user=request.user, drs_no=drs_num, status="Updated")
+            if details.exists():
+                drs_details_list = []
+                for i in details:
+                    temp_dict = {}
+                    total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no, user=request.user).count()
+                    temp_dict["id"] = i.id
+                    temp_dict["date"] = i.date.strftime("%d-%b-%Y")
+                    temp_dict["drs_no"] = i.drs_no
+                    temp_dict["deliveryboy_name"] = i.deliveryboy_name.delivery_boy_name
+                    temp_dict["total_docs"] = total_docs
+                    temp_dict["status"] = i.status
+                    drs_details_list.append(temp_dict)                      
+                return JsonResponse({"status": 1, "drs_details": drs_details_list})
+            return JsonResponse({"status": 0, "message": "DRS Not found for this number."})
+        else:            
+            details = DrsMaster.objects.filter(user=request.user, date__range=[drs_date, drs_date], status="Updated")
+            if details.exists():    
+                drs_details_list = []
+                for i in details:
+                    temp_dict = {}
+                    total_docs = DrsTransactionHistory.objects.filter(drs_number=i.drs_no, user=request.user).count()
+                    temp_dict["id"] = i.id
+                    temp_dict["date"] = i.date.strftime("%d-%b-%Y")
+                    temp_dict["drs_no"] = i.drs_no
+                    temp_dict["deliveryboy_name"] = i.deliveryboy_name.delivery_boy_name
+                    temp_dict["total_docs"] = total_docs
+                    temp_dict["status"] = i.status
+                    drs_details_list.append(temp_dict)                         
+                return JsonResponse({"status": 1, "drs_details": drs_details_list})
+            return JsonResponse({"status": 0, "message": "DRS Not found for this date."})
+
+    return redirect("drs")
+
+# ############################## Manifest details here ###################################
+@login_required(login_url="login_auth")
 def manifest_show(request):
     today = datetime.date.today() #- timedelta(days=1)
     status = ParcelStatus.objects.get(name="OUT")    

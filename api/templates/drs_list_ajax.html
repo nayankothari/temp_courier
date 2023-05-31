@@ -53,4 +53,45 @@
         var edit_url = "{% url 'view_drs' drs_number='sid_value' %}".replace('sid_value', sid);
         window.open(edit_url, "_blank")
     });
+
+    // ########################## To search on DRS by drs number and date both #####################################
+    $("#search_by_date_btn").click(function() {
+        let search_drs_num = $("#search_drs_num").val();
+        let search_date = $("#search_date").val();
+        let token = $("input[name='csrfmiddlewaretoken']").val();
+        let search_detail = {};
+        let if_proceed = null
+        if (search_drs_num) {
+            search_detail.drs_num = search_drs_num
+            if_proceed = 1;
+        } else if (search_date) {
+            search_detail.drs_date = search_date
+            if_proceed = 1;
+        } else {
+            alert("Select Correct drs number or date to search.");
+            $("#search_drs_num").focus();
+        }
+        if (if_proceed) {
+            search_detail.csrfmiddlewaretoken = token;
+            $.ajax({
+                url: "{% url 'search_drs_by_num_date' %}",
+                type: "POST",
+                data: search_detail,
+                success: function(response) {
+                    if (response.status == 1) {
+                        var data = response.drs_details;
+                        console.log(data);
+                        var table_data = "";
+                        for (i = 0; i < data.length; i++) {
+                            table_data += "<tr><td>" + data[i].date + "</td><td>" + data[i].drs_no + "</td><td>" + data[i].deliveryboy_name + "</td><td>" + data[i].total_docs + "</td><td>" + data[i].status + "</td><td><button type='button' id='view_button' class='border-0 bg-transparent text-primary viewButton' data-sid=" + data[i].drs_no + " title='View DRS'><i class='bi bi-eye'></i></button></td></tr>"
+                        }
+                        $("#tbody3").html(table_data);
+                    } else {
+                        alert(response.message);
+                    };
+                }
+            });
+
+        }
+    });
 </script>

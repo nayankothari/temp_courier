@@ -77,7 +77,7 @@
 
                 </div>
             </div>
-
+            <!-- This section contain today's generated DRS details -->
             <div class="card mt-4">
                 <div class="card-header">
                     Today's generated DRS
@@ -109,6 +109,48 @@
                                         {% endif %}
                                     </tr>
                                     {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% csrf_token %}
+            <div class="row mt-3 justify-content-lg-center">
+                <h5 class="text-center alert alert-light text-black">Search Updated DRS</h5>
+                <div class="col-md-3">
+                    <label for="search_drs_num"><b>DRS Number</b></label>
+                    <input type="text" name="search_drs_num" id="search_drs_num" class="form-control">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="search_date"><b>Date</b></label>
+                    <input type="date" name="search_date" id="search_date" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <input type="button" id="search_by_date_btn" value="Search" class="mt-4 btn btn-success">
+                </div>
+
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">
+                    DRS List
+                </div>
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="scrollme">
+                            <table class="table table-striped table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>DRS No.</th>
+                                        <th>Delivery boy</th>
+                                        <th>Qty</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody3">
                                 </tbody>
                             </table>
                         </div>
