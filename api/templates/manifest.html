@@ -27,7 +27,7 @@
                                     <td>{{ mf.d_to__name }}</td>
                                     <td>{{ mf.child_count }}</td>
                                     <td>
-                                        <button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid="{{ mf.d_to__id }}/{{ mf.date_substr }}" title="Print DRS"><i class="bi bi-printer"></i></button>
+                                        <button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid="{{ mf.d_to__id }}/{{ mf.date_substr }}" title="Print Manifest"><i class="bi bi-printer"></i></button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -77,5 +77,4 @@
         </div>
     </div>
 </div>
-
-{% endblock content %}
+{% include 'manifest_ajax.html' %} {% endblock content %}

@@ -1,0 +1,34 @@
+<script>
+    $("#search_by_date_btn").click(function() {
+        let date = $("#search_date").val();
+        let token = $("input[name='csrfmiddlewaretoken']").val();
+        let date_data = {
+            "date": date,
+            "csrfmiddlewaretoken": token
+        }
+        if (date) {
+            let table_output = "";
+            $.ajax({
+                url: "{% url 'search_manifest' %}",
+                type: "POST",
+                data: date_data,
+                success: function(response) {
+                    if (response.status == 1) {
+                        new_data = response.data;
+                        var counter = 1;
+                        for (i = 0; i < new_data.length; i++) {
+                            table_output += "<tr><td>" + counter + "</td><td>" + new_data[i].date_substr + "</td><td>" + new_data[i].d_to__name + "</td><td>" + new_data[i].child_count + "</td><td> <button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid=" + new_data[i].d_to__id + "/" + new_data[i].date_substr + " title='Print Manifest'><i class='bi bi-printer'></i></button></td></tr>";
+                            counter++;
+                        }
+                        $("#tbody3").html(table_output);
+                    } else {
+                        alert(response.message);
+                    };
+                }
+            });
+
+        } else {
+            alert("Select correct date");
+        }
+    })
+</script>

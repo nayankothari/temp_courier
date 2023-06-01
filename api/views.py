@@ -1070,4 +1070,17 @@ def manifest_show(request):
     return render(request, "manifest.html", context={"details": data})
 
 
+@login_required(login_url="login_auth")
+def search_manifest(request):
+    if request.method == "POST":
+        date = request.POST.get("date")
+        date = datetime.datetime.strptime(date, "%Y-%m-%d")
+        next_date = date + timedelta(days=1)        
+        status = ParcelStatus.objects.get(name="OUT")    
+        data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__range=[date, next_date]).annotate(date_substr=Substr('in_out_datetime', 1, 10)).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")        
+        if data.exists():            
+            return JsonResponse({"status": 1, "data": list(data)})
+        return JsonResponse({"status": 0, "message": "Manifest not found for selected date."})
+    return JsonResponse({"status": 0, "message": "Get method is not allowed."})
+
 
