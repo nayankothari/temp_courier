@@ -21,6 +21,7 @@ from .models import contactus, Token, BranchNetwork, Destination
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
+from .models import CNoteGenerator
 
 
 log = logging.getLogger(__name__)
@@ -108,7 +109,7 @@ def tracking(request, tracking_number):
 
         return redirect("home")        
     except Exception as e:   
-        print(e)                    
+        log.exception(e)              
         return redirect("home")
 
 
@@ -418,7 +419,7 @@ def edit_party_details(request):
              "opening_balance": data.opening_balance}
             return JsonResponse({"status": 1, "data": data})
         except Exception as e:
-            print(e)
+            log.exception(e)
             return JsonResponse({"status": 0})
 
 
@@ -433,7 +434,7 @@ def delete_party_detail(request):
         return JsonResponse({"status": 1, "data": list(data), "total_parties": total_parties})
 
     except Exception as e:
-        print(e)
+        log.exception(e)
 
 
 # ############################## TRACKING HISTORY IN start ##########################################
@@ -486,8 +487,7 @@ def save_input_load(request):
                 except Exception as e:                    
                     return JsonResponse({"status": 0, "message": "User destination Not found."}) 
             except:
-                return JsonResponse({"status": 0, "message": "Status Not found."})            
-        
+                return JsonResponse({"status": 0, "message": "Status Not found."})                    
         except:            
             return JsonResponse({"status": 0, "message": "C Note Number Not found."})
 
@@ -695,7 +695,7 @@ def edit_area_details(request):
             data = {"id": area_details.id, "area_name": area_details.area_name, "pincode": area_details.pincode.id}                        
             return JsonResponse({"status": 1, "data": data})
         except Exception as e:
-            print(e)
+            log.exception(e)  
 
     return JsonResponse({"status": 0})
 
@@ -712,7 +712,7 @@ def delete_area_detail(request):
 
             return JsonResponse({"status": 1, "data": list(area_details), "total_areas": total_areas})
         except Exception as e:
-            print(e)
+            log.exception(e)  
         
         return JsonResponse({"status": 0})
 
@@ -764,7 +764,7 @@ def edit_delivery_boy_details(request):
                     "alternate_number": data.alternate_number, "email": data.email, "area_name": data.area_name.area_name, "area_id": data.area_name.id}                                    
             return JsonResponse({"status": 1, "data": data})
         except Exception as e:
-            print(e)
+            log.exception(e)  
     return JsonResponse({"status": 0})
 
 
@@ -780,7 +780,7 @@ def delete_delivery_boy_detail(request):
             data = {"total_boys": total_boys, "delivery_boys": list(delivery_boys)}
             return JsonResponse({"status": 1, "data": data})
         except Exception as e:
-            print(e)
+            log.exception(e)  
         return JsonResponse({"status": 0})
 
 
@@ -844,7 +844,7 @@ def edit_drs_details(request, drs_number):
         else:
             return redirect("drs")    
     except Exception as e:
-        print(e)
+        log.exception(e)  
         return redirect("drs")
 
 @login_required(login_url="login_auth")
@@ -971,7 +971,7 @@ def upload_drs(request, drs_number):
         else:
             return redirect("drs")
     except Exception as e:
-        print(e)
+        log.exception(e)  
         return redirect("drs")
 
 
@@ -1012,7 +1012,7 @@ def print_drs(request, drs_number):
         return render(request, "drs_print.html", context={"drs_heaser": drs_header, "drs_history": drs_transaction, "address": address})
     
     except Exception as e:
-        print(e)
+        log.exception(e)  
         return redirect("drs")
 
 @login_required(login_url="login_auth")
@@ -1023,7 +1023,8 @@ def view_drs(request, drs_number):
             drs_history = DrsTransactionHistory.objects.filter(user=request.user, drs_number=drs_number)            
             return render(request, "drs_view.html", context={"header": drs_details, "history": drs_history}) 
         return redirect("drs")
-    except Exception as e:        
+    except Exception as e:      
+        log.exception(e)    
         return redirect("drs")
 
 @login_required(login_url="login_auth")
@@ -1091,4 +1092,21 @@ def search_manifest(request):
 
 @login_required(login_url="login_auth")
 def c_note_master(request):
-    return render(request, "c_note_master.html")
+    log.info("Request for C Note Number by {}".format(request.user))
+    user_details = UserAdditionalDetails.objects.get(user=request.user)
+    last_number = CNoteGenerator.objects.aggregate(max_value=Max("to_range"))["max_value"]
+    if not last_number:
+        last_number = 2121110    
+    from_range = last_number + 1
+    to_range = from_range + 100
+    last_50_records = CNoteGenerator.objects.order_by('-created_at')[:50]
+    users = User.objects.all()    
+    # print(i.id, i.username)
+    context= {
+        "last_number": last_number,
+        "from_range": from_range,
+        "to_range": to_range,
+        "last_50_records": last_50_records,
+        "users": users
+    }
+    return render(request, "c_note_master.html", context=context)

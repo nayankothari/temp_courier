@@ -107,6 +107,9 @@
                         <li><a class="dropdown-item" href="{% url 'area_master' %}">Area Master</a></li>
                         <li><a class="dropdown-item" href="{% url 'delivery_boy_master' %}">Delivery boy Master</a></li>
                         {% if user.is_superuser %}
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="{% url 'c_note_master' %}">C Note Master</a></li>
                         {% endif %}
                     </ul>

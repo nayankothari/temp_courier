@@ -11,57 +11,34 @@
                     <form action="" method="post">
                         {% csrf_token %}
                         <div class="row justify-content-center">
+                            <label for="">Last C. Note number Issued: <b>{{ last_number }}</b></label><br><br>
                             <div class="col-md-4">
-                                <label for="datetime"><b>DRS Date</b>
+                                <label for="from_range"><b>From</b>
                                     <span class="red_color">*</span>
                                 </label>
-                                <input type="date" id="datetime" name="datetime" class="form-control" name="date-field" />
+                                <input type="number" id="from_range" name="fron_range" class="form-control" value="{{ from_range }}" disabled />
                             </div>
                             <div class="col-md-4">
-                                <label for="area_name"><b>Area Name</b>
+                                <label for="to_range"><b>To</b>
                                     <span class="red_color">*</span>
                                 </label>
-                                <select class="form-select control-label" name="area_name" id="area_name" aria-label="Area Name" required>            
-                                    {% for area in area_names %}
-                                    <option value="{{ area.id }}">{{ area.area_name }}</option>            
-                                    {% endfor %}
-                                </select>
+                                <input type="number" id="to_range" name="to_range" class="form-control" value="{{ to_range }}" />
                             </div>
-                            <div class="col-md-4">
-                                <label for="delivery_boy"><b>Delivery boy</b>
+                            <div class="col-md-3">
+                                <label for="delivery_boy"><b>User</b>
                                     <span class="red_color">*</span>
                                 </label>
                                 <select class="form-select control-label" name="delivery_boy" id="delivery_boy" aria-label="Area Name" required>            
-                                    {% for boy in delivery_boy %}
-                                    <option value="{{ boy.id }}">{{ boy.delivery_boy_name }}</option>
+                                    {% for user in users %}
+                                    <option value="{{ user.id }}">{{ user.username }}</option>
                                     {% endfor %}
                                 </select>
-
+                            </div>
+                            <div class="col-md-1 text-center">
+                                <button type="button" class="btn btn-success mt-4" id="save_c_note">Save</button>
                             </div>
                         </div>
-                        <br>
-                        <div class="row mt-2">
-                            <div class="col-md-4">
-                                <label for="docket_number"><b>Docket No.</b></label>
-                                <input type="text" name="docket_number" id="docket_number" class="form-control">
-                            </div>
 
-                            <div class="col-md-4">
-                                <label for="origin"><b>Origin:</b></label>
-                                <select class="form-select control-label" id="origin" name="origin">
-                                    {% for des in origins %}
-                                    <option value="{{ des.id }}">{{ des.name }}</option>      
-                                    {% endfor %}              
-                                </select>
-                            </div>
-                            <div class="col-md-4 form-group align-self-center">
-                                <label for="con_name"><b>Consignee Name</b></label>
-                                <input type="text" name="con_name" id="con_name" class="form-control">
-                            </div>
-                            <!-- <div class="col-md-1 text-center mt-4">
-                                <button type="button" class="btn btn-primary">Add</button>
-                            </div> -->
-                        </div>
                     </form>
                 </div>
             </div>
@@ -71,16 +48,17 @@
         <div class="card mt-4">
             <div class="col-12">
                 <div class="card-header">
-                    DRS Details
-                </div>
+                    C. Note master details </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table" id="DrsTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">Docket No.</th>
-                                    <th scope="col">Origin</th>
-                                    <th scope="col">Consignee Name</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Destination</th>
+                                    <th scope="col">From</th>
+                                    <th scope="col">To</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -92,10 +70,5 @@
             </div>
         </div>
     </div>
-    <div class="row mt-3 justify-content-center">
-        <div class="col-12 text-center mb-3">
-            <button type="button" class="btn btn-success" id="save_drs">Save</button>
-        </div>
-    </div>
 </div>
-{% include 'drs_ajax.html' %} {% endblock content %}
+{% include 'c_note_ajax.html' %} {% endblock content %}
