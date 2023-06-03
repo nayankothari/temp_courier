@@ -13,7 +13,7 @@ from .views import advance_search_by_date, advance_search_by_c_note, advance_sea
 from .views import save_input_load, load_in_delete, advance_search_load_in_by_date, view_drs
 from .views import area_master, save_area_master, edit_area_details, delete_area_detail
 from .views import delete_delivery_boy_detail, drs, generate_drs, doc_num_from_booking_to_drs
-from .views import manifest_show, search_drs_by_num_date, search_manifest
+from .views import manifest_show, search_drs_by_num_date, search_manifest, c_note_master
 
 urlpatterns = [    
     path(r"", home, name="home"),
@@ -71,5 +71,6 @@ urlpatterns = [
     path(r"manifest_show", manifest_show, name="manifest_show"),
     path(r"search_drs_by_num_date", search_drs_by_num_date, name="search_drs_by_num_date"),
     path(r"search_manifest", search_manifest, name="search_manifest"),
+    path(r"c_note_master", c_note_master, name="c_note_master"),
 ]
 

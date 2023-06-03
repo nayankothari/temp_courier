@@ -3,6 +3,7 @@ Some of basic django imports that help to render and filter data from database.
 """
 import ast
 import base64
+import logging
 import requests
 import datetime
 from .models import Reasons
@@ -21,6 +22,8 @@ from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
 
+
+log = logging.getLogger(__name__)
 
 today_date = datetime.datetime.now().strftime("%Y")
 # Create your views here.
@@ -221,11 +224,13 @@ def bookings(request):
     parties = PartyAccounts.objects.filter(user=request.user)
     today_date = datetime.date.today()    
     today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
+    from_destination = UserAdditionalDetails.objects.get(user=request.user)        
     context = {"destinations": destinations, 
                "ref_courier_name": ref_courier_name,
                "parties": parties, "today_bookings": today_bookings,
                "booking_type": booking_type,
-               "total_bookings": len(today_bookings)}                
+               "total_bookings": len(today_bookings), 
+               "from_destination": from_destination}                
     return render(request, "bookings.html", context=context)
 
 
@@ -1084,3 +1089,6 @@ def search_manifest(request):
     return JsonResponse({"status": 0, "message": "Get method is not allowed."})
 
 
+@login_required(login_url="login_auth")
+def c_note_master(request):
+    return render(request, "c_note_master.html")

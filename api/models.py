@@ -284,3 +284,18 @@ class DrsTransactionHistory(models.Model):
     
     def __str__(self):
         return self.docket_number
+
+
+class CNoteGenerator(models.Model):    
+    from_range = models.BigIntegerField(blank=False, null=True)
+    to_range = models.BigIntegerField(blank=False, null=True)
+    user = models.ForeignKey(User, models.CASCADE, blank=False, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)    
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "C Note Number Generator"
+    
+    def __str__(self):
+        return str(self.from_range) + " To " + str(self.to_range)
+    
