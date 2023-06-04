@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row mt-4">
         <div class="col-12">
-            <h4 class="text-center mt-5"></h4>
+            <h4 class="text-center"></h4>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <!-- <thead>
@@ -58,14 +58,14 @@
 <!-- For internal tracking Details -->
 
 <div class="container">
-    <div class="row">
+    <div class="row mt-2">
         {% if booking_details.ref_courier_name.type == 'Internal' %}
         <div class="col-12">
             <div class="scrollme">
                 <table class="table table-striped table-responsive">
                     <tbody>
                         <tr>
-                            <th class="tracking_head" colspan="5">Tracking Details</th>
+                            <th class="tracking_head" colspan="5">Tracking history</th>
                         </tr>
                         <tr>
                             <th>Date</th>
@@ -78,7 +78,11 @@
                         {% for track_his in tracking_history %}
                         <tr>
                             <td>{{ track_his.in_out_datetime|date:"Y-m-d" }}</td>
+                            {% if track_his.status.name == 'IN' %}
+                            <td></td>
+                            {% else %}
                             <td>{{ track_his.d_from }}</td>
+                            {% endif %}
                             <td>{{ track_his.d_to }}</td>
                             <td>{{ track_his.status }}</td>
                             {% if track_his.remarks %}
@@ -93,7 +97,7 @@
                             <td>{{ track_his.d_from }}</td>
                             <td>{{ track_his.d_to }}</td>
                             {% if user.is_authenticated %}
-                            <td><b>{{ status }} | Delivery Boy: {{ dbd.delivery_boy_name }}, Number: {{ dbd.mobile_number }}</b></td>
+                            <td><b>{{ status }} | Delivery boy: {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
                             {% else %}
                             <td><b>{{ status }}</b></td>
                             {% endif %} {% if reason %}
@@ -140,7 +144,7 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 text-center mb-3 mt-3">
-                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-primary">Back to Tracking Page</button></a>
+                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-primary">Back to Home</button></a>
                 </div>
             </div>
         </div>

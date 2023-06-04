@@ -50,7 +50,7 @@ def tracking(request, tracking_number):
                 # print(booking_details.c_note_number, booking_details.from_destination,
                 # booking_details.to_destination, booking_details.doc_date.strftime("%d-%b-%Y %H:%M %p"), booking_details.receiver_name)                                    
                 if_drs = None
-                last_status = "Shipment information sent to Airpost Xpress"
+                last_status = "Shipment Booked by Airpost xpress"
                 if tracking_history.exists():                    
                     last_status = str(tracking_history[0].status) + " - " + str(tracking_history[0].d_to)
 
@@ -211,8 +211,14 @@ def login_auth(request):
         password = request.POST.get("password")
         user = auth.authenticate(username=user_name, password=password)
         if user:
-            auth.login(request, user)
-            return redirect("dashboard")
+            license_exp_date = UserAdditionalDetails.objects.get(user=user).licence_expire_date
+            remaining_time = (license_exp_date - datetime.datetime.now()).days            
+            if not remaining_time <= 0:
+                auth.login(request, user)
+                return redirect("dashboard")
+            
+            context = {"message": "Your license is expired, please connect with support team", "today_date": today_date}
+            return render(request, "login.html", context)
         else:
             context = {"message": "Invalid credentials !", "today_date": today_date}
             return render(request, "login.html", context)
