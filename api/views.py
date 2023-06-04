@@ -95,14 +95,17 @@ def tracking(request, tracking_number):
                 else:                    
                     final_status = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")
                     if final_status.exists():
-                        final_status = final_status[0]     
+                        final_status = final_status[0]                             
+                        delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number)
+                        delivery_boy_detail = delivery_boy_detail.deliveryboy_name                        
                         if_drs = 1                        
                         last_status = final_status.status       
                         reason = ""
                         if final_status.reason:
                             reason = final_status.reason                                            
+                        
                         return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
-                    "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, "reason": reason, "date": final_status.created_at})
+                    "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, "reason": reason, "date": final_status.created_at, "dbd": delivery_boy_detail})
                 
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
                 "last_status": last_status, "today_date": today_date, "drs_details": if_drs})   
@@ -112,6 +115,18 @@ def tracking(request, tracking_number):
         log.exception(e)              
         return redirect("home")
 
+
+def check_tracking_num(request):
+    if request.method == "POST":
+        try:
+            tracking_num = request.POST.get("tracking_num")
+            data = Booking.objects.filter(c_note_number=tracking_num)                        
+            if data.exists():
+                return JsonResponse({"status": 1})
+            return JsonResponse({"status": 0, "message": "Insert Correct docket Number"})
+        except Exception as e:
+            log.exception(e)
+    return JsonResponse({"status": 0, "message": "GET method is not allowed."})
 
 def tracking_with_selenium(request, details):
     # def start_in_thread():
@@ -238,76 +253,81 @@ def bookings(request):
 @login_required(login_url="login_auth")
 def save_booking(request):
     if request.method == "POST":        
-        update_id = request.POST.get("id")                      
         c_note_number = request.POST.get("cnotenumber")
-        existing_c_note = Booking.objects.filter(c_note_number=c_note_number)
         request.session["success"] = None
-        request.session["next_c_note"] = ""
-        party_name = request.POST.get("party")              
-        request.session["party_name"] = party_name
-        party_name = PartyAccounts.objects.get(id=party_name)    
-        booking_type = request.POST.get("bookingtype")  
-        request.session["booking_type"] = booking_type
-        booking_type = BookingType.objects.get(id=booking_type)
-        booking_datetime = request.POST.get("datetime")        
-        from_dest = request.POST.get("from_destination")
-        request.session["from_dest"] = from_dest
-        from_dest = Destination.objects.get(id=from_dest)
-        to_dest = request.POST.get("todest")
-        request.session["to_dest"] = to_dest
-        to_dest = Destination.objects.get(id=to_dest)
-        s_name = request.POST.get("s_name")
-        s_number = request.POST.get("s_number")
-        r_name = request.POST.get("r_name")
-        r_number = request.POST.get("r_number")        
-        ref_courier = request.POST.get("ref_courier")        
-        ref_courier = RefCourier.objects.get(id=ref_courier)
-        ref_number = request.POST.get("ref_number")
-        remarks = request.POST.get("remarks")
-        amount = request.POST.get("amount")
-        weight = request.POST.get("weight")
-        if not update_id:            
-            if not existing_c_note:                            
-                booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
-                c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
-                sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
-                ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, amount=amount, weight=weight)                    
+        process_further = False
+        c_note_details = CNoteGenerator.objects.filter(user=request.user)
+        for i in c_note_details:            
+            if int(i.from_range) <= int(c_note_number) <= int(i.to_range):
+                process_further = True 
+                break                            
+        if process_further:
+            update_id = request.POST.get("id")                              
+            existing_c_note = Booking.objects.filter(c_note_number=c_note_number)            
+            request.session["next_c_note"] = ""
+            party_name = request.POST.get("party")              
+            request.session["party_name"] = party_name
+            party_name = PartyAccounts.objects.get(id=party_name)    
+            booking_type = request.POST.get("bookingtype")  
+            request.session["booking_type"] = booking_type
+            booking_type = BookingType.objects.get(id=booking_type)
+            booking_datetime = request.POST.get("datetime")        
+            from_dest = request.POST.get("from_destination")
+            request.session["from_dest"] = from_dest
+            from_dest = Destination.objects.get(id=from_dest)
+            to_dest = request.POST.get("todest")
+            request.session["to_dest"] = to_dest
+            to_dest = Destination.objects.get(id=to_dest)
+            s_name = request.POST.get("s_name")
+            s_number = request.POST.get("s_number")
+            r_name = request.POST.get("r_name")
+            r_number = request.POST.get("r_number")        
+            ref_courier = request.POST.get("ref_courier")        
+            ref_courier = RefCourier.objects.get(id=ref_courier)
+            ref_number = request.POST.get("ref_number")
+            remarks = request.POST.get("remarks")
+            amount = request.POST.get("amount")
+            weight = request.POST.get("weight")
+            if not update_id:            
+                if not existing_c_note:                            
+                    booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
+                    c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
+                    sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
+                    ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, amount=amount, weight=weight)                    
+                    booking_obj.save()            
+                    request.session["success"] = "success"
+                    try:
+                        request.session["next_c_note"] = int(c_note_number) + 1
+                    except:
+                        pass
+                    messages.success(request, "Shipment booked Successfully.")
+                    return redirect("bookings")
+                else:
+                    messages.error(request, 'C Note Already exists')            
+            else:            
+                booking_obj = Booking.objects.get(id=update_id)            
+                booking_obj.doc_date = booking_datetime
+                booking_obj.party_name = party_name
+                booking_obj.booking_type = booking_type
+                booking_obj.c_note_number = c_note_number
+                booking_obj.from_destination = from_dest
+                booking_obj.to_destination = to_dest
+                booking_obj.sender_name = s_name
+                booking_obj.sender_mobile = s_number
+                booking_obj.receiver_name = r_name
+                booking_obj.receiver_mobile_number = r_number
+                booking_obj.ref_courier_name = ref_courier
+                booking_obj.ref_courier_number = ref_number 
+                booking_obj.remarks = remarks
+                booking_obj.amount = amount
+                booking_obj.weight = weight
+                booking_obj.user=request.user                    
                 booking_obj.save()            
                 request.session["success"] = "success"
-                try:
-                    request.session["next_c_note"] = int(c_note_number) + 1
-                except:
-                    pass
-                messages.success(request, "Shipment booked Successfully.")
-                return redirect("bookings")
-            else:
-                messages.error(request, 'C Note Already exists')            
-        else:            
-            booking_obj = Booking.objects.get(id=update_id)            
-            booking_obj.doc_date = booking_datetime
-            booking_obj.party_name = party_name
-            booking_obj.booking_type = booking_type
-            booking_obj.c_note_number = c_note_number
-            booking_obj.from_destination = from_dest
-            booking_obj.to_destination = to_dest
-            booking_obj.sender_name = s_name
-            booking_obj.sender_mobile = s_number
-            booking_obj.receiver_name = r_name
-            booking_obj.receiver_mobile_number = r_number
-            booking_obj.ref_courier_name = ref_courier
-            booking_obj.ref_courier_number = ref_number 
-            booking_obj.remarks = remarks
-            booking_obj.amount = amount
-            booking_obj.weight = weight
-            booking_obj.user=request.user                    
-            booking_obj.save()            
-            request.session["success"] = "success"
-            messages.success(request, "Shipment updated Successfully.")
-            return redirect("bookings")
-        # print("party_name: ", party_name, "booking_datetine:", booking_datetime,
-        # "c_note_number: ", c_note_number, "from_dest: ", from_dest,
-        # "To_dest: ", to_dest, "s_name: ", s_name, "s_number: ", s_number, "r_name: ", r_name, 
-        # "r_number: ", r_number, "ref_courier: ", ref_courier, "ref_numbe: ", ref_number)                
+                messages.success(request, "Shipment updated Successfully.")
+                return redirect("bookings")                       
+        else:
+            messages.success(request, "Invalid C. Note number")
     return redirect("bookings")
 
 @login_required(login_url="login_auth")
@@ -1090,6 +1110,8 @@ def search_manifest(request):
     return JsonResponse({"status": 0, "message": "Get method is not allowed."})
 
 
+# ######################################## C Note Details for admi use only #################################
+
 @login_required(login_url="login_auth")
 def c_note_master(request):
     log.info("Request for C Note Number by {}".format(request.user))
@@ -1098,7 +1120,7 @@ def c_note_master(request):
     if not last_number:
         last_number = 2121110    
     from_range = last_number + 1
-    to_range = from_range + 100
+    to_range = from_range + 99
     last_50_records = CNoteGenerator.objects.order_by('-created_at')[:50]
     users = User.objects.all()    
     # print(i.id, i.username)
@@ -1110,3 +1132,32 @@ def c_note_master(request):
         "users": users
     }
     return render(request, "c_note_master.html", context=context)
+
+@login_required(login_url="login_auth")
+def save_c_note_number(request):
+    if request.method == "POST":
+        try:
+            user = request.POST.get("user")
+            from_range = request.POST.get("from_range")
+            to_range = request.POST.get("to_range")
+            result = int(to_range) - int(from_range)
+            if result >= 1:                        
+                user = User.objects.get(id=user)                        
+                CNoteGenerator(from_range=from_range, to_range=to_range, user=user).save()
+                return JsonResponse({"status":1})            
+            return JsonResponse({"status": 0, "message": "C. Note Number can't be less than last assign number"})        
+        except Exception as e:
+            log.exception(e)
+    return JsonResponse({"status": 0})
+
+@login_required(login_url="login_auth")
+def delete_c_note_details(request):
+    if request.method == "POST":
+        try:
+            sid = request.POST.get("sid")
+            CNoteGenerator.objects.get(id=sid).delete()            
+            return JsonResponse({"status": 1})
+        except Exception as e:
+            log.exception(e)
+    return JsonResponse({"status": 0})
+

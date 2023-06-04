@@ -92,8 +92,11 @@
                             <td>{{ date|date:"Y-m-d" }}</td>
                             <td>{{ track_his.d_from }}</td>
                             <td>{{ track_his.d_to }}</td>
+                            {% if user.is_authenticated %}
+                            <td><b>{{ status }} | Delivery Boy: {{ dbd.delivery_boy_name }}, Number: {{ dbd.mobile_number }}</b></td>
+                            {% else %}
                             <td><b>{{ status }}</b></td>
-                            {% if reason %}
+                            {% endif %} {% if reason %}
                             <td>{{ reason }}</td>
                             {% else %}
                             <td>{{ reason }}</td>

@@ -14,11 +14,13 @@ from .views import save_input_load, load_in_delete, advance_search_load_in_by_da
 from .views import area_master, save_area_master, edit_area_details, delete_area_detail
 from .views import delete_delivery_boy_detail, drs, generate_drs, doc_num_from_booking_to_drs
 from .views import manifest_show, search_drs_by_num_date, search_manifest, c_note_master
+from .views import save_c_note_number, delete_c_note_details, check_tracking_num
 
 urlpatterns = [    
     path(r"", home, name="home"),
     path(r"tracking/", home, name="only_tracking"),
     path(r"tracking/<str:tracking_number>", tracking, name="tracking_page"),    
+    path(r"check_tracking_num", check_tracking_num, name="check_tracking_num"),
     path(r"tracking/track_internal/<str:details>", tracking_with_selenium),    
     path(r"contact_us", contactUs, name="ContactUS"),    
     path(r"network", network, name="network"),
@@ -72,5 +74,7 @@ urlpatterns = [
     path(r"search_drs_by_num_date", search_drs_by_num_date, name="search_drs_by_num_date"),
     path(r"search_manifest", search_manifest, name="search_manifest"),
     path(r"c_note_master", c_note_master, name="c_note_master"),
+    path(r"save_c_note_number", save_c_note_number, name="save_c_note_number"),
+    path(r"delete_c_note_details", delete_c_note_details, name="delete_c_note_details")
 ]
 

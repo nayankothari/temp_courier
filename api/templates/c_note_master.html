@@ -1,6 +1,28 @@
 {% extends 'base.html' %}{% block title %}C.Note Master{% endblock title %}{% load static %}{% block content %}
 
 <div class="container back_color">
+    <div class="modal" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form id="delete_btn_form">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="card mt-4">
             <div class="col-12">
@@ -25,10 +47,10 @@
                                 <input type="number" id="to_range" name="to_range" class="form-control" value="{{ to_range }}" />
                             </div>
                             <div class="col-md-3">
-                                <label for="delivery_boy"><b>User</b>
+                                <label for="user"><b>User</b>
                                     <span class="red_color">*</span>
                                 </label>
-                                <select class="form-select control-label" name="delivery_boy" id="delivery_boy" aria-label="Area Name" required>            
+                                <select class="form-select control-label" name="user" id="user" aria-label="Area Name" required>            
                                     {% for user in users %}
                                     <option value="{{ user.id }}">{{ user.username }}</option>
                                     {% endfor %}
@@ -56,13 +78,24 @@
                                 <tr>
                                     <th scope="col">Date</th>
                                     <th scope="col">User</th>
-                                    <th scope="col">Destination</th>
+                                    <!-- <th scope="col">Destination</th> -->
                                     <th scope="col">From</th>
                                     <th scope="col">To</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody">
+                                {% for detail in last_50_records %}
+                                <tr>
+                                    <td>{{ detail.created_at|date:'Y-m-d' }}</td>
+                                    <td>{{ detail.user.username }}</td>
+                                    <td>{{ detail.from_range }}</td>
+                                    <td>{{ detail.to_range }}</td>
+                                    <td>
+                                        <button type='button' id='delete_button' class='border-0 bg-transparent text-primary deleteButton' data-sid="{{ detail.id }}" title="Delete DRS" data-toggle="modal" data-target="#deleteModal"><i class="bi bi-trash3"></i></button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>

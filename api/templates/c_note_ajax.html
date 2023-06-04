@@ -1,4 +1,61 @@
 <script>
-    var input = $("#to_range")
-    input.focus().setSelectionRange(input.value.length, input.value.length);
+    // ############################### for Save c note details ############################ 
+    $("#save_c_note").click(function() {
+        token = $("input[name=csrfmiddlewaretoken]").val();
+        from_range = $("#from_range").val();
+        to_range = $("#to_range").val();
+        user = $("#user").val();
+        let result = to_range - from_range;
+        if (result <= 0) {
+            alert("C. Note Number can't be less than last assign number.")
+        } else {
+            let new_data = {
+                csrfmiddlewaretoken: token,
+                from_range: from_range,
+                to_range: to_range,
+                user: user
+            }
+            $.ajax({
+                url: "{% url 'save_c_note_number' %}",
+                method: "POST",
+                type: "json",
+                data: new_data,
+                success: function(response) {
+                    if (response.status == 1) {
+                        window.location.href = "/c_note_master";
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            })
+        }
+    });
+
+    // ########################### For delete C note details ################################
+    $("#tbody").on("click", ".deleteButton", function() {
+        let sid = $(this).attr("data-sid");
+        $("#confirmDelete").attr("data-sid", sid);
+    });
+
+    $("#confirmDelete").click(function() {
+        var sid = $(this).data("sid");
+        let token = $("input[name='csrfmiddlewaretoken']").val();
+        let json_data = {
+            sid: sid,
+            csrfmiddlewaretoken: token
+        }
+        $.ajax({
+            url: "{% url 'delete_c_note_details' %}",
+            type: "POST",
+            data: json_data,
+            success: function(response) {
+                if (response.status == 1) {
+                    window.location.href = '/c_note_master'
+                } else {
+                    alert(response.message);
+                };
+            }
+        });
+        window.location.href = '/c_note_master'
+    });
 </script>

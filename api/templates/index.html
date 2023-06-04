@@ -5,14 +5,14 @@
         <div class="col-md-4">
         </div>
         <div class="col-md-4">
-            <form method="post" action="" target="_blank">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="trackingdetails" class="form-label" id="tracking_name">TRACK YOUR SHIPMENT</label>
-                    <input type="text" class="form-control" id="trackingdetails" aria-describedby="emailHelp" name="tracking_number" required>
-                </div>
-                <button type="submit" class="btn btn-success">Track shipment</button>
-            </form>
+            <!-- <form> -->
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="trackingdetails" class="form-label" id="tracking_name">TRACK YOUR SHIPMENT</label>
+                <input type="number" class="form-control" id="trackingdetails" aria-describedby="emailHelp" name="tracking_number" required>
+            </div>
+            <button type="button" class="btn btn-success" id="tracking_btn">Track shipment</button>
+            <!-- </form> -->
         </div>
         <div class="col-md-4">
         </div>
@@ -36,10 +36,10 @@
                     </ul>
 
                 </p>
-                <!-- <img src="{% static 'img/home_img.png' %}" class="img-fluid" alt="AIRPOST XPRESS"> -->
+
             </div>
             <div class="col-md-6 mt-5">
-                <img src="{%static 'img\first_pic.jpg'%}" class="img-fluid" alt="">
+                <img src="{% static 'img\first_pic.jpg'%}" class="img-fluid" alt="">
             </div>
         </div>
     </div>
@@ -48,7 +48,7 @@
         <div class="row justify-content-around first_section">
             <div class="col-md-5">
                 <img src="{%static 'img\second_img.jpg'%}" class="img-fluid" alt="">
-                <!-- <img src="{% static 'img/home_img.png' %}" class="img-fluid" alt="AIRPOST XPRESS"> -->
+
             </div>
             <div class="scroll-animation col-md-6 mt-5">
                 <h1>Do You Want A Fast Service? Just Contact Us.</h1>
@@ -151,8 +151,8 @@
                 </button>
             </div>
             <div class="modal-body ">
-                <b>Airpost Xpress</b> never requests money for address verification, so avoid transferring money through Google Pay, Phone Pay, or any other UPI mode. Do not share confidential information like bank details, OTP, PIN, or passwords. This
-                message is issued in public interest.</p>
+                <b>Airpost Xpress</b> never requests money for address verification, Avoid transferring money through Google Pay, Phone Pay, or any other UPI mode. Do not share confidential information like bank details, OTP, PIN, or passwords. This message
+                is issued in public interest.</p>
             </div>
             <div class="modal-footer ">
                 <button type="button " class="btn btn-secondary " data-bs-dismiss="modal" aria-hidden="true">Close</button>
@@ -175,6 +175,32 @@
 <script type="text/javascript ">
     $(window).on('load', function() {
         $('#myModal').modal('show');
+    });
+
+    $("#tracking_btn").click(function() {
+        var tracking_num = $("#trackingdetails").val();
+        var token = $("input[name=csrfmiddlewaretoken]").val();
+        var new_data = {
+            csrfmiddlewaretoken: token,
+            tracking_num: tracking_num
+        }
+        console.log(tracking_num);
+        $.ajax({
+            url: "{% url 'check_tracking_num' %}",
+            method: "POST",
+            type: "json",
+            data: new_data,
+            success: function(response) {
+                if (response.status == 1) {
+                    console.log("success");
+                    new_url = "tracking/" + tracking_num
+                    window.location.href = new_url;
+                } else {
+                    alert(response.message);
+                    $("#trackingdetails").focus();
+                }
+            }
+        });
     });
 </script>
 {% endblock content %}
