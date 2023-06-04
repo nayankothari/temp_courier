@@ -194,7 +194,7 @@
                 if (response.status == 1) {
                     console.log("success");
                     new_url = "tracking/" + tracking_num
-                    window.location.href = new_url;
+                    window.open(new_url, "_blank")
                 } else {
                     alert(response.message);
                     $("#trackingdetails").focus();
