@@ -15,39 +15,75 @@
                         <tr>
                             <th scope="row" colspan="2" class="tracking_head">Booking Detail</th>
                         </tr>
+                        {% if only_and_only_drs == 1 %}
+                        <tr>
+                            <th scope="row">C.N. Number</th>
+                            <td><b>{{ c_note_number }}</b></td>
+
+                        </tr>
+                        {% else %}
                         <tr>
                             <th scope="row">C.N. Number</th>
                             <td><b>{{ booking_details.c_note_number }}</b></td>
 
                         </tr>
-                        {% if booking_details.ref_courier_name.type != 'Internal' %}
+                        {% endif %} {% if booking_details.ref_courier_name.type != 'Internal' %}
                         <tr>
                             <th scope="row">Ref. Number</th>
                             <td>{{ booking_details.ref_courier_number }}</td>
 
                         </tr>
-                        {% endif %}
+                        {% endif %} {% if only_and_only_drs == 1 %}
+                        <tr>
+                            <th scope="row">From Center</th>
+                            <td>{{ from_destination }}</td>
+                        </tr>
+                        {% else %}
                         <tr>
                             <th scope="row">From Center</th>
                             <td>{{ booking_details.from_destination }}</td>
                         </tr>
+                        {% endif %}
                         <tr>
                             <th scope="row">To Center</th>
                             <td><b>{{ booking_details.to_destination }}</b></td>
                         </tr>
+                        {% if only_and_only_drs == 1 %}
+                        <tr>
+                            <th scope="row">Date/Time</th>
+                            <td>{{ date | date:'d-m-Y' }}</td>
+                        </tr>
+                        {% else %}
                         <tr>
                             <th scope="row">Date/Time</th>
                             <td>{{ booking_details.doc_date }}</td>
                         </tr>
+                        {% endif %} {% if only_and_only_drs == 1 %}
+                        <tr>
+                            <th scope="row">Receiver name</th>
+                            <td>{{ receiver_name }}</td>
+                        </tr>
+                        {% else %}
                         <tr>
                             <th scope="row">Receiver name</th>
                             <td>{{ booking_details.receiver_name }}</td>
                         </tr>
+                        {% endif %} {% if last_status.name == 'DELIVERED' %}
+                        <tr>
+                            <th scope="row" class="text-success">Current Status</th>
+                            <td class="text-success"><b>{{ last_status }} - {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
+                        </tr>
+                        {% else %}
                         <tr>
                             <th scope="row">Current Status</th>
-                            <td><b>{{ last_status }}</b></td>
+                            <td><b>{{ last_status }} - {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
                         </tr>
-
+                        {% endif %} {% if only_and_only_drs == 1 %}
+                        <tr>
+                            <th scope="row">Remarks/Receiver</th>
+                            <td>{{ reason }}</td>
+                        </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -72,7 +108,7 @@
                             <th>From</th>
                             <th>To</th>
                             <th>Status</th>
-                            <th>Remarks</th>
+                            <th>Remarks/Receiver</th>
                         </tr>
 
                         {% for track_his in tracking_history %}

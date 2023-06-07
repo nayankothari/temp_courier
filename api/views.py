@@ -96,7 +96,7 @@ def tracking(request, tracking_number):
                     final_status = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")
                     if final_status.exists():
                         final_status = final_status[0]                             
-                        delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number)
+                        delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
                         delivery_boy_detail = delivery_boy_detail.deliveryboy_name                        
                         if_drs = 1                        
                         last_status = final_status.status       
@@ -109,6 +109,25 @@ def tracking(request, tracking_number):
                 
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
                 "last_status": last_status, "today_date": today_date, "drs_details": if_drs})   
+            
+            else: # use for internal drs tracking
+                if request.user.is_authenticated:
+                    drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_number).order_by("-created_at")                    
+                    if drs_obj.exists():
+                        if_drs = 1    
+                        only_and_only_drs = 1 
+                        final_status = drs_obj[0]                             
+                        delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
+                        delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
+                        last_status = final_status.status                               
+                        reason = ""                        
+                        if final_status.reason:
+                            reason = final_status.reason
+                        return render(request, "tracking.html", {"tracking_history": [],
+                    "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
+                    "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
+                     "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
+                     "dbd": delivery_boy_detail})
 
         return redirect("home")        
     except Exception as e:   
@@ -123,6 +142,11 @@ def check_tracking_num(request):
             data = Booking.objects.filter(c_note_number=tracking_num)                        
             if data.exists():
                 return JsonResponse({"status": 1})
+            elif request.user.is_authenticated:
+                drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_num).order_by("-created_at")
+                if drs_obj.exists():
+                    return JsonResponse({"status": 1})                            
+
             return JsonResponse({"status": 0, "message": "Insert Correct docket Number"})
         except Exception as e:
             log.exception(e)
