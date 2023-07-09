@@ -99,6 +99,17 @@ class RefCourier(models.Model):
     def __str__(self):
         return self.name
     
+
+class GstModel(models.Model):
+    gst_name = models.CharField(max_length=50, null=True, blank=False)
+    gst_rate = models.FloatField()
+
+    class Meta:
+        verbose_name_plural = "Gst Details"
+    
+    def __str__(self):
+        return self.tax_name
+
 class BookingType(models.Model):
     booking_type = models.CharField(max_length=256, null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
@@ -127,9 +138,31 @@ class Booking(models.Model):
     weight = models.FloatField(blank=True, null=True)
     amount = models.FloatField(blank=True, null=True)
     remarks = models.TextField(max_length=550, blank=True, null=True)
+    # New columns are added forom here.
+    sender_address = models.TextField(max_length=500, blank=True, null=True, default="")
+    receiver_address = models.TextField(max_length=500, blank=True, null=True, default="")
+    pcs = models.FloatField(default=1, blank=True, null=True)
+    charged_weight = models.FloatField(default=0, blank=True, null=True)    
+    declared_value = models.FloatField(default=0, blank=True, null=True)
+    freight_charge = models.FloatField(default=0, blank=True, null=True)
+    pod_charge = models.FloatField(default=0, blank=True, null=True)
+    spl_del_charge = models.FloatField(default=0, blank=True, null=True)
+    insurance_amt = models.FloatField(default=0, blank=True, null=True)
+    insurance_per = models.FloatField(default=0, blank=True, null=True)
+    gst_rate = models.ForeignKey(GstModel, on_delete=models.PROTECT, null=True, blank=True)    
+    gst_amount = models.IntegerField(null=True, blank=True)
+    gst_number = models.CharField(max_length=20, null=True, blank=True)
+    c_i_gst = models.BooleanField(null=True, blank=True, default=False) # False is c gst
+    payment_mode = models.CharField(null=True, blank=True, max_length=15)
+    e_way_bill_number = models.CharField(null=True, blank=True, max_length=30)
+    state = models.ForeignKey(State, null=True, blank=True, on_delete=models.PROTECT)
+    pincode = models.BigIntegerField(null=True, blank=True)
+    # Default fields
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    
     
     class Meta:
         verbose_name_plural = "Booking"
@@ -201,6 +234,7 @@ class UserAdditionalDetails(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     alias = models.CharField(max_length=256, null=True, blank=True)
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE, null=True)
+    gst_number = models.CharField(max_length=25, null=True, blank=True)
     is_active = models.BooleanField(null=True, blank=False, default=True)
     purchase_date = models.DateTimeField(default=datetime.now)    
     licence_expire_date = models.DateTimeField(default=new_date)

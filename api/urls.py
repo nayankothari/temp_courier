@@ -15,6 +15,8 @@ from .views import area_master, save_area_master, edit_area_details, delete_area
 from .views import delete_delivery_boy_detail, drs, generate_drs, doc_num_from_booking_to_drs
 from .views import manifest_show, search_drs_by_num_date, search_manifest, c_note_master
 from .views import save_c_note_number, delete_c_note_details, check_tracking_num
+from .views import booking_dashboard, cash_booking
+
 
 urlpatterns = [    
     path(r"", home, name="home"),
@@ -29,12 +31,17 @@ urlpatterns = [
     path(r"login_auth", login_auth, name="login_auth"),
     path(r"logout", logout, name="logout"),
     path(r"dashboard", dashboard, name="dashboard"),
+
     path(r"bookings", bookings, name="bookings"),    
     path(r"save_booking", save_booking, name="save_booking"), 
     path(r"edit_data_retrive", edit_data_retrive, name="edit_data_retrive"),     
     path(r"advance_search_by_date", advance_search_by_date, name="advance_search_by_date"),
     path(r"advance_search_by_c_note", advance_search_by_c_note, name="advance_search_by_c_note"),    
     path(r"advance_search_for_ref_number", advance_search_for_ref_number, name="advance_search_for_ref_number"),
+    
+    path(r"booking_dashboard", booking_dashboard, name="booking_dashboard"),
+    path(r"cash_booking", cash_booking, name="cash_booking"),
+
     path(r"part_master", part_master, name="part_master"),    
     path(r"save_parties", save_parties, name="save_parties"),        
     path(r"edit_party_details", edit_party_details, name="edit_party_details"),        

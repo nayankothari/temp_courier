@@ -1,0 +1,269 @@
+{% extends 'base.html' %}{% block title %}Cash Booking{% endblock title %}{% load static %}{% block content %}
+
+
+<div class="container back_color">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-2 mb-2">
+                <div class="card-header">
+                    Cash Booking
+                </div>
+                <div class="card-body">
+                    <!-- Header Details -->
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="c_note_no"><b>C Note No.</b></label>
+                                <span class="red_color">*</span>
+                                <input type="number" class="form-control form-control-sm" id="c_note_no" name="c_note_no">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="booking_type"><b>Booking Type</b>
+                                <span class="red_color">*</span>
+                            </label>
+                            <select class="form-select control-label form-select-sm" name="booking_type" id="booking_type" aria-label="Booking Type" required>                                                
+                                    <option value="1">Surface</option>                                                
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="datetime"><b>Booking Date</b>
+                                <span class="red_color">*</span>
+                            </label>
+                            <input type="date" id="datetime" name="datetime" class="form-control form-control-sm" name="booking_date" />
+                        </div>
+                        <div class="col-md-2">
+                            <label for="payment_mode"><b>Payment Mode</b>
+                                <span class="red_color">*</span>
+                            </label>
+                            <select class="form-select control-label form-select-sm" name="payment_mode" id="payment_mode" aria-label="Payment Mode" required>                                                
+                                <option selected value="Cash">Cash</option>
+                                <option value="Credit">Credit</option>
+                                <option value="To Pay">To Pay</option>
+                                                                                                            
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="ref_courier_name"><b>Ref. Courier Name</b>
+                                <span class="red_color">*</span>
+                            </label>
+                            <select class="form-select control-label form-select-sm" name="ref_courier_name" id="ref_courier_name" aria-label="Ref. Courier Name" required>                                                
+                                    <option value="1">Airpost Xpress</option>                                                
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="ref_number"><b>Ref Number</b></label>
+                                <input type="text" class="form-control form-control-sm" id="ref_number" name="ref_number">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <!-- Sender Details -->
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="sender_name"><b>Sender Name</b></label>
+                                        <input type="text" class="form-control form-control-sm" id="sender_name" name="sender_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="sender_mobile"><b>Mobile</b></label>
+                                        <span class="red_color">*</span>
+                                        <input type="text" class="form-control form-control-sm" id="sender_mobile" name="sender_mobile">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="sender_address"><b>Address</b></label>
+                                        <input type="text" class="form-control form-control-sm" id="sender_address" name="sender_address">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="from_destination"><b>From Destination</b>
+                                        <span class="red_color">*</span>
+                                    </label>
+                                    <select class="form-select control-label form-select-sm" name="from_destination" id="from_destination" aria-label="From Destination" required>                                                
+                                            <option value="1">Bikaner</option>                                                
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="gst_number"><b>GST Number</b></label>
+                                        <input type="text" class="form-control form-control-sm" id="gst_number" name="gst_number">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="sender_mobile"><b>E Way Bill Number</b></label>
+                                        <input type="text" class="form-control form-control-sm" id="sender_mobile" name="sender_mobile">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Receiver details -->
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="receiver_name"><b>Receiver Name</b></label>
+                                        <input type="text" class="form-control form-control-sm" id="receiver_name" name="receiver_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="receiver_mobile"><b>Mobile</b></label>
+                                        <span class="red_color">*</span>
+                                        <input type="text" class="form-control form-control-sm" id="receiver_mobile" name="receiver_mobile">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="receiver_address"><b>Address</b></label>
+                                        <input type="text" class="form-control form-control-sm" id="receiver_address" name="receiver_address">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="to_destination"><b>To Destination</b>
+                                        <span class="red_color">*</span>
+                                    </label>
+                                    <select class="form-select control-label form-select-sm" name="to_destination" id="to_destination" aria-label="To Destination" required>                                                
+                                            <option value="1">Jaipur</option>                                                
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="pincode"><b>Pincode</b></label>
+                                        <input type="text" class="form-control form-control-sm" id="pincode" name="pincode">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="state"><b>State</b>
+                                        <span class="red_color">*</span>
+                                    </label>
+                                    <select class="form-select control-label form-select-sm" name="state" id="state" aria-label="State" required>                                                
+                                            <option value="1">RAJASTHAN</option>                                                
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Rest details for calculations -->
+                    <div class="row">
+                        <!-- First line -->
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="qty"><b>No. of Pcs.</b></label>
+                                <input type="number" class="form-control form-control-sm" id="qty" name="qty" value="1">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="actual_weight"><b>Actual W. (gms)</b></label>
+                                <input type="number" class="form-control form-control-sm" id="actual_weight" name="actual_weight" value="100">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="charged_weight"><b>Charged W. (gms)</b></label>
+                                <input type="number" class="form-control form-control-sm" id="charged_weight" name="charged_weight" value="100">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="declare_value"><b>Declared value</b></label>
+                                <input type="number" class="form-control form-control-sm" id="declare_value" name="declare_value" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="freight_charge"><b>Freight charge</b></label>
+                                <input type="number" class="form-control form-control-sm" id="freight_charge" name="freight_charge" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="pod_charge"><b>POD Charge</b></label>
+                                <input type="number" class="form-control form-control-sm" id="pod_charge" name="pod_charge" value="0">
+                            </div>
+                        </div>
+
+
+                        <!-- Second line -->
+                        <div class="col-md-2 mt-2">
+                            <div class="form-group">
+                                <label for="spcl_del_charge"><b>Spcl Del. charge</b></label>
+                                <input type="number" class="form-control form-control-sm" id="spcl_del_charge" name="spcl_del_charge" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-2">
+                            <div class="form-group">
+                                <label for="insurance_percentage"><b>Insurance %</b></label>
+                                <input type="number" class="form-control form-control-sm" id="insurance_percentage" name="insurance_percentage" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-2">
+                            <div class="form-group">
+                                <label for="insurance_amount"><b>Insurance Amount</b></label>
+                                <input type="number" class="form-control form-control-sm" id="insurance_amount" name="insurance_amount" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-2">
+                            <label for="gst_rate"><b>GST Rate</b>
+                                <span class="red_color">*</span>
+                            </label>
+                            <select class="form-select control-label form-select-sm" name="gst_rate" id="gst_rate" aria-label="GST Rate" required>                                                
+                                    <option value="0">0%</option>                                                
+                            </select>
+                        </div>
+                        <div class="col-md-2 mt-2">
+                            <div class="form-group">
+                                <label for="gst_amount"><b>GST Amount</b></label>
+                                <input type="number" class="form-control form-control-sm" id="gst_amount" name="gst_amount" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gst_radio" id="cs_gst" value="cs_gst">
+                                <label class="form-check-label" for="cs_gst">
+                                  C+S GST
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gst_radio" id="i_gst" value="i_gst" checked>
+                                <label class="form-check-label" for="i_gst">
+                                  I GST
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Total amount and remarks -->
+                        <div class="col-md-2 mt-2">
+                            <div class="form-group">
+                                <label for="total_amount"><b>Total Amount</b></label>
+                                <input type="number" class="form-control form-control-sm" id="total_amount" name="total_amount" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <div class="form-group">
+                                <label for="remarks"><b>Remarks</b></label>
+                                <input type="text" class="form-control form-control-sm" id="remarks" name="remarks">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-4">
+                            <input type="button" class="btn btn-success" style="width: 150px;" value="Save">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -263,6 +263,16 @@ def dashboard(request):
 # ###############################3 Dashboard details #####################################
 
 @login_required(login_url="login_auth")
+def booking_dashboard(request):
+    return render(request, "booking_dashboard.html")
+
+
+@login_required(login_url="login_auth")
+def cash_booking(request):
+    return render(request, "cash_booking.html")
+
+
+@login_required(login_url="login_auth")
 def bookings(request):    
     destinations = Destination.objects.all()    
     ref_courier_name = RefCourier.objects.all()    
@@ -291,6 +301,7 @@ def save_booking(request):
             if int(i.from_range) <= int(c_note_number) <= int(i.to_range):
                 process_further = True 
                 break                            
+        
         if process_further:
             update_id = request.POST.get("id")                              
             existing_c_note = Booking.objects.filter(c_note_number=c_note_number)            
