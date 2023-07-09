@@ -1,6 +1,5 @@
 {% extends 'base.html' %}{% block title %}Cash Booking{% endblock title %}{% load static %}{% block content %}
 
-
 <div class="container back_color">
     <div class="row">
         <div class="col-md-12">
@@ -30,7 +29,7 @@
                             <label for="datetime"><b>Booking Date</b>
                                 <span class="red_color">*</span>
                             </label>
-                            <input type="date" id="datetime" name="datetime" class="form-control form-control-sm" name="booking_date" />
+                            <input type="datetime-local" id="datetime" name="datetime" class="form-control form-control-sm" name="booking_date" />
                         </div>
                         <div class="col-md-2">
                             <label for="payment_mode"><b>Payment Mode</b>
@@ -40,6 +39,9 @@
                                 <option selected value="Cash">Cash</option>
                                 <option value="Credit">Credit</option>
                                 <option value="To Pay">To Pay</option>
+                                <option value="To Pay">UPI</option>
+                                <option value="To Pay">Cheque</option>
+                                <option value="To Pay">Other</option>
                                                                                                             
                             </select>
                         </div>
@@ -99,8 +101,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="sender_mobile"><b>E Way Bill Number</b></label>
-                                        <input type="text" class="form-control form-control-sm" id="sender_mobile" name="sender_mobile">
+                                        <label for="e_way_bill"><b>E Way Bill Number</b></label>
+                                        <input type="text" class="form-control form-control-sm" id="e_way_bill" name="e_way_bill">
                                     </div>
                                 </div>
                             </div>
@@ -165,32 +167,32 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label for="actual_weight"><b>Actual W. (gms)</b></label>
-                                <input type="number" class="form-control form-control-sm" id="actual_weight" name="actual_weight" value="100">
+                                <label for="actual_weight"><b>Actual Wt. (gms)</b></label>
+                                <input type="number" class="form-control form-control-sm wt_field" id="actual_weight" name="actual_weight" value="100">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label for="charged_weight"><b>Charged W. (gms)</b></label>
+                                <label for="charged_weight"><b>Charged Wt. (gms)</b></label>
                                 <input type="number" class="form-control form-control-sm" id="charged_weight" name="charged_weight" value="100">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="declare_value"><b>Declared value</b></label>
-                                <input type="number" class="form-control form-control-sm" id="declare_value" name="declare_value" value="0">
+                                <input type="number" class="form-control form-control-sm inpt_fld" id="declare_value" name="declare_value" value="0">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="freight_charge"><b>Freight charge</b></label>
-                                <input type="number" class="form-control form-control-sm" id="freight_charge" name="freight_charge" value="0">
+                                <input type="number" class="form-control form-control-sm inpt_fld" id="freight_charge" name="freight_charge" value="0">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="pod_charge"><b>POD Charge</b></label>
-                                <input type="number" class="form-control form-control-sm" id="pod_charge" name="pod_charge" value="0">
+                                <input type="number" class="form-control form-control-sm inpt_fld" id="pod_charge" name="pod_charge" value="0">
                             </div>
                         </div>
 
@@ -199,33 +201,34 @@
                         <div class="col-md-2 mt-2">
                             <div class="form-group">
                                 <label for="spcl_del_charge"><b>Spcl Del. charge</b></label>
-                                <input type="number" class="form-control form-control-sm" id="spcl_del_charge" name="spcl_del_charge" value="0">
+                                <input type="number" class="form-control form-control-sm inpt_fld" id="spcl_del_charge" name="spcl_del_charge" value="0">
                             </div>
                         </div>
                         <div class="col-md-2 mt-2">
                             <div class="form-group">
                                 <label for="insurance_percentage"><b>Insurance %</b></label>
-                                <input type="number" class="form-control form-control-sm" id="insurance_percentage" name="insurance_percentage" value="0">
+                                <input type="number" class="form-control form-control-sm inpt_fld" id="insurance_percentage" name="insurance_percentage" value="0">
                             </div>
                         </div>
                         <div class="col-md-2 mt-2">
                             <div class="form-group">
                                 <label for="insurance_amount"><b>Insurance Amount</b></label>
-                                <input type="number" class="form-control form-control-sm" id="insurance_amount" name="insurance_amount" value="0">
+                                <input type="number" class="form-control form-control-sm inpt_fld" id="insurance_amount" name="insurance_amount" value="0" readonly>
                             </div>
                         </div>
                         <div class="col-md-2 mt-2">
                             <label for="gst_rate"><b>GST Rate</b>
                                 <span class="red_color">*</span>
                             </label>
-                            <select class="form-select control-label form-select-sm" name="gst_rate" id="gst_rate" aria-label="GST Rate" required>                                                
-                                    <option value="0">0%</option>                                                
+                            <select class="form-select control-label form-select-sm inpt_fld" name="gst_rate" id="gst_rate" aria-label="GST Rate" required>                                                
+                                    <option value="0">0 %</option>   
+                                    <option value="18">18 %</option>                                                
                             </select>
                         </div>
                         <div class="col-md-2 mt-2">
                             <div class="form-group">
                                 <label for="gst_amount"><b>GST Amount</b></label>
-                                <input type="number" class="form-control form-control-sm" id="gst_amount" name="gst_amount" value="0">
+                                <input type="number" class="form-control form-control-sm inpt_fld" id="gst_amount" name="gst_amount" value="0" readonly>
                             </div>
                         </div>
                         <div class="col-md-2 mt-2">
@@ -247,7 +250,7 @@
                         <div class="col-md-2 mt-2">
                             <div class="form-group">
                                 <label for="total_amount"><b>Total Amount</b></label>
-                                <input type="number" class="form-control form-control-sm" id="total_amount" name="total_amount" value="0">
+                                <input type="number" class="form-control form-control-sm inpt_fld" id="total_amount" name="total_amount" value="0" readonly>
                             </div>
                         </div>
                         <div class="col-md-4 mt-2">
@@ -257,7 +260,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mt-4">
-                            <input type="button" class="btn btn-success" style="width: 150px;" value="Save">
+                            <input type="button" id="save_btn" class="btn btn-success" style="width: 150px;" value="Save">
                         </div>
 
                     </div>
@@ -266,4 +269,60 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('.inpt_fld').on('input', function() {
+            var declare_value = parseFloat($('#declare_value').val()) || 0;
+            var freight_charge = parseFloat($('#freight_charge').val()) || 0;
+            var pod_charge = parseFloat($('#pod_charge').val()) || 0;
+            var spcl_del_charge = parseFloat($('#spcl_del_charge').val()) || 0;
+            var insurance_percentage = parseFloat($('#insurance_percentage').val()) || 0;
+            var insurance_amt = (declare_value * insurance_percentage) / 100
+            insurance_amt = insurance_amt.toFixed(2);
+            $("#insurance_amount").val(insurance_amt);
+            var insurance_amount = parseFloat($('#insurance_amount').val()) || 0;
+
+            var gst_amount = parseFloat($('#gst_amount').val()) || 0;
+
+            var sum = freight_charge + pod_charge + spcl_del_charge +
+                insurance_amount + gst_amount
+            $('#total_amount').val(sum.toFixed(2));
+        });
+
+        // To modify when change gst rates        
+        $("#gst_rate").on("change", function() {
+            var gst_rate = $(this).val();
+            var declare_value = parseFloat($('#declare_value').val()) || 0;
+            var freight_charge = parseFloat($('#freight_charge').val()) || 0;
+            var pod_charge = parseFloat($('#pod_charge').val()) || 0;
+            var spcl_del_charge = parseFloat($('#spcl_del_charge').val()) || 0;
+            var insurance_percentage = parseFloat($('#insurance_percentage').val()) || 0;
+            var insurance_amt = (declare_value * insurance_percentage) / 100
+            insurance_amt = insurance_amt.toFixed(2);
+            $("#insurance_amount").val(insurance_amt);
+            var insurance_amount = parseFloat($('#insurance_amount').val()) || 0;
+            var sum_before_gst = freight_charge + pod_charge + spcl_del_charge +
+                insurance_amount;
+            var sum_before_gst = (sum_before_gst * gst_rate) / 100
+            $('#gst_amount').val(sum_before_gst);
+            var gst_amount = parseFloat($('#gst_amount').val()) || 0;
+            var sum = freight_charge + pod_charge + spcl_del_charge +
+                insurance_amount + gst_amount
+            $('#total_amount').val(sum.toFixed(2));
+        })
+
+        // To modify actual and charged weight
+        $('.wt_field').on('input', function() {
+            var actual_weight = $("#actual_weight").val();
+            $("#charged_weight").val(actual_weight);
+
+        });
+
+        var now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('datetime').value = now.toISOString().slice(0, 16);
+    });
+</script>
+
 {% endblock content %}
