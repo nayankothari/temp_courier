@@ -273,6 +273,7 @@
 <script>
     $(document).ready(function() {
         $('.inpt_fld').on('input', function() {
+            var gst_rate = $("#gst_rate").val();
             var declare_value = parseFloat($('#declare_value').val()) || 0;
             var freight_charge = parseFloat($('#freight_charge').val()) || 0;
             var pod_charge = parseFloat($('#pod_charge').val()) || 0;
@@ -282,14 +283,15 @@
             insurance_amt = insurance_amt.toFixed(2);
             $("#insurance_amount").val(insurance_amt);
             var insurance_amount = parseFloat($('#insurance_amount').val()) || 0;
-
+            var sum_before_gst = freight_charge + pod_charge + spcl_del_charge +
+                insurance_amount;
+            var sum_before_gst = (sum_before_gst * gst_rate) / 100
+            $('#gst_amount').val(sum_before_gst);
             var gst_amount = parseFloat($('#gst_amount').val()) || 0;
-
             var sum = freight_charge + pod_charge + spcl_del_charge +
                 insurance_amount + gst_amount
             $('#total_amount').val(sum.toFixed(2));
         });
-
         // To modify when change gst rates        
         $("#gst_rate").on("change", function() {
             var gst_rate = $(this).val();
@@ -310,7 +312,7 @@
             var sum = freight_charge + pod_charge + spcl_del_charge +
                 insurance_amount + gst_amount
             $('#total_amount').val(sum.toFixed(2));
-        })
+        });
 
         // To modify actual and charged weight
         $('.wt_field').on('input', function() {
