@@ -21,7 +21,7 @@ from .models import contactus, Token, BranchNetwork, Destination
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
-from .models import CNoteGenerator
+from .models import CNoteGenerator, State, GstModel
 
 
 log = logging.getLogger(__name__)
@@ -269,7 +269,138 @@ def booking_dashboard(request):
 
 @login_required(login_url="login_auth")
 def cash_booking(request):
-    return render(request, "cash_booking.html")
+    booking_type = BookingType.objects.all()
+    ref_courier_name = RefCourier.objects.all()
+    from_destination = UserAdditionalDetails.objects.get(user=request.user)    
+    destinations = Destination.objects.all()    
+    states = State.objects.all()
+    gst_rates = GstModel.objects.all()
+    context = {"destinations": destinations, 
+               "ref_courier_names": ref_courier_name,               
+               "booking_type": booking_type,                
+               "from_destination": from_destination,
+               "states": states, "gst_rates": gst_rates} 
+
+    return render(request, "cash_booking.html", context=context)
+
+@login_required(login_url="login_auth")
+def save_cash_booking(request):
+    if request.method == "POST":        
+        c_note_number = request.POST.get("c_note_no")
+        request.session["success"] = None
+        process_further = False
+        c_note_details = CNoteGenerator.objects.filter(user=request.user)
+        for i in c_note_details:            
+            if int(i.from_range) <= int(c_note_number) <= int(i.to_range):
+                process_further = True 
+                break                            
+        
+        if process_further:
+            update_id = request.POST.get("id_of")                              
+            existing_c_note = Booking.objects.filter(c_note_number=c_note_number)            
+            request.session["next_c_note_for_cash"] = ""
+            booking_type = request.POST.get("booking_type")              
+            booking_type = BookingType.objects.get(id=booking_type)
+            booking_datetime = request.POST.get("datetime") 
+            payment_mode = request.POST.get("payment_mode")
+            ref_courier_name = request.POST.get("ref_courier_name")        
+            ref_courier_name = RefCourier.objects.get(id=ref_courier_name)
+            ref_number = request.POST.get("ref_number")
+            sender_name = request.POST.get("sender_name")
+            sender_mobile = request.POST.get("sender_mobile")
+            sender_address = request.POST.get("sender_address")
+            from_destination = request.POST.get("from_destination")            
+            from_destination = Destination.objects.get(id=from_destination)
+            gst_number = request.POST.get("gst_number")
+            e_way_bill = request.POST.get("e_way_bill")
+            receiver_name = request.POST.get("receiver_name")
+            receiver_mobile = request.POST.get("receiver_mobile")        
+            receiver_address = request.POST.get("receiver_address")
+            to_destination = request.POST.get("to_destination")            
+            to_destination = Destination.objects.get(id=to_destination)
+            pincode = request.POST.get("pincode")
+            state = request.POST.get("state")
+            state = State.objects.get(id=state)
+            qty = request.POST.get("qty")
+            charged_weight = request.POST.get("charged_weight")
+            actual_weight = request.POST.get("actual_weight")
+            declare_value = request.POST.get("declare_value")
+            freight_charge = request.POST.get("freight_charge")
+            pod_charge = request.POST.get("pod_charge")
+            spcl_del_charge = request.POST.get("spcl_del_charge")
+            insurance_amount = request.POST.get("insurance_amount")
+            insurance_percentage = request.POST.get("insurance_percentage")
+            gst_rate = request.POST.get("gst_rate")
+            gst_rate = GstModel.objects.get(id=gst_rate)
+            gst_amount = request.POST.get("gst_amount")
+            gst_radio = request.POST.get("gst_radio")
+            total_amount = request.POST.get("total_amount")            
+            party_name = PartyAccounts.objects.get(party_name__icontains="cash", user=request.user)    
+            print(party_name)
+            remarks = request.POST.get("remarks")
+            if not update_id:            
+                if not existing_c_note:                            
+                    booking_obj = Booking.objects.create(c_note_number=c_note_number, booking_type=booking_type, doc_date=booking_datetime,
+                                    payment_mode=payment_mode, ref_courier_name=ref_courier_name, ref_courier_number=ref_number,
+                                    sender_name=sender_name, sender_mobile=sender_mobile, sender_address=sender_address,
+                                    from_destination=from_destination, gst_number=gst_number, e_way_bill_number=e_way_bill, receiver_name=receiver_name,
+                                    receiver_mobile_number=receiver_mobile, receiver_address=receiver_address, to_destination=to_destination,
+                                    pincode=pincode, state=state, pcs=qty, charged_weight=charged_weight, weight=actual_weight,
+                                    declared_value=declare_value, freight_charge=freight_charge, pod_charge=pod_charge, spl_del_charge=spcl_del_charge,
+                                    insurance_amt=insurance_amount, insurance_per=insurance_percentage, gst_rate=gst_rate, gst_amount=gst_amount,
+                                    c_i_gst=gst_radio, amount=total_amount, remarks=remarks, user=request.user)                    
+                    # booking_obj.save()
+                    print("Data save karna hai")            
+                    request.session["success"] = "success"
+                    try:
+                        request.session["next_c_note_for_cash"] = int(c_note_number) + 1
+                    except:
+                        pass
+                    messages.success(request, "Shipment booked Successfully.")
+                    return JsonResponse({"status": 1, "message": "Shipment booked Successfully"})                       
+                else:                    
+                    return JsonResponse({"status": 0, "message": "C Note Already exists"})         
+            else:            
+                booking_obj = Booking.objects.get(id=update_id)            
+                booking_obj.c_note_number=c_note_number, 
+                booking_obj.booking_type=booking_type, 
+                booking_obj.doc_date=booking_datetime,                                    
+                booking_obj.payment_mode=payment_mode, 
+                booking_obj.ref_courier_name=ref_courier_name, 
+                booking_obj.ref_courier_number=ref_number,
+                booking_obj.sender_name=sender_name, 
+                booking_obj.sender_mobile=sender_mobile, 
+                booking_obj.sender_address=sender_address,
+                booking_obj.from_destination=from_destination, 
+                booking_obj.gst_number=gst_number, 
+                booking_obj.e_way_bill_number=e_way_bill, 
+                booking_obj.receiver_name=receiver_name,
+                booking_obj.receiver_mobile_number=receiver_mobile, 
+                booking_obj.receiver_address=receiver_address, 
+                booking_obj.to_destination=to_destination,
+                booking_obj.pincode=pincode, state=state, 
+                booking_obj.pcs=qty, 
+                booking_obj.charged_weight=charged_weight, 
+                booking_obj.weight=actual_weight,
+                booking_obj.declared_value=declare_value, 
+                booking_obj.freight_charge=freight_charge, 
+                booking_obj.pod_charge=pod_charge, 
+                booking_obj.spl_del_charge=spcl_del_charge,
+                booking_obj.insurance_amt=insurance_amount, 
+                booking_obj.insurance_per=insurance_percentage, 
+                booking_obj.gst_rate=gst_rate, 
+                booking_obj.gst_amount=gst_amount,
+                booking_obj.c_i_gst=gst_radio, 
+                booking_obj.amount=total_amount, 
+                booking_obj.remarks=remarks, 
+                booking_obj.user=request.user                
+                # booking_obj.save()            
+                request.session["success"] = "success"
+                messages.success(request, "Shipment updated Successfully.")
+                return JsonResponse({"status": 1, "message": "Shipment updated Successfully"})                       
+        else:            
+            return JsonResponse({"status": 0, "message": "Invalid C. Note number"})
+    return JsonResponse({"status": 0, "message": "Get method not allowed."})
 
 
 @login_required(login_url="login_auth")

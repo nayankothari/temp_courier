@@ -108,7 +108,7 @@ class GstModel(models.Model):
         verbose_name_plural = "Gst Details"
     
     def __str__(self):
-        return self.tax_name
+        return self.gst_name
 
 class BookingType(models.Model):
     booking_type = models.CharField(max_length=256, null=True, blank=False)

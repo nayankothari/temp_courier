@@ -9,261 +9,275 @@
                 </div>
                 <div class="card-body">
                     <!-- Header Details -->
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="c_note_no"><b>C Note No.</b></label>
-                                <span class="red_color">*</span>
-                                <input type="number" class="form-control form-control-sm" id="c_note_no" name="c_note_no">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" id="id_of">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="c_note_no"><b>C Note No.</b></label>
+                                    <span class="red_color">*</span>
+                                    <input type="number" class="form-control form-control-sm" id="c_note_no" name="c_note_no">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="booking_type"><b>Booking Type</b>
+                            <div class="col-md-2">
+                                <label for="booking_type"><b>Booking Type</b>
                                 <span class="red_color">*</span>
                             </label>
-                            <select class="form-select control-label form-select-sm" name="booking_type" id="booking_type" aria-label="Booking Type" required>                                                
-                                    <option value="1">Surface</option>                                                
+                                <select class="form-select control-label form-select-sm" name="booking_type" id="booking_type" aria-label="Booking Type" required>
+                                {% for type in booking_type %}
+                                <option value="{{ type.id }}">{{ type.booking_type }}</option>
+                                {% endfor %}
+
                             </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="datetime"><b>Booking Date</b>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="datetime"><b>Booking Date</b>
                                 <span class="red_color">*</span>
                             </label>
-                            <input type="datetime-local" id="datetime" name="datetime" class="form-control form-control-sm" name="booking_date" />
-                        </div>
-                        <div class="col-md-2">
-                            <label for="payment_mode"><b>Payment Mode</b>
+                                <input type="datetime-local" id="datetime" name="datetime" class="form-control form-control-sm" name="booking_date" />
+                            </div>
+                            <div class="col-md-2">
+                                <label for="payment_mode"><b>Payment Mode</b>
                                 <span class="red_color">*</span>
                             </label>
-                            <select class="form-select control-label form-select-sm" name="payment_mode" id="payment_mode" aria-label="Payment Mode" required>                                                
+                                <select class="form-select control-label form-select-sm" name="payment_mode" id="payment_mode" aria-label="Payment Mode" required>
                                 <option selected value="Cash">Cash</option>
                                 <option value="Credit">Credit</option>
                                 <option value="To Pay">To Pay</option>
                                 <option value="To Pay">UPI</option>
                                 <option value="To Pay">Cheque</option>
                                 <option value="To Pay">Other</option>
-                                                                                                            
+
                             </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="ref_courier_name"><b>Ref. Courier Name</b>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="ref_courier_name"><b>Ref. Courier Name</b>
                                 <span class="red_color">*</span>
                             </label>
-                            <select class="form-select control-label form-select-sm" name="ref_courier_name" id="ref_courier_name" aria-label="Ref. Courier Name" required>                                                
-                                    <option value="1">Airpost Xpress</option>                                                
+                                <select class="form-select control-label form-select-sm" name="ref_courier_name" id="ref_courier_name" aria-label="Ref. Courier Name" required>
+                                {% for courier in ref_courier_names %}
+                                <option value="{{ courier.id }}">{{ courier.name }}</option>
+                                {% endfor %}
                             </select>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="ref_number"><b>Ref Number</b></label>
-                                <input type="text" class="form-control form-control-sm" id="ref_number" name="ref_number">
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="ref_number"><b>Ref Number</b></label>
+                                    <input type="text" class="form-control form-control-sm" id="ref_number" name="ref_number">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <!-- Sender Details -->
-                        <div class="col-md-6">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="sender_name"><b>Sender Name</b></label>
-                                        <input type="text" class="form-control form-control-sm" id="sender_name" name="sender_name">
+                        <hr>
+                        <div class="row">
+                            <!-- Sender Details -->
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="sender_name"><b>Sender Name</b></label>
+                                            <input type="text" class="form-control form-control-sm" id="sender_name" name="sender_name">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="sender_mobile"><b>Mobile</b></label>
-                                        <span class="red_color">*</span>
-                                        <input type="text" class="form-control form-control-sm" id="sender_mobile" name="sender_mobile">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="sender_mobile"><b>Mobile</b></label>
+                                            <span class="red_color">*</span>
+                                            <input type="text" class="form-control form-control-sm" id="sender_mobile" name="sender_mobile">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="sender_address"><b>Address</b></label>
-                                        <input type="text" class="form-control form-control-sm" id="sender_address" name="sender_address">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="sender_address"><b>Address</b></label>
+                                            <input type="text" class="form-control form-control-sm" id="sender_address" name="sender_address">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="from_destination"><b>From Destination</b>
+                                    <div class="col-md-6">
+                                        <label for="from_destination"><b>From Destination</b>
                                         <span class="red_color">*</span>
                                     </label>
-                                    <select class="form-select control-label form-select-sm" name="from_destination" id="from_destination" aria-label="From Destination" required>                                                
-                                            <option value="1">Bikaner</option>                                                
+                                        <select class="form-select control-label form-select-sm" name="from_destination" id="from_destination" aria-label="From Destination" required>
+                                        <option value="{{ from_destination.destination.id }}">{{ from_destination.destination.name }}</option>
                                     </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="gst_number"><b>GST Number</b></label>
-                                        <input type="text" class="form-control form-control-sm" id="gst_number" name="gst_number">
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="e_way_bill"><b>E Way Bill Number</b></label>
-                                        <input type="text" class="form-control form-control-sm" id="e_way_bill" name="e_way_bill">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="gst_number"><b>GST Number</b></label>
+                                            <input type="text" class="form-control form-control-sm" id="gst_number" name="gst_number">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="e_way_bill"><b>E Way Bill Number</b></label>
+                                            <input type="text" class="form-control form-control-sm" id="e_way_bill" name="e_way_bill">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Receiver details -->
-                        <div class="col-md-6">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="receiver_name"><b>Receiver Name</b></label>
-                                        <input type="text" class="form-control form-control-sm" id="receiver_name" name="receiver_name">
+                            <!-- Receiver details -->
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="receiver_name"><b>Receiver Name</b></label>
+                                            <input type="text" class="form-control form-control-sm" id="receiver_name" name="receiver_name">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="receiver_mobile"><b>Mobile</b></label>
-                                        <span class="red_color">*</span>
-                                        <input type="text" class="form-control form-control-sm" id="receiver_mobile" name="receiver_mobile">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="receiver_mobile"><b>Mobile</b></label>
+                                            <span class="red_color">*</span>
+                                            <input type="text" class="form-control form-control-sm" id="receiver_mobile" name="receiver_mobile">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="receiver_address"><b>Address</b></label>
-                                        <input type="text" class="form-control form-control-sm" id="receiver_address" name="receiver_address">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="receiver_address"><b>Address</b></label>
+                                            <input type="text" class="form-control form-control-sm" id="receiver_address" name="receiver_address">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="to_destination"><b>To Destination</b>
-                                        <span class="red_color">*</span>
-                                    </label>
-                                    <select class="form-select control-label form-select-sm" name="to_destination" id="to_destination" aria-label="To Destination" required>                                                
-                                            <option value="1">Jaipur</option>                                                
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="pincode"><b>Pincode</b></label>
-                                        <input type="text" class="form-control form-control-sm" id="pincode" name="pincode">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="state"><b>State</b>
+                                    <div class="col-md-6">
+                                        <label for="to_destination"><b>To Destination</b>
                                         <span class="red_color">*</span>
                                     </label>
-                                    <select class="form-select control-label form-select-sm" name="state" id="state" aria-label="State" required>                                                
-                                            <option value="1">RAJASTHAN</option>                                                
+                                        <select class="form-select control-label form-select-sm" name="to_destination" id="to_destination" aria-label="To Destination" required>
+                                        {% for des in destinations %}
+                                        <option value="{{ des.id }}">{{ des.name }}</option>
+                                        {% endfor %}
                                     </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="pincode"><b>Pincode</b></label>
+                                            <input type="number" class="form-control form-control-sm" id="pincode" name="pincode">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="state"><b>State</b>
+                                        <span class="red_color">*</span>
+                                    </label>
+                                        <select class="form-select control-label form-select-sm" name="state" id="state" aria-label="State" required>
+                                        {% for state in states %}
+                                        <option value="{{ state.id }}">{{ state.state_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <hr>
-                    <!-- Rest details for calculations -->
-                    <div class="row">
-                        <!-- First line -->
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="qty"><b>No. of Pcs.</b></label>
-                                <input type="number" class="form-control form-control-sm" id="qty" name="qty" value="1">
+                        <hr>
+                        <!-- Rest details for calculations -->
+                        <div class="row">
+                            <!-- First line -->
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="qty"><b>No. of Pcs.</b></label>
+                                    <input type="number" class="form-control form-control-sm" id="qty" name="qty" value="1">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="actual_weight"><b>Actual Wt. (gms)</b></label>
-                                <input type="number" class="form-control form-control-sm wt_field" id="actual_weight" name="actual_weight" value="100">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="actual_weight"><b>Actual Wt. (gms)</b></label>
+                                    <input type="number" class="form-control form-control-sm wt_field" id="actual_weight" name="actual_weight" value="100">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="charged_weight"><b>Charged Wt. (gms)</b></label>
-                                <input type="number" class="form-control form-control-sm" id="charged_weight" name="charged_weight" value="100">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="charged_weight"><b>Charged Wt. (gms)</b></label>
+                                    <input type="number" class="form-control form-control-sm" id="charged_weight" name="charged_weight" value="100">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="declare_value"><b>Declared value</b></label>
-                                <input type="number" class="form-control form-control-sm inpt_fld" id="declare_value" name="declare_value" value="0">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="declare_value"><b>Declared value</b></label>
+                                    <input type="number" class="form-control form-control-sm inpt_fld" id="declare_value" name="declare_value" value="0">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="freight_charge"><b>Freight charge</b></label>
-                                <input type="number" class="form-control form-control-sm inpt_fld" id="freight_charge" name="freight_charge" value="0">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="freight_charge"><b>Freight charge</b></label>
+                                    <input type="number" class="form-control form-control-sm inpt_fld" id="freight_charge" name="freight_charge" value="0">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="pod_charge"><b>POD Charge</b></label>
-                                <input type="number" class="form-control form-control-sm inpt_fld" id="pod_charge" name="pod_charge" value="0">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="pod_charge"><b>POD Charge</b></label>
+                                    <input type="number" class="form-control form-control-sm inpt_fld" id="pod_charge" name="pod_charge" value="0">
+                                </div>
                             </div>
-                        </div>
 
 
-                        <!-- Second line -->
-                        <div class="col-md-2 mt-2">
-                            <div class="form-group">
-                                <label for="spcl_del_charge"><b>Spcl Del. charge</b></label>
-                                <input type="number" class="form-control form-control-sm inpt_fld" id="spcl_del_charge" name="spcl_del_charge" value="0">
+                            <!-- Second line -->
+                            <div class="col-md-2 mt-2">
+                                <div class="form-group">
+                                    <label for="spcl_del_charge"><b>Spcl Del. charge</b></label>
+                                    <input type="number" class="form-control form-control-sm inpt_fld" id="spcl_del_charge" name="spcl_del_charge" value="0">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2 mt-2">
-                            <div class="form-group">
-                                <label for="insurance_percentage"><b>Insurance %</b></label>
-                                <input type="number" class="form-control form-control-sm inpt_fld" id="insurance_percentage" name="insurance_percentage" value="0">
+                            <div class="col-md-2 mt-2">
+                                <div class="form-group">
+                                    <label for="insurance_percentage"><b>Insurance %</b></label>
+                                    <input type="number" class="form-control form-control-sm inpt_fld" id="insurance_percentage" name="insurance_percentage" value="0">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2 mt-2">
-                            <div class="form-group">
-                                <label for="insurance_amount"><b>Insurance Amount</b></label>
-                                <input type="number" class="form-control form-control-sm inpt_fld" id="insurance_amount" name="insurance_amount" value="0" readonly>
+                            <div class="col-md-2 mt-2">
+                                <div class="form-group">
+                                    <label for="insurance_amount"><b>Insurance Amount</b></label>
+                                    <input type="number" class="form-control form-control-sm inpt_fld" id="insurance_amount" name="insurance_amount" value="0" readonly>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2 mt-2">
-                            <label for="gst_rate"><b>GST Rate</b>
+                            <div class="col-md-2 mt-2">
+                                <label for="gst_rate"><b>GST %</b>
                                 <span class="red_color">*</span>
                             </label>
-                            <select class="form-select control-label form-select-sm inpt_fld" name="gst_rate" id="gst_rate" aria-label="GST Rate" required>                                                
-                                    <option value="0">0 %</option>   
-                                    <option value="18">18 %</option>                                                
+                                <select class="form-select control-label form-select-sm inpt_fld" name="gst_rate" id="gst_rate" aria-label="GST Rate" required>
+                                {% for gst in gst_rates %}
+                                    <option value="{{ gst.id }}">{{ gst.gst_name }}</option>  
+                                {% endfor %}                              
                             </select>
-                        </div>
-                        <div class="col-md-2 mt-2">
-                            <div class="form-group">
-                                <label for="gst_amount"><b>GST Amount</b></label>
-                                <input type="number" class="form-control form-control-sm inpt_fld" id="gst_amount" name="gst_amount" value="0" readonly>
                             </div>
-                        </div>
-                        <div class="col-md-2 mt-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gst_radio" id="cs_gst" value="cs_gst">
-                                <label class="form-check-label" for="cs_gst">
-                                  C+S GST
+                            <div class="col-md-2 mt-2">
+                                <div class="form-group">
+                                    <label for="gst_amount"><b>GST Amount</b></label>
+                                    <input type="number" class="form-control form-control-sm inpt_fld" id="gst_amount" name="gst_amount" value="0" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-2 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gst_radio" id="cs_gst" value="cs_gst">
+                                    <label class="form-check-label" for="cs_gst">
+                                    C+S GST
                                 </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gst_radio" id="i_gst" value="i_gst" checked>
+                                    <label class="form-check-label" for="i_gst">
+                                    I GST
+                                </label>
+                                </div>
+                            </div>
+                            <!-- Total amount and remarks -->
+                            <div class="col-md-2 mt-2">
+                                <div class="form-group">
+                                    <label for="total_amount"><b>Total Amount</b></label>
+                                    <input type="number" class="form-control form-control-sm inpt_fld" id="total_amount" name="total_amount" value="0" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <div class="form-group">
+                                    <label for="remarks"><b>Remarks</b></label>
+                                    <input type="text" class="form-control form-control-sm" id="remarks" name="remarks">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-4">
+                                <input type="button" id="save_btn" class="btn btn-success" style="width: 150px;" value="Save">
                             </div>
 
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gst_radio" id="i_gst" value="i_gst" checked>
-                                <label class="form-check-label" for="i_gst">
-                                  I GST
-                                </label>
-                            </div>
                         </div>
-                        <!-- Total amount and remarks -->
-                        <div class="col-md-2 mt-2">
-                            <div class="form-group">
-                                <label for="total_amount"><b>Total Amount</b></label>
-                                <input type="number" class="form-control form-control-sm inpt_fld" id="total_amount" name="total_amount" value="0" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mt-2">
-                            <div class="form-group">
-                                <label for="remarks"><b>Remarks</b></label>
-                                <input type="text" class="form-control form-control-sm" id="remarks" name="remarks">
-                            </div>
-                        </div>
-                        <div class="col-md-3 mt-4">
-                            <input type="button" id="save_btn" class="btn btn-success" style="width: 150px;" value="Save">
-                        </div>
-
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -273,7 +287,8 @@
 <script>
     $(document).ready(function() {
         $('.inpt_fld').on('input', function() {
-            var gst_rate = $("#gst_rate").val();
+            var gst_rate = $("#gst_rate").find("option:selected").text();
+            gst_rate = parseFloat(gst_rate) || 0;
             var declare_value = parseFloat($('#declare_value').val()) || 0;
             var freight_charge = parseFloat($('#freight_charge').val()) || 0;
             var pod_charge = parseFloat($('#pod_charge').val()) || 0;
@@ -290,11 +305,12 @@
             var gst_amount = parseFloat($('#gst_amount').val()) || 0;
             var sum = freight_charge + pod_charge + spcl_del_charge +
                 insurance_amount + gst_amount
-            $('#total_amount').val(sum.toFixed(2));
+            $('#total_amount').val(sum.toFixed(0));
         });
         // To modify when change gst rates        
         $("#gst_rate").on("change", function() {
-            var gst_rate = $(this).val();
+            var gst_rate = $(this).find("option:selected").text();
+            gst_rate = parseFloat(gst_rate) || 0;
             var declare_value = parseFloat($('#declare_value').val()) || 0;
             var freight_charge = parseFloat($('#freight_charge').val()) || 0;
             var pod_charge = parseFloat($('#pod_charge').val()) || 0;
@@ -311,7 +327,7 @@
             var gst_amount = parseFloat($('#gst_amount').val()) || 0;
             var sum = freight_charge + pod_charge + spcl_del_charge +
                 insurance_amount + gst_amount
-            $('#total_amount').val(sum.toFixed(2));
+            $('#total_amount').val(sum.toFixed(0));
         });
 
         // To modify actual and charged weight
@@ -320,10 +336,127 @@
             $("#charged_weight").val(actual_weight);
 
         });
-
+        // Set datetime in datetime fields
         var now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('datetime').value = now.toISOString().slice(0, 16);
+
+
+        // Save Cash Booking details
+        $("#save_btn").click(function() {
+            var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
+            var id_of = $("#id_of").val();
+            var c_note_no = $("#c_note_no").val();
+            if (c_note_no) {
+                var booking_type = $("#booking_type").val();
+                var datetime = $("#datetime").val();
+                var payment_mode = $("#payment_mode").val();
+                var ref_courier_name = $("#ref_courier_name").val();
+                var ref_number = $("#ref_number").val();
+                var sender_name = $("#sender_name").val();
+                var sender_mobile = $("#sender_mobile").val();
+                var sender_address = $("#sender_address").val();
+                var from_destination = $("#from_destination").val();
+                var gst_number = $("#gst_number").val();
+                var e_way_bill = $("#e_way_bill").val();
+                var receiver_name = $("#receiver_name").val();
+                var receiver_mobile = $("#receiver_mobile").val();
+                var receiver_address = $("#receiver_address").val();
+                var to_destination = $("#to_destination").val();
+                var pincode = $("#pincode").val();
+                pincode = parseInt(pincode) || 0;
+                var state = $("#state").val();
+                var qty = $("#qty").val();
+                qty = parseFloat(qty) || 0;
+                var charged_weight = $("#charged_weight").val();
+                charged_weight = parseFloat(charged_weight) || 0;
+                var actual_weight = $("#actual_weight").val();
+                actual_weight = parseFloat(actual_weight) || 0;
+                var declare_value = $("#declare_value").val();
+                declare_value = parseFloat(declare_value) || 0;
+                var freight_charge = $("#freight_charge").val();
+                freight_charge = parseFloat(freight_charge) || 0;
+                var pod_charge = $("#pod_charge").val();
+                pod_charge = parseFloat(pod_charge) || 0;
+                var spcl_del_charge = $("#spcl_del_charge").val();
+                spcl_del_charge = parseFloat(spcl_del_charge) || 0;
+                var insurance_amount = $("#insurance_amount").val();
+                insurance_amount = parseFloat(insurance_amount) || 0;
+                var insurance_percentage = $("#insurance_percentage").val();
+                insurance_percentage = parseFloat(insurance_percentage) || 0;
+                var gst_rate = $("#gst_rate").val();
+                var gst_amount = $("#gst_amount").val();
+                gst_amount = parseFloat(gst_amount) || 0;
+                var total_amount = $("#total_amount").val();
+                total_amount = parseFloat(total_amount) || 0;
+                var remarks = $("#remarks").val();
+                var cs_i_gst = $("input[name='gst_radio']:checked").val();
+                if (cs_i_gst === "i_gst") {
+                    cs_i_gst = true;
+                } else {
+                    cs_i_gst = false
+                };
+
+                var final_data = {
+                    csrfmiddlewaretoken: csrfmiddlewaretoken,
+                    id_of: id_of,
+                    c_note_no: c_note_no,
+                    booking_type: booking_type,
+                    datetime: datetime,
+                    payment_mode: payment_mode,
+                    ref_courier_name: ref_courier_name,
+                    ref_number: ref_number,
+                    sender_name: sender_name,
+                    sender_mobile: sender_mobile,
+                    sender_address: sender_address,
+                    from_destination: from_destination,
+                    gst_number: gst_number,
+                    e_way_bill: e_way_bill,
+                    receiver_name: receiver_name,
+                    receiver_mobile: receiver_mobile,
+                    receiver_address: receiver_address,
+                    to_destination: to_destination,
+                    pincode: pincode,
+                    state: state,
+                    qty: qty,
+                    charged_weight: charged_weight,
+                    actual_weight: actual_weight,
+                    declare_value: declare_value,
+                    freight_charge: freight_charge,
+                    pod_charge: pod_charge,
+                    spcl_del_charge: spcl_del_charge,
+                    insurance_amount: insurance_amount,
+                    insurance_percentage: insurance_percentage,
+                    gst_rate: gst_rate,
+                    gst_amount: gst_amount,
+                    total_amount: total_amount,
+                    remarks: remarks,
+                    cs_i_gst: cs_i_gst
+                };
+                // Save booking ajax
+                $.ajax({
+                    url: "{% url 'save_cash_booking' %}",
+                    method: "POST",
+                    dataType: "json",
+                    data: final_data,
+                    success: function(data) {
+                        console.log(data);
+                        if (data.status == 1) {
+                            console.log("success message.")
+                        } else {
+                            alert(data.message);
+                            $("#c_note_no").focus();
+                        }
+
+                    }
+                })
+
+
+            } else {
+                alert("Insert C Note Number.");
+                $("#c_note_no").focus();
+            }
+        })
     });
 </script>
 
