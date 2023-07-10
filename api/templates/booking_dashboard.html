@@ -9,6 +9,17 @@
 
 <div class="container back_color">
     <div class="row">
+        {% for message in messages %} {% if request.session.success %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %} {% endfor %}
         <div class="col-md-12 mb-5">
             <div class="card mt-2">
                 <div class="card-header">

@@ -440,9 +440,8 @@
                     dataType: "json",
                     data: final_data,
                     success: function(data) {
-                        console.log(data);
                         if (data.status == 1) {
-                            console.log("success message.")
+                            window.location.assign("{% url 'booking_dashboard' %}");
                         } else {
                             alert(data.message);
                             $("#c_note_no").focus();
@@ -450,8 +449,6 @@
 
                     }
                 })
-
-
             } else {
                 alert("Insert C Note Number.");
                 $("#c_note_no").focus();
