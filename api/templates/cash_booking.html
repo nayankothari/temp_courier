@@ -17,7 +17,7 @@
                                 <div class="form-group">
                                     <label for="c_note_no"><b>C Note No.</b></label>
                                     <span class="red_color">*</span>
-                                    <input type="number" class="form-control form-control-sm" id="c_note_no" name="c_note_no">
+                                    <input type="number" class="form-control form-control-sm" id="c_note_no" name="c_note_no" value="{{ request.session.next_c_note_for_cash }}">
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -121,6 +121,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="receiver_name"><b>Receiver Name</b></label>
+                                            <span class="red_color">*</span>
                                             <input type="text" class="form-control form-control-sm" id="receiver_name" name="receiver_name">
                                         </div>
                                     </div>
@@ -341,26 +342,41 @@
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('datetime').value = now.toISOString().slice(0, 16);
 
-
         // Save Cash Booking details
         $("#save_btn").click(function() {
             var csrfmiddlewaretoken = $("input[name='csrfmiddlewaretoken']").val();
             var id_of = $("#id_of").val();
             var c_note_no = $("#c_note_no").val();
-            if (c_note_no) {
+            var sender_mobile = $("#sender_mobile").val();
+            var receiver_mobile = $("#receiver_mobile").val();
+            var receiver_name = $("#receiver_name").val();
+            receiver_name = $.trim(receiver_name)
+            sender_mobile = $.trim(sender_mobile)
+            receiver_mobile = $.trim(receiver_mobile)
+            c_note_no = $.trim(c_note_no)
+            if (sender_mobile == '') {
+                alert("Insert sender mobile number.");
+                $("#sender_mobile").focus();
+            } else if (receiver_mobile == '') {
+                alert("Insert receiver mobile number.");
+                $("#receiver_mobile").focus();
+            } else if (c_note_no == '') {
+                alert("Insert C Note Number.");
+                $("#c_note_no").focus();
+            } else if (receiver_name == '') {
+                alert("Insert receiver name.")
+                $("#receiver_name").focus();
+            } else {
                 var booking_type = $("#booking_type").val();
                 var datetime = $("#datetime").val();
                 var payment_mode = $("#payment_mode").val();
                 var ref_courier_name = $("#ref_courier_name").val();
                 var ref_number = $("#ref_number").val();
                 var sender_name = $("#sender_name").val();
-                var sender_mobile = $("#sender_mobile").val();
                 var sender_address = $("#sender_address").val();
                 var from_destination = $("#from_destination").val();
                 var gst_number = $("#gst_number").val();
                 var e_way_bill = $("#e_way_bill").val();
-                var receiver_name = $("#receiver_name").val();
-                var receiver_mobile = $("#receiver_mobile").val();
                 var receiver_address = $("#receiver_address").val();
                 var to_destination = $("#to_destination").val();
                 var pincode = $("#pincode").val();
@@ -449,11 +465,56 @@
 
                     }
                 })
-            } else {
-                alert("Insert C Note Number.");
-                $("#c_note_no").focus();
-            }
+            };
         })
+
+        // Edit details fill from here if available
+        var edit_details = "{{ edit_page }}";
+        if (edit_details == 1) {
+            $("#id_of").val('{{ booking_details.id }}');
+            $("#c_note_no").val('{{ booking_details.c_note_number }}');
+            $("#sender_mobile").val('{{ booking_details.sender_mobile }}');
+            $("#receiver_mobile").val('{{ booking_details.receiver_mobile_number }}');
+            $("#receiver_name").val('{{ booking_details.receiver_name }}');
+            $("#booking_type").val('{{ booking_details.booking_type.id }}').change();
+            var momentObj = moment("{{ booking_details.doc_date }}", "MMMM D, YYYY, h:mm a");
+            var formatted_date = momentObj.format("YYYY-MM-DDTHH:mm");
+            $("#datetime").val(formatted_date);
+            $("#payment_mode").val('{{ booking_details.payment_mode }}').change();
+            $("#ref_courier_name").val('{{ booking_details.ref_courier_name.id }}').change();
+            $("#ref_number").val('{{ booking_details.ref_courier_number }}');
+            $("#sender_name").val('{{ booking_details.sender_name }}');
+            $("#sender_address").val('{{ booking_details.sender_address }}');
+            $("#from_destination").val('{{ booking_details.from_destination.id }}').change();
+            $("#gst_number").val('{{ booking_details.gst_number }}');
+            $("#e_way_bill").val('{{ booking_details.e_way_bill_number }}');
+            $("#receiver_address").val('{{ booking_details.receiver_address }}');
+            $("#to_destination").val('{{ booking_details.to_destination.id }}').change();
+            $("#pincode").val('{{ booking_details.pincode }}');
+            $("#state").val('{{ booking_details.state.id }}');
+            $("#qty").val('{{ booking_details.pcs }}');
+            $("#charged_weight").val('{{ booking_details.charged_weight }}');
+            $("#actual_weight").val('{{ booking_details.weight }}');
+            $("#declare_value").val('{{ booking_details.declared_value }}');
+            $("#freight_charge").val('{{ booking_details.freight_charge }}');
+            $("#pod_charge").val('{{ booking_details.pod_charge }}');
+            $("#spcl_del_charge").val('{{ booking_details.spl_del_charge }}');
+            $("#insurance_amount").val('{{ booking_details.insurance_amt }}');
+            $("#insurance_percentage").val('{{ booking_details.insurance_per }}').change();
+            $("#gst_rate").val('{{ booking_details.gst_rate.id }}').change();
+            $("#gst_amount").val('{{ booking_details.gst_amount }}');
+            $("#total_amount").val('{{ booking_details.amount }}');
+            $("#remarks").val('{{ booking_details.remarks }}');
+            // var cs_i_gst = $("input[name='gst_radio']:checked")
+            // $('input[name="gst_radio"][value=""]').prop('checked', true);
+            var cs_gst = "{{ booking_details.c_i_gst }}";
+            if (cs_gst == "False") {
+                $('input[name="gst_radio"][value="cs_gst"]').prop('checked', true);
+            } else {
+                $('input[name="gst_radio"][value="i_gst"]').prop('checked', true);
+            }
+        };
+
     });
 </script>
 

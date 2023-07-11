@@ -15,7 +15,7 @@ from .views import area_master, save_area_master, edit_area_details, delete_area
 from .views import delete_delivery_boy_detail, drs, generate_drs, doc_num_from_booking_to_drs
 from .views import manifest_show, search_drs_by_num_date, search_manifest, c_note_master
 from .views import save_c_note_number, delete_c_note_details, check_tracking_num
-from .views import booking_dashboard, cash_booking, save_cash_booking
+from .views import booking_dashboard, cash_booking, save_cash_booking, edit_cash_booking
 
 
 urlpatterns = [    
@@ -42,6 +42,7 @@ urlpatterns = [
     path(r"booking_dashboard", booking_dashboard, name="booking_dashboard"),
     path(r"cash_booking", cash_booking, name="cash_booking"),
     path(r"save_cash_booking", save_cash_booking, name="save_cash_booking"),
+    path(r"cash_booking/edit/<str:booking_num>", edit_cash_booking, name="edit_cash_booking"),
 
     path(r"part_master", part_master, name="part_master"),    
     path(r"save_parties", save_parties, name="save_parties"),        
