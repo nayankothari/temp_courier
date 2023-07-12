@@ -302,7 +302,7 @@
             var sum_before_gst = freight_charge + pod_charge + spcl_del_charge +
                 insurance_amount;
             var sum_before_gst = (sum_before_gst * gst_rate) / 100
-            $('#gst_amount').val(sum_before_gst);
+            $('#gst_amount').val(sum_before_gst.toFixed(2));
             var gst_amount = parseFloat($('#gst_amount').val()) || 0;
             var sum = freight_charge + pod_charge + spcl_del_charge +
                 insurance_amount + gst_amount
@@ -324,7 +324,7 @@
             var sum_before_gst = freight_charge + pod_charge + spcl_del_charge +
                 insurance_amount;
             var sum_before_gst = (sum_before_gst * gst_rate) / 100
-            $('#gst_amount').val(sum_before_gst);
+            $('#gst_amount').val(sum_before_gst.toFixed(2));
             var gst_amount = parseFloat($('#gst_amount').val()) || 0;
             var sum = freight_charge + pod_charge + spcl_del_charge +
                 insurance_amount + gst_amount
@@ -505,8 +505,6 @@
             $("#gst_amount").val('{{ booking_details.gst_amount }}');
             $("#total_amount").val('{{ booking_details.amount }}');
             $("#remarks").val('{{ booking_details.remarks }}');
-            // var cs_i_gst = $("input[name='gst_radio']:checked")
-            // $('input[name="gst_radio"][value=""]').prop('checked', true);
             var cs_gst = "{{ booking_details.c_i_gst }}";
             if (cs_gst == "False") {
                 $('input[name="gst_radio"][value="cs_gst"]').prop('checked', true);

@@ -139,18 +139,19 @@ def check_tracking_num(request):
     if request.method == "POST":
         try:
             tracking_num = request.POST.get("tracking_num")
-            data = Booking.objects.filter(c_note_number=tracking_num)                        
-            if data.exists():
-                return JsonResponse({"status": 1})
-            elif request.user.is_authenticated:
-                drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_num).order_by("-created_at")
-                if drs_obj.exists():
-                    return JsonResponse({"status": 1})                            
+            if str(tracking_num).strip():
+                data = Booking.objects.filter(c_note_number=tracking_num)                        
+                if data.exists():
+                    return JsonResponse({"status": 1})
+                elif request.user.is_authenticated:
+                    drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_num).order_by("-created_at")
+                    if drs_obj.exists():
+                        return JsonResponse({"status": 1})                            
 
             return JsonResponse({"status": 0, "message": "Insert Correct docket Number"})
         except Exception as e:
             log.exception(e)
-    return JsonResponse({"status": 0, "message": "GET method is not allowed."})
+    return JsonResponse({"status": 0, "message": "Insert Correct docket Number"})
 
 def tracking_with_selenium(request, details):
     # def start_in_thread():
