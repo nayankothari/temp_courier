@@ -17,7 +17,7 @@
                         new_data = response.data;
                         var counter = 1;
                         for (i = 0; i < new_data.length; i++) {
-                            table_output += "<tr><td>" + counter + "</td><td>" + new_data[i].date_substr + "</td><td>" + new_data[i].d_to__name + "</td><td>" + new_data[i].child_count + "</td><td> <button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid=" + new_data[i].d_to__id + "/" + new_data[i].date_substr + " title='Print Manifest'><i class='bi bi-printer'></i></button></td></tr>";
+                            table_output += "<tr><td>" + counter + "</td><td>" + new_data[i].date_substr + "</td><td>" + new_data[i].d_to__name + "</td><td>" + new_data[i].child_count + "</td><td> <button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid=" + new_data[i].d_to__id + "_" + new_data[i].date_substr + " title='Print Manifest'><i class='bi bi-printer'></i></button></td></tr>";
                             counter++;
                         }
                         $("#tbody3").html(table_output);
@@ -30,5 +30,13 @@
         } else {
             alert("Select correct date");
         }
-    })
+    });
+
+    // Print manifest
+    $("tbody").on("click", ".printButton", function() {
+        let sid = $(this).attr("data-sid");
+        console.log(sid);
+        var edit_url = "{% url 'print_manifesto' sid_num='sid' %}".replace('sid', sid);
+        window.open(edit_url, "_blank")
+    });
 </script>

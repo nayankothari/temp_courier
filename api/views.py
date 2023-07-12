@@ -1317,6 +1317,24 @@ def search_manifest(request):
     return JsonResponse({"status": 0, "message": "Get method is not allowed."})
 
 
+@login_required(login_url="login_auth")
+def print_manifest(request, sid_num):
+    try:
+        sid_details = str(sid_num).split("_")
+        destination = sid_details[0]
+        destination = Destination.objects.get(id=destination)
+        date = sid_details[1]
+        date = datetime.datetime.strptime(date, "%Y-%m-%d")    
+        next_date = date + timedelta(days=1)       
+        status = ParcelStatus.objects.get(name="OUT")    
+        data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__range=[date, next_date], d_to=destination)                
+        user_details = BranchNetwork.objects.get(user=request.user)
+        # print(user_details.branch_incharge_number, user_details.office_lane_line_number)
+        context = {"data": data, "user_details": user_details, "date": date, "destination": destination}        
+        return render(request, "manifest_print.html", context=context)
+    except Exception as e:
+        log.exception(e)
+        return redirect("manifest_show")
 # ######################################## C Note Details for admi use only #################################
 
 @login_required(login_url="login_auth")
