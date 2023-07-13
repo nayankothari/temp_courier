@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% load static %}
+    <link rel="stylesheet" href="{% static 'css\\index.css' %}">
+    <link rel="stylesheet" href="{% static 'css\\tracking.css' %}">
+    <link rel="stylesheet" href="{% static 'css\\dashboard.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img\\favicon.ico' %}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <title>Airpost Xpress | Print Preview</title>
+
+    <style>
+        .table-container {
+            width: 380px;
+            height: 480px;
+            border: 4px double black;
+        }
+        
+        table {
+            width: 100%;
+            /* height: 100%; */
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        
+        th,
+        td {
+            border: 1px solid black;
+        }
+        
+        td {
+            width: calc(380px / 8);
+            /* height: 20px; */
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th style="border: 0px; height: 0px;"></th>
+                <th style="border: 0px;"></th>
+                <th style="border: 0px;"></th>
+                <th style="border: 0px;"></th>
+                <th style="border: 0px;"></th>
+                <th style="border: 0px;"></th>
+                <th style="border: 0px;"></th>
+                <th style="border: 0px;"></th>
+            </tr>
+            <tr>
+                <td colspan="8" style="border: 0px; border-bottom: 1px solid black; height: 45px;">
+                    <img src="{% static 'img/airpost_logo.png' %}" alt="" width="80%" height="32px" style="padding-left: 45px;">
+                </td>
+            </tr>
+            <tr>
+                <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship To,</b></td>
+                <td colspan="4" style="font-size: 12px; border: 0px;">{{ bd.receiver_name }}</td>
+                <td colspan="3" rowspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 1px soild black;"></td>
+                <!-- To setup barcode image -->
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size: 11px; border: 0px;">{{ bd.receiver_address }}</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.to_destination }}</b> - {{bd.pincode }}</td>
+                <!-- <td colspan="3" style="border-right: 0px; border-top: 0px;"></td> -->
+            </tr>
+
+            <tr>
+                <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ bd.state }}</b>, Mob: {{bd.receiver_mobile_number }}</td>
+                <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px;"><b>Sr. No.</b> {{ bd.id }}</td>
+            </tr>
+
+            <tr>
+                <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship By,</b></td>
+                <td colspan="4" style="font-size: 12px; border: 0px;">{{ bd.sender_name }}</td>
+                <td colspan="3" style="border-right: 0px; border-top: 1px; border-bottom: 0; font-size: 11px; text-align: center;"><b>GSTIN</b></td>
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size: 11px; border: 0px;">{{ bd.sender_address }}</td>
+                <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.gst_number }}</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size: 11px; border: 0px;"><b>{{ bd.from_destination }}</b> - {{ud.pincode }}</td>
+                <td colspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 11px; text-align: center;"><b>E Way Bill No.</b></td>
+            </tr>
+
+            <tr>
+                <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ ud.state }}</b>, Mob: {{bd.sender_mobile }}</td>
+                <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.e_way_bill_number }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" style="font-size: 10px; border-bottom: 1px solid black;">{{ bd.booking_type }}</td>
+                <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 10px;"><b>Payment: </b>{{ bd.payment_mode }}</td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>{{ bd.doc_date | date:"d-m-Y" }}</b></td>
+            </tr>
+            <tr>
+                <td colspan="4" style="font-size: 11px; border-bottom: 1px solid black;"><b>Ref.</b> {{ bd.ref_courier_name }}</td>
+                <td colspan="4" style="border-right: 0px; border-top: 0px; font-size: 11px;"><b>Ref. No.</b> {{ bd.ref_courier_number }}</td>
+            </tr>
+            <tr>
+                <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Qty.</b></td>
+                <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 8px; text-align: center;"><b>Weight(G)</b></td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Declared value</b></td>
+                <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Ins %</b></td>
+                <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 11px; text-align: center;"><b>GST %</b></td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; border-bottom: 1; font-size: 11px;"><b>C GST:</b></td>
+
+            </tr>
+            <tr>
+                <td style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.pcs }}</td>
+                <td style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.charged_weight }}</td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.declared_value }}</td>
+                <td style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.insurance_per }}</td>
+                <td style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.gst_rate }}</td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px;"><b>S GST:</b> </td>
+            </tr>
+
+            <tr>
+                <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Freight</b></td>
+                <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 9px; text-align: center;"><b>POD ch.</b></td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Spl del ch.</b></td>
+                <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Ins ch.</b></td>
+                <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>GST Amt</b></td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Total Amount</b></td>
+
+            </tr>
+            <tr>
+                <td style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.freight_charge }}</td>
+                <td style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.pod_charge }}</td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.spl_del_charge }}</td>
+                <td style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.insurance_amt }}</td>
+                <td style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;">{{ bd.gst_amount }}</td>
+                <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>{{ bd.amount }}</b></td>
+            </tr>
+            <tr>
+                <td colspan="8" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Item Desc:</b> {{ bd.remarks }}</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size: 11px; border: 0;"><b>Terms & Conditions*</b></td>
+                <td colspan="3" style="border: 1px solid black; border-bottom: 0px; border-right: 0px; text-align: center;" rowspan="3">
+                    <div id="qrcode">
+
+                    </div>
+                </td>
+                <!-- Need to setup QR Code -->
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size: 10px; border: 0;">&nbsp; &#8226; Condition 1st</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size: 10px; border: 0;">&nbsp; &#8226; Condition 2nd</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="font-size: 10px; border: 0px; border-bottom: 1px solid black;">&nbsp; &#8226; Condition 3rd</td>
+                <td colspan="3" style="font-size: 10px; border: 0px; border-left: 1px solid black; border-bottom: 1px solid black; text-align: center;">Scan To Track</td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="font-size: 11px; border: 0;"><b>Franchise Details:</b></td>
+            </tr>
+            <tr>
+                <td colspan="8" style="font-size: 10px; border: 0;">{{ ud.branch_name }}</td>
+            </tr>
+            <tr>
+                <td colspan="6" style="font-size: 10px; border: 0;">{{ ud.address }}</td>
+                <td colspan="2" style="font-size: 10px; border: 0; text-align: center;"><b>Sign.</b></td>
+            </tr>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+        // Generate and set the QR code
+        $(document).ready(function() {
+            //     $('#qrcode').qrcode("this plugin is great");
+
+            window.print();
+        });
+    </script>
+    <!-- <script type="text/javascript">        
+    </script> -->
+</body>
+
+</html>

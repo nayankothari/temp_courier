@@ -134,7 +134,6 @@ def tracking(request, tracking_number):
         log.exception(e)              
         return redirect("home")
 
-
 def check_tracking_num(request):
     if request.method == "POST":
         try:
@@ -272,6 +271,7 @@ def booking_dashboard(request):
     }
     return render(request, "booking_dashboard.html", context=context)
 
+# ############################# Cash Booking details ##############################
 
 @login_required(login_url="login_auth")
 def cash_booking(request):
@@ -439,6 +439,18 @@ def edit_cash_booking(request, booking_num):
     except:
         return redirect("booking_dashboard")        
 
+@login_required(login_url="login_auth")
+def print_cash_booking(request, sid):       
+    try:
+        booking_details = Booking.objects.get(user=request.user, id=sid)
+        user_details = BranchNetwork.objects.get(user=request.user)           
+        context = {"bd": booking_details, "ud": user_details}
+        return render(request, "print_cash_booking.html", context=context)
+    except Exception as e:
+        log.exception(e)
+    
+    return redirect("booking_dashboard")
+# ########################################## Fast Booking details  ###########################
 @login_required(login_url="login_auth")
 def bookings(request):    
     destinations = Destination.objects.all()    
