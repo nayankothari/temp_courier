@@ -24,7 +24,7 @@
                         <label for="party"><b>Party Ledger</b>
                             <span class="red_color">*</span>
                         </label>
-                        <select class="form-select control-label" name="party" id="party" aria-label="Default select example" required>
+                        <select class="form-select control-label party_booking" name="party" id="party" aria-label="Default select example" required>
                         {% for party in parties %}                    
                             <option value="{{ party.id }}">{{ party.party_name }}</option>
                         {% endfor %}
@@ -242,6 +242,14 @@
     document.getElementById('datetime').value = now.toISOString().slice(0, 16);
     document.getElementById('from_datetime').valueAsDate = now;
     document.getElementById('to_datetime').valueAsDate = now;
+
+    var new_value = $("#party").find("option:selected").text();
+    $("#sender_name").val(new_value);
+
+    $("#party").on("change", function() {
+        var new_val = $(this).find("option:selected").text();
+        $("#sender_name").val(new_val);
+    })
 </script>
 
 <!-- https://stackoverflow.com/questions/1317714/how-can-i-filter-a-date-of-a-datetimefield-in-django -->

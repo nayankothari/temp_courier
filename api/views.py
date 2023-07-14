@@ -452,7 +452,7 @@ def print_cash_booking(request, sid):
         user_details = BranchNetwork.objects.get(user=request.user)
         c_number = str(booking_details.c_note_number)
         # Generate barcde
-        barcode_svg = BARCODE_CLASS(c_number).render(writer_options={"module_width": float(.35),
+        barcode_svg = BARCODE_CLASS(c_number).render(writer_options={"module_width": float(.30),
                                                 "module_height": float(10)}).decode("utf8")   
         # Generate QR Code        
         qr_url = (f"http://206.189.133.131:8080/tracking/{str(c_number)}")
@@ -533,8 +533,9 @@ def save_booking(request):
                     booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
                     c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
                     sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
-                    ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, amount=amount, weight=weight)                    
-                    booking_obj.save()            
+                    ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, 
+                    amount=amount, weight=weight, charged_weight=weight)                    
+                    booking_obj.save()                          
                     request.session["success"] = "success"
                     try:
                         request.session["next_c_note"] = int(c_note_number) + 1
@@ -561,6 +562,7 @@ def save_booking(request):
                 booking_obj.remarks = remarks
                 booking_obj.amount = amount
                 booking_obj.weight = weight
+                booking_obj.charged_weight = weight
                 booking_obj.user=request.user                    
                 booking_obj.save()            
                 request.session["success"] = "success"
