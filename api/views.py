@@ -1,11 +1,14 @@
 """
 Some of basic django imports that help to render and filter data from database.
 """
+import io
 import ast
+import pyqrcode
 import base64
 import logging
 import requests
 import datetime
+from PIL import Image
 from .models import Reasons
 from datetime import timedelta
 from django.db.models import Max
@@ -22,7 +25,10 @@ from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
 from .models import CNoteGenerator, State, GstModel
+import barcode
+from barcode.writer import SVGWriter
 
+BARCODE_CLASS = barcode.get_barcode_class("code128")
 
 log = logging.getLogger(__name__)
 
@@ -443,9 +449,23 @@ def edit_cash_booking(request, booking_num):
 def print_cash_booking(request, sid):       
     try:
         booking_details = Booking.objects.get(user=request.user, id=sid)
-        user_details = BranchNetwork.objects.get(user=request.user)           
-        context = {"bd": booking_details, "ud": user_details}
-        return render(request, "print_cash_booking.html", context=context)
+        user_details = BranchNetwork.objects.get(user=request.user)
+        c_number = str(booking_details.c_note_number)
+        # Generate barcde
+        barcode_svg = BARCODE_CLASS(c_number).render(writer_options={"module_width": float(.35),
+                                                "module_height": float(10)}).decode("utf8")   
+        # Generate QR Code        
+        qr_url = (f"http://206.189.133.131:8080/tracking/{str(c_number)}")
+        qr_code = pyqrcode.create(qr_url)                
+        svg_buffer = io.BytesIO()
+        qr_code.svg(svg_buffer, scale=10, module_color='#000', background='#fff')
+        svg_buffer.seek(0)        
+        svg_base64 = base64.b64encode(svg_buffer.getvalue()).decode()        
+        qr_code = f'<img src="data:image/svg+xml;base64,{svg_base64}" width="70" height="60" alt="QR Code">'
+        context = {"bd": booking_details, "ud": user_details, "barcode": barcode_svg, "qr_code": qr_code}
+        
+        
+        return render(request, "print_cash_booking.html", context=context)    
     except Exception as e:
         log.exception(e)
     
