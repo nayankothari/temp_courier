@@ -43,8 +43,7 @@
                             </label>
                                 <select class="form-select control-label form-select-sm" name="payment_mode" id="payment_mode" aria-label="Payment Mode" required>
                                 <option selected value="Cash">Cash</option>
-                                <option value="Credit">Credit</option>
-                                <option value="To Pay">To Pay</option>
+                                <option value="Credit">Credit</option>                                
                                 <option value="To Pay">UPI</option>
                                 <option value="To Pay">Cheque</option>
                                 <option value="To Pay">Other</option>
@@ -273,7 +272,23 @@
                                     <input type="text" class="form-control form-control-sm" id="remarks" name="remarks">
                                 </div>
                             </div>
-                            <div class="col-md-3 mt-4">
+                            <div class="col-md-2 mt-2">
+                                <label for="booking_mode"><b>Booking Mode</b>
+                                    <span class="red_color">*</span>
+                                </label>
+                                <select class="form-select control-label form-select-sm" name="booking_mode" id="booking_mode" aria-label="Booking Mode">
+                                    <option selected value="PREPAID">PREPAID</option>
+                                    <option value="COD">COD</option>
+                                    <option value="TO-PAY">TO-PAY</option>                                    
+                                </select>
+                            </div>
+                            <div class="col-md-2 mt-2">
+                                <div class="form-group">
+                                    <label for="mode_amount"><b>Mode Amount</b></label>
+                                    <input type="number" class="form-control form-control-sm" id="mode_amount" name="mode_amount" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-2 mt-4">
                                 <input type="button" id="save_btn" class="btn btn-success" style="width: 150px;" value="Save">
                             </div>
 
@@ -405,6 +420,9 @@
                 gst_amount = parseFloat(gst_amount) || 0;
                 var total_amount = $("#total_amount").val();
                 total_amount = parseFloat(total_amount) || 0;
+                var booking_mode = $("#booking_mode").val();
+                var mode_amount = $("#mode_amount").val();
+                mode_amount = parseFloat(mode_amount) || 0;
                 var remarks = $("#remarks").val();
                 var cs_i_gst = $("input[name='gst_radio']:checked").val();
                 if (cs_i_gst === "i_gst") {
@@ -447,7 +465,9 @@
                     gst_amount: gst_amount,
                     total_amount: total_amount,
                     remarks: remarks,
-                    cs_i_gst: cs_i_gst
+                    cs_i_gst: cs_i_gst,
+                    mode_amount: mode_amount,
+                    booking_mode: booking_mode
                 };
                 // Save booking ajax
                 $.ajax({
@@ -505,6 +525,8 @@
             $("#gst_amount").val('{{ booking_details.gst_amount }}');
             $("#total_amount").val('{{ booking_details.amount }}');
             $("#remarks").val('{{ booking_details.remarks }}');
+            $("#booking_mode").val('{{ booking_details.booking_mode }}').change();
+            $("#mode_amount").val('{{ booking_details.mode_amount }}');
             var cs_gst = "{{ booking_details.c_i_gst }}";
             if (cs_gst == "False") {
                 $('input[name="gst_radio"][value="cs_gst"]').prop('checked', true);

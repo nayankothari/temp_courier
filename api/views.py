@@ -347,6 +347,9 @@ def save_cash_booking(request):
                 gst_amount = request.POST.get("gst_amount")
                 gst_amount = float(gst_amount)
                 gst_radio = request.POST.get("cs_i_gst")
+                mode_amount = request.POST.get("mode_amount")
+                booking_mode = request.POST.get("booking_mode")
+
                 if gst_radio == "true":
                     gst_radio = True
                 else:
@@ -366,7 +369,8 @@ def save_cash_booking(request):
                                         pincode=pincode, state=state, pcs=qty, charged_weight=charged_weight, weight=actual_weight,
                                         declared_value=declare_value, freight_charge=freight_charge, pod_charge=pod_charge, spl_del_charge=spcl_del_charge,
                                         insurance_amt=insurance_amount, insurance_per=insurance_percentage, gst_rate=gst_rate, gst_amount=gst_amount,
-                                        c_i_gst=gst_radio, amount=total_amount, remarks=remarks, user=request.user)                    
+                                        c_i_gst=gst_radio, amount=total_amount, remarks=remarks, mode_amount=mode_amount, booking_mode=booking_mode,
+                                        user=request.user)                    
                         booking_obj.save()                    
                         request.session["success"] = "success"
                         try:
@@ -412,6 +416,8 @@ def save_cash_booking(request):
                     booking_obj.c_i_gst=gst_radio
                     booking_obj.amount=total_amount 
                     booking_obj.remarks=remarks
+                    booking_obj.mode_amount = mode_amount
+                    booking_obj.booking_mode = booking_mode
                     booking_obj.user=request.user                
                     booking_obj.save()            
                     request.session["success"] = "success"
@@ -470,6 +476,7 @@ def print_cash_booking(request, sid):
         log.exception(e)
     
     return redirect("booking_dashboard")
+
 # ########################################## Fast Booking details  ###########################
 @login_required(login_url="login_auth")
 def bookings(request):    
@@ -487,7 +494,6 @@ def bookings(request):
                "total_bookings": len(today_bookings), 
                "from_destination": from_destination}                
     return render(request, "bookings.html", context=context)
-
 
 @login_required(login_url="login_auth")
 def save_booking(request):
@@ -527,14 +533,15 @@ def save_booking(request):
             ref_number = request.POST.get("ref_number")
             remarks = request.POST.get("remarks")
             amount = request.POST.get("amount")
-            weight = request.POST.get("weight")
+            weight = request.POST.get("weight") 
+            qty = request.POST.get("qty")           
             if not update_id:            
                 if not existing_c_note:                            
                     booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
                     c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
                     sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
                     ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, 
-                    amount=amount, weight=weight, charged_weight=weight)                    
+                    amount=amount, weight=weight, charged_weight=weight, freight_charge=amount, pcs=qty)                    
                     booking_obj.save()                          
                     request.session["success"] = "success"
                     try:
@@ -563,6 +570,8 @@ def save_booking(request):
                 booking_obj.amount = amount
                 booking_obj.weight = weight
                 booking_obj.charged_weight = weight
+                booking_obj.freight_charge = amount
+                booking_obj.pcs=qty
                 booking_obj.user=request.user                    
                 booking_obj.save()            
                 request.session["success"] = "success"
@@ -578,7 +587,7 @@ def edit_data_retrive(request):
         id = request.POST.get("id")        
         data = Booking.objects.filter(pk=id).values("id", "doc_date", "party_name", "c_note_number", 
         "from_destination", "to_destination", "sender_name", "sender_mobile", "receiver_name", "receiver_mobile_number",
-        "ref_courier_name", "ref_courier_number", "booking_type", "amount", "remarks", "weight")                      
+        "ref_courier_name", "ref_courier_number", "booking_type", "amount", "remarks", "weight", "pcs")                      
         return JsonResponse({"data": list(data)})
 
 

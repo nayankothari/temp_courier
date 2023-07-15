@@ -157,6 +157,8 @@ class Booking(models.Model):
     e_way_bill_number = models.CharField(null=True, blank=True, max_length=30)
     state = models.ForeignKey(State, null=True, blank=True, on_delete=models.PROTECT)
     pincode = models.BigIntegerField(null=True, blank=True)
+    booking_mode = models.CharField(null=True, blank=True, max_length=256)
+    mode_amount = models.FloatField(null=True, blank=True, default=0)
     # Default fields
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
