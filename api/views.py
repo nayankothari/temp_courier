@@ -9,6 +9,7 @@ import logging
 import requests
 import datetime
 from PIL import Image
+from django.db.models import F
 from .models import Reasons
 from datetime import timedelta
 from django.db.models import Max
@@ -24,7 +25,7 @@ from .models import contactus, Token, BranchNetwork, Destination
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
-from .models import CNoteGenerator, State, GstModel
+from .models import CNoteGenerator, State, GstModel, Network
 import barcode
 from barcode.writer import SVGWriter
 
@@ -193,30 +194,42 @@ def network(request):
     head_offices = BranchNetwork.objects.filter(status="R O")            
     if request.method == "POST":
         if "by_pincode" in request.POST and request.POST.get("pincode"):
-            pincode = request.POST.get("pincode")
-            data = BranchNetwork.objects.filter(pincode=pincode)          
-            if data:                                              
-                message = None
-                context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
-
-                return render(request, "network.html", context=context)
-            else:
-                context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
-
-                return render(request, "network.html", context=context)
-        
-        elif "by_area" in request.POST and request.POST.get("area_name"):
-            area_name = request.POST.get("area_name")           
-            ques = (Q(branch_name__icontains=area_name) | Q(state__state_name__icontains=area_name) 
-            | Q(zone__name__icontains=area_name) | Q(area_name__icontains=area_name))
-            data = BranchNetwork.objects.filter(ques)
-            if data:                                              
-                message = None
-                context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
-                return render(request, "network.html", context=context)
-            else:
-                context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
-                return render(request, "network.html", context=context)            
+            try:
+                pincode = int(request.POST.get("pincode"))
+                if len(str(pincode)) == 6:
+                    data = BranchNetwork.objects.filter(pincode=pincode)                                             
+                    if data:        
+                        add_details = Network.objects.filter(user=data[0].user)                                                          
+                        message = None                                                                        
+                        context = {"head_offices": head_offices, "message": None,
+                                    "data": data, "today_date": today_date, "add_details": add_details}
+                        return render(request, "network.html", context=context)
+                    
+                    add_details = Network.objects.filter(pincode=pincode)                    
+                    if add_details.exists():
+                        data = BranchNetwork.objects.filter(user=add_details[0].user)
+                        context = {"head_offices": head_offices, "message": None, "today_date": today_date, "data": data, "add_details":add_details}
+                        return render(request, "network.html", context=context)
+                    else:                        
+                        context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
+                        return render(request, "network.html", context=context)
+                else:
+                    context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
+                    return render(request, "network.html", context=context) 
+            except Exception as e:
+                log.exception(e)
+        # elif "by_area" in request.POST and request.POST.get("area_name"):
+        #     area_name = request.POST.get("area_name")           
+        #     ques = (Q(branch_name__icontains=area_name) | Q(state__state_name__icontains=area_name) 
+        #     | Q(zone__name__icontains=area_name) | Q(area_name__icontains=area_name))
+        #     data = BranchNetwork.objects.filter(ques)
+        #     if data:                                              
+        #         message = None
+        #         context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
+        #         return render(request, "network.html", context=context)
+        #     else:
+        #         context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
+        #         return render(request, "network.html", context=context)            
         
         else:
             context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
@@ -987,6 +1000,62 @@ def delete_area_detail(request):
         
         return JsonResponse({"status": 0})
 
+# ########################################### Delivery Area Master ###############################
+@login_required(login_url="login_auth")
+def delivery_area_master(request):
+    data = Network.objects.filter(user=request.user).order_by("pincode")
+    return render(request, "delivery_area_master.html", context={"data": data})
+
+@login_required(login_url="login_auth")
+def save_delivery_area_master_details(request):
+    if request.method == "POST":
+        try:            
+            pincode = int(request.POST.get("pincode"))
+            delivery_areas = request.POST.get("delivery_areas")
+            non_del_areas = request.POST.get("non_delivery_areas")
+            chargeable_del_areas = request.POST.get("chargeable_delivery_areas")
+            saved_details = Network.objects.filter(user=request.user, pincode=pincode)                                    
+            if not saved_details.exists():                            
+                Network(pincode=pincode, delivery_areas=delivery_areas, non_delivery_area=non_del_areas, 
+                        chargeable_delivery_area=chargeable_del_areas, user=request.user).save()
+                messages.success(request, "Delivery areas added successfully.")
+            else:  
+                old_details = Network.objects.get(user=request.user, pincode=pincode)
+                old_details.delivery_areas = delivery_areas
+                old_details.non_delivery_area=non_del_areas
+                old_details.chargeable_delivery_area=chargeable_del_areas
+                old_details.save()
+                messages.success(request, "Delivery areas updated successfully.")                
+        except Exception as e:
+            log.exception(e)
+
+    return redirect("delivery_area_master")
+
+@login_required(login_url="login_auth")
+def delete_del_area_master(request):
+    if request.method == "POST":
+        try:
+            id_of = request.POST.get("id_of")
+            Network.objects.get(id=id_of).delete() 
+            messages.success(request, "Pincode details deleted successfully.")   
+            return JsonResponse({"status": 1})
+        except Exception as e:            
+            log.exception(e)            
+    return JsonResponse({"status": 0})
+
+@login_required(login_url="login_auth")
+def edit_del_area_master(request):
+    if request.method == "POST":
+        try:
+            id_of = request.POST.get("id_of")
+            details = Network.objects.get(id=id_of, user=request.user)            
+            details = {"pincode": details.pincode, "delivery_areas": details.delivery_areas, 
+                       "non_del_areas": details.non_delivery_area, "ch_del_areas": details.chargeable_delivery_area }            
+            return JsonResponse({"status": 1, "data": details})
+        except Exception as e:
+            log.exception(e)
+
+    return JsonResponse({"status": 0})
 
 # ########################################### Delivery boy master ################################
 

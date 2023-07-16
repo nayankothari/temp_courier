@@ -6,13 +6,13 @@
             <form class="form-inline networ_search_form" method="POST" action="network">
                 {% csrf_token %}
                 <div class="form-group mx-sm-3 mb-2 mt-4">
-                    <h2><label for="pincode" class="area_name">Pincode</label></h2>
-                    <input type="number" class="form-control" name="pincode" id="pincode" placeholder="Search By Pincode" required>
+                    <h3><label for="pincode" class="area_name">Pincode</label></h3>
+                    <input type="number" class="form-control form-control-sm" name="pincode" id="pincode" placeholder="Search By Pincode" required>
                 </div>
-                <button type="submit" name="by_pincode" class="btn btn-primary mb-3">Search</button>
+                <button type="submit" name="by_pincode" class="btn btn-primary btn-sm mb-3">Search</button>
             </form>
         </div>
-        <div class="col-md-4 text-center mb-5">
+        <!-- <div class="col-md-4 text-center mb-5">
             <form class="form-inline networ_search_form" method="POST" action="network">
                 {% csrf_token %}
                 <div class="form-group mx-sm-3 mb-2 mt-4">
@@ -21,7 +21,7 @@
                 </div>
                 <button type="submit" name="by_area" class="btn btn-primary mb-3">Search</button>
             </form>
-        </div>
+        </div> -->
     </div>
 </div>
 
@@ -43,9 +43,9 @@
                         <br><b>Area name:</b> {{ office.area_name }}
                         <br><b>State: </b>{{ office.state }}
                         <br><b>Pincode:</b> {{ office.pincode }}
-                        <br><b>Country:</b> {{ office.country }}
-                        <br><b>Office number:</b> <a class="text-decoration-none" href="tel:{{ office.office_number }}">{{ office.office_number }}</a>
-                        <br><b>Landline number:</b> <a class="text-decoration-none" href="tel:{{ office.office_lane_line_number }}">{{ office.office_lane_line_number }}</a>
+                        <br><b>Country:</b> {{ office.country }} {% if office.office_number %}
+                        <br><b>Office number:</b> <a class="text-decoration-none" href="tel:{{ office.office_number }}">{{ office.office_number }}</a> {% endif %} {% if office.office_lane_line_number %}
+                        <br><b>Landline number:</b> <a class="text-decoration-none" href="tel:{{ office.office_lane_line_number }}">{{ office.office_lane_line_number }}</a> {% endif %}
                         <br><b>Address:</b><br>{{ office.address }}
 
                     </p>
@@ -53,6 +53,41 @@
                 <!-- <div class="card-footer">
                     <small class="text-muted">Last updated 3 mins ago</small>
                 </div> -->
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="table-responsive mt-1">
+                <table class="table table-hover table-bordered table-sm booked_data">
+                    <thead>
+                        <tr>
+                            <th scope="col">Pincode</th>
+                            <th scope="col">Delivery areas</th>
+                            <th scope="col">Non delivery areas</th>
+                            <th scope="col">Chargeable delivery areas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        {% for obj in add_details %}
+                        <tr>
+                            <td>{{ obj.pincode }}</td>
+
+                            {% if obj.delivery_areas %}
+                            <td>{{ obj.delivery_areas }}</td>
+                            {% else %}
+                            <td></td>
+                            {% endif %} {% if obj.non_delivery_area %}
+                            <td>{{ obj.non_delivery_area }}</td>
+                            {% else %}
+                            <td></td>
+                            {% endif %} {% if obj.chargeable_delivery_area %}
+                            <td>{{ obj.chargeable_delivery_area }}</td>
+                            {% else %}
+                            <td></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
         {% endfor %}
@@ -97,9 +132,9 @@
                         <br><b>Area name:</b> {{ office.area_name }}
                         <br><b>State: </b>{{ office.state }}
                         <br><b>Pincode:</b> {{ office.pincode }}
-                        <br><b>Country:</b> {{ office.country }}
-                        <br><b>Office number:</b> <a class="text-decoration-none" href="tel:{{ office.office_number }}">{{ office.office_number }}</a>
-                        <br><b>Landline number:</b> <a class="text-decoration-none" href="tel:{{ office.office_lane_line_number }}">{{ office.office_lane_line_number }}</a>
+                        <br><b>Country:</b> {{ office.country }} {% if office.office_number %}
+                        <br><b>Office number:</b> <a class="text-decoration-none" href="tel:{{ office.office_number }}">{{ office.office_number }}</a> {% endif %} {% if office.office_lane_line_number %}
+                        <br><b>Landline number:</b> <a class="text-decoration-none" href="tel:{{ office.office_lane_line_number }}">{{ office.office_lane_line_number }}</a> {% endif %}
                         <br><b>Address:</b><br>{{ office.address }}
 
                     </p>
@@ -112,5 +147,7 @@
         {% endfor %}
     </div>
 </div>
-
+<script>
+    $("#pincode").focus();
+</script>
 {% endif %} {% endblock content %}

@@ -3,7 +3,7 @@ from .models import Destination, RefCourier, Booking
 from .models import Trackinghistory, ParcelStatus, BranchNetwork
 from .models import contactus, State, Token, Country, PartyAccounts, Reasons
 from .models import UserAdditionalDetails, BookingType, DeliveryBoyMaster, AreaMaster
-from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory, GstModel
+from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory, GstModel, Network
 
 
 class AdminTracking(admin.ModelAdmin):
@@ -34,3 +34,4 @@ admin.site.register(DrsMaster)
 admin.site.register(DrsTransactionHistory)
 admin.site.register(Reasons)
 admin.site.register(GstModel)
+admin.site.register(Network)

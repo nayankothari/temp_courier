@@ -50,14 +50,19 @@
                 <div class="row">
                     <div class="col-md-6 mt-2">
                         <label for="pincode"><b>Pincode</b>
-                            <span class="red_color">*</span>
+                            <span class="red_color">*</span>                            
                         </label>
-                        <select class="form-select" name="pincode" id="pincode" aria-label="Default select example" required>
+                        <select class="form-select mb-0" name="pincode" id="pincode" aria-label="Default select example" required>
                             {% for pincode in pincodes %}
                             <!-- <option selected>Open this select menu</option> -->
                             <option value="{{ pincode.id }}">{{ pincode.pincode }}</option>
                             {% endfor %}
                         </select>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <label for="pincode"><b></b>
+                            <span style="font-size: 11px;"><br>(If pincode not available select your default pincode.)</span>  
+                        </label>
                     </div>
 
                     <div class="row">

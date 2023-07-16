@@ -213,6 +213,20 @@ class BranchNetwork(models.Model):
         return self.branch_name
 
 
+class Network(models.Model):
+    pincode = models.BigIntegerField(null=True, blank=True)
+    delivery_areas = models.TextField(max_length=2000, null=True, blank=True)
+    non_delivery_area = models.TextField(max_length=2000, null=True, blank=True)
+    chargeable_delivery_area = models.TextField(max_length=2000, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Network"
+    
+    def __str__(self):
+        return str(self.pincode)
+
 class contactus(models.Model):
     name = models.CharField(max_length=256)
     email = models.EmailField(max_length=254)

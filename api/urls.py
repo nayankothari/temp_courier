@@ -16,8 +16,8 @@ from .views import delete_delivery_boy_detail, drs, generate_drs, doc_num_from_b
 from .views import manifest_show, search_drs_by_num_date, search_manifest, c_note_master
 from .views import save_c_note_number, delete_c_note_details, check_tracking_num
 from .views import booking_dashboard, cash_booking, save_cash_booking, edit_cash_booking
-from .views import print_manifest, print_cash_booking
-
+from .views import print_manifest, print_cash_booking, delivery_area_master, save_delivery_area_master_details
+from .views import delete_del_area_master, edit_del_area_master
 
 urlpatterns = [    
     path(r"", home, name="home"),
@@ -79,6 +79,11 @@ urlpatterns = [
     path(r"edit_delivery_boy_details", edit_delivery_boy_details, name="edit_delivery_boy_details"),
     path(r"delete_delivery_boy_detail", delete_delivery_boy_detail, name="delete_delivery_boy_detail"),
     
+    path(r"delivery_area_master", delivery_area_master, name="delivery_area_master"),
+    path(r"save_delivery_area_master_details", save_delivery_area_master_details, name="save_delivery_area_master_details"),
+    path(r"delete_del_area_master", delete_del_area_master, name="delete_del_area_master"),
+    path(r"edit_del_area_master", edit_del_area_master, name="edit_del_area_master"),
+
     path(r"drs", drs, name="drs"),    
     path(r"drs/generate_drs", generate_drs, name="generate_drs"),        
     path(r"doc_num_from_booking_to_drs", doc_num_from_booking_to_drs, name="doc_num_from_booking_to_drs"),    

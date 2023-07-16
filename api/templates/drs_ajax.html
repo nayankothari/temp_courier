@@ -34,6 +34,31 @@
                 });
             }
         });
+
+        $('#docket_number').blur(function(event) {
+            event.preventDefault();
+            var docket_num = $(this).val();
+            let csr = $("input[name=csrfmiddlewaretoken").val();
+            let drs_doc_data = {
+                'docket_num': docket_num,
+                'csrfmiddlewaretoken': csr
+            }
+            $.ajax({
+                url: "{% url 'doc_num_from_booking_to_drs' %}",
+                type: "POST",
+                data: drs_doc_data,
+                success: function(response) {
+                    if (response.status == 1) {
+                        let data = response.data;
+                        $("#docket_number").val("");
+                        var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td> <input type="text" class="form-control con_name" value="' + data.name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                        $('#DrsTable tbody').prepend(row);
+                    } else {
+                        $('#origin').focus();
+                    };
+                }
+            });
+        })
     });
 
 
