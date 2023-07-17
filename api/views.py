@@ -471,7 +471,7 @@ def print_cash_booking(request, sid):
         user_details = BranchNetwork.objects.get(user=request.user)
         c_number = str(booking_details.c_note_number)
         # Generate barcde
-        barcode_svg = BARCODE_CLASS(c_number).render(writer_options={"module_width": float(.30),
+        barcode_svg = BARCODE_CLASS(c_number).render(writer_options={"module_width": float(.32),
                                                 "module_height": float(10)}).decode("utf8")   
         # Generate QR Code        
         qr_url = (f"http://206.189.133.131:8080/tracking/{str(c_number)}")
@@ -480,7 +480,7 @@ def print_cash_booking(request, sid):
         qr_code.svg(svg_buffer, scale=10, module_color='#000', background='#fff')
         svg_buffer.seek(0)        
         svg_base64 = base64.b64encode(svg_buffer.getvalue()).decode()        
-        qr_code = f'<img src="data:image/svg+xml;base64,{svg_base64}" width="70" height="60" alt="QR Code">'
+        qr_code = f'<img src="data:image/svg+xml;base64,{svg_base64}" width="90" height="90" alt="QR Code">'
         context = {"bd": booking_details, "ud": user_details, "barcode": barcode_svg, "qr_code": qr_code}
         
         
@@ -554,7 +554,7 @@ def save_booking(request):
                     c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
                     sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
                     ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, 
-                    amount=amount, weight=weight, charged_weight=weight, freight_charge=amount, pcs=qty)                    
+                    amount=amount, weight=weight, charged_weight=weight, freight_charge=amount, pcs=qty, booking_mode="A/c")                    
                     booking_obj.save()                          
                     request.session["success"] = "success"
                     try:
@@ -585,7 +585,8 @@ def save_booking(request):
                 booking_obj.charged_weight = weight
                 booking_obj.freight_charge = amount
                 booking_obj.pcs=qty
-                booking_obj.user=request.user                    
+                booking_obj.user=request.user  
+                booking_obj.booking_mode = "A/c"                  
                 booking_obj.save()            
                 request.session["success"] = "success"
                 messages.success(request, "Shipment updated Successfully.")
@@ -602,7 +603,6 @@ def edit_data_retrive(request):
         "from_destination", "to_destination", "sender_name", "sender_mobile", "receiver_name", "receiver_mobile_number",
         "ref_courier_name", "ref_courier_number", "booking_type", "amount", "remarks", "weight", "pcs")                      
         return JsonResponse({"data": list(data)})
-
 
 @login_required(login_url="login_auth")
 def advance_search_by_date(request):
@@ -750,17 +750,22 @@ def save_input_load(request):
                     to_destination = UserAdditionalDetails.objects.get(user=request.user)                
                     to_destination = to_destination.destination
                     try:                        
-                        from_destination = Destination.objects.get(id=from_destination)                        
+                        # from_destination = Destination.objects.get(id=from_destination)  
+                        old_chain_details = Trackinghistory.objects.filter(c_note_number=c_note_number_booking).order_by("-in_out_datetime")
+                        if old_chain_details.exists():                            
+                            from_destination = Destination.objects.get(id=old_chain_details[0].d_from.id)
+                        else:
+                            from_destination = Destination.objects.get(id=c_note_number_booking.from_destination.id)                        
                         if id_of:
                             saved_data = Trackinghistory.objects.get(id=id_of)
                             saved_data.c_note_number = c_note_number_booking
                             saved_data.remarks = remarks
-                            saved_data.d_from = to_destination
+                            saved_data.d_from = from_destination
                             saved_data.in_out_datetime = date
                             saved_data.save()                                               
-                        else:
+                        else:                            
                             Trackinghistory.objects.create(c_note_number=c_note_number_booking, in_out_datetime=date,
-                                    d_from=to_destination, d_to=to_destination, status=status, remarks=remarks, user=user)                                                
+                                    d_from=from_destination, d_to=to_destination, status=status, remarks=remarks, user=user)                                                
                         # data = Trackinghistory.objects.values()
                         today_date = datetime.date.today()      
                         today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")

@@ -71,17 +71,46 @@
                         <tr>
                             <th scope="row" class="text-success">Current Status</th>
                             {% if user.is_authenticated %}
-                            <td class="text-success"><b>{{ last_status }} - {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
+                            <td class="text-success"><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
                             {% else %}
                             <td class="text-success"><b>{{ last_status }}</b></td>
+                            {% endif %}
+                        </tr>
+                        {% elif last_status.name == 'PENDING' %}
+                        <tr>
+                            <th scope="row" class="text-success">Current Status</th>
+                            {% if user.is_authenticated %}
+                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
+                            {% else %}
+                            <td class="text-danger"><b>{{ last_status }}</b></td>
+                            {% endif %}
+                        </tr>
+                        {% elif last_status.name == 'RETURN' %}
+                        <tr>
+                            <th scope="row" class="text-success">Current Status</th>
+                            {% if user.is_authenticated %}
+                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
+                            {% else %}
+                            <td class="text-danger"><b>{{ last_status }}</b></td>
+                            {% endif %}
+                        </tr>
+                        {% elif last_status.name == 'UNDELIVERED' %}
+                        <tr>
+                            <th scope="row" class="text-success">Current Status</th>
+                            {% if user.is_authenticated %}
+                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
+                            {% else %}
+                            <td class="text-danger"><b>{{ last_status }}</b></td>
                             {% endif %}
                         </tr>
                         {% else %}
                         <tr>
                             <th scope="row">Current Status</th>
-                            {% if user.is_authenticated %}
-                            <td><b>{{ last_status }} - {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
+                            {% if user.is_authenticated %} {% if dbd.delivery_boy_name %}
+                            <td><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }}</b></td>
                             {% else %}
+                            <td><b>{{ last_status }}</b></td>
+                            {% endif %} {% else %}
                             <td><b>{{ last_status }}</b></td>
                             {% endif %}
                         </tr>

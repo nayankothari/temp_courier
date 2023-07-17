@@ -82,7 +82,7 @@
                                         <div class="form-group">
                                             <label for="sender_mobile"><b>Mobile</b></label>
                                             <span class="red_color">*</span>
-                                            <input type="text" class="form-control form-control-sm" id="sender_mobile" name="sender_mobile">
+                                            <input type="number" maxlength="10" minlength="10" class="form-control form-control-sm" id="sender_mobile" name="sender_mobile">
                                         </div>
                                     </div>
 
@@ -128,7 +128,7 @@
                                         <div class="form-group">
                                             <label for="receiver_mobile"><b>Mobile</b></label>
                                             <span class="red_color">*</span>
-                                            <input type="text" class="form-control form-control-sm" id="receiver_mobile" name="receiver_mobile">
+                                            <input type="number" maxlength="10" minlength="10" class="form-control form-control-sm" id="receiver_mobile" name="receiver_mobile">
                                         </div>
                                     </div>
 
@@ -180,13 +180,13 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="actual_weight"><b>Actual Wt. (gms)</b></label>
-                                    <input type="number" class="form-control form-control-sm wt_field" id="actual_weight" name="actual_weight" value="100">
+                                    <input type="number" class="form-control form-control-sm wt_field" id="actual_weight" name="actual_weight" value="50">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="charged_weight"><b>Charged Wt. (gms)</b></label>
-                                    <input type="number" class="form-control form-control-sm" id="charged_weight" name="charged_weight" value="100">
+                                    <input type="number" class="form-control form-control-sm" id="charged_weight" name="charged_weight" value="50">
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -279,7 +279,8 @@
                                 <select class="form-select control-label form-select-sm" name="booking_mode" id="booking_mode" aria-label="Booking Mode">
                                     <option selected value="PREPAID">PREPAID</option>
                                     <option value="COD">COD</option>
-                                    <option value="TO-PAY">TO-PAY</option>                                    
+                                    <option value="TO-PAY">TO-PAY</option>  
+                                    <option value="A/c">A/c</option>                                                                        
                                 </select>
                             </div>
                             <div class="col-md-2 mt-2">
