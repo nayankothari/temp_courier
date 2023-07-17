@@ -554,7 +554,7 @@ def save_booking(request):
                     c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
                     sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
                     ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, 
-                    amount=amount, weight=weight, charged_weight=weight, freight_charge=amount, pcs=qty, booking_mode="A/c")                    
+                    amount=amount, weight=weight, charged_weight=weight, freight_charge=amount, pcs=qty, booking_mode="A/C")                    
                     booking_obj.save()                          
                     request.session["success"] = "success"
                     try:
@@ -586,7 +586,7 @@ def save_booking(request):
                 booking_obj.freight_charge = amount
                 booking_obj.pcs=qty
                 booking_obj.user=request.user  
-                booking_obj.booking_mode = "A/c"                  
+                booking_obj.booking_mode = "A/C"                  
                 booking_obj.save()            
                 request.session["success"] = "success"
                 messages.success(request, "Shipment updated Successfully.")
