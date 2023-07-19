@@ -42,10 +42,11 @@
                 <div class="card-body">
                     <div class="row justify-content-end text-end">
                         <div class="col-md-5">
-                            <!-- <button class="btn btn-success mb-2">Cash Booking</button> -->
-                            <a href="{% url 'cash_booking' %}" class="text-decoration-none btn btn-success mb-2"><b>Cash Booking</b></a>
-                            <!-- <button class="btn btn-primary mb-2">Party Booking</button> -->
-                            <a href="{% url 'bookings' %}" class="text-decoration-none btn btn-primary mb-2"><b>Fast Booking</b></a>
+                            <a href="{% url 'cash_booking' %}" class="text-decoration-none btn btn-primary mb-2"><b>Cash Booking</b></a>
+                            <a href="{% url 'bookings' %}" class="text-decoration-none btn btn-success mb-2"><b>Fast Booking</b></a>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" name="c_note_num" id="c_note_num" class="form-control" placeholder="Search C. Note Number" maxlength="6">
                         </div>
                     </div>
                     <div class="col-12">
@@ -66,17 +67,14 @@
                                         <th>Ref courier</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody">
                                     {% for booking in todays_booking %}
                                     <tr>
                                         <td>
                                             <a href="{% url 'edit_cash_booking' booking.id %}" class="text-decoration-none border-0 bg-transparent text-primary editButton"><i class="bi bi-pencil"></i></a>
-                                            <!-- <button type='button' id='delete_button' class='border-0 bg-transparent text-primary deleteButton' data-sid="{{ drs.id }}" title="Delete DRS" data-toggle="modal" data-target="#deleteModal"><i class="bi bi-trash3"></i></button> -->
-
                                             <a href="{% url 'print_cash_booking' booking.id %}" target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>
-                                            <!-- <button type='button' id='print_button' class='border-0 bg-transparent text-primary printButton' data-sid="{{ booking.id }}" title="Print DRS"><i class="bi bi-printer"></i></button> -->
                                         </td>
-                                        <td>{{ booking.c_note_number }}</td>
+                                        <td><a class="text-decoration-none" href="{% url 'tracking_page' booking.c_note_number %}" target="_blank">{{ booking.c_note_number }}</a></td>
                                         <td>{{ booking.doc_date|date:"d-b-Y" }} </td>
                                         <td>{{ booking.to_destination }}</td>
                                         <td>{{ booking.booking_type }}</td>
@@ -95,28 +93,243 @@
 
                 </div>
             </div>
-            <!-- This section contain today's generated DRS details -->
+        </div>
+        <div class="row mt-3 justify-content-lg-center">
             {% csrf_token %}
-            <div class="row mt-3 justify-content-lg-center">
+            <div class="clo-md-12">
                 <h5 class="text-center alert alert-light text-black">Filter in booked shipments</h5>
-                <div class="col-md-3">
-                    <label for="search_drs_num"><b>C Note Number</b></label>
-                    <input type="text" name="search_drs_num" id="search_drs_num" class="form-control">
-                </div>
-
-                <div class="col-md-3">
-                    <label for="search_date"><b>Date</b></label>
-                    <input type="date" name="search_date" id="search_date" class="form-control">
-                </div>
-                <div class="col-md-2 mb-5">
-                    <input type="button" id="search_by_date_btn" value="Search" class="mt-4 btn btn-success">
-                </div>
-
             </div>
         </div>
-    </div>
+        <!-- This section contain today's generated DRS details -->
 
+        <div class="row justify-content-start">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="search_from_date"><b>From Date</b></label>
+                        <input type="date" name="search_from_date" id="search_from_date" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="search_to_date"><b>To Date</b></label>
+                        <input type="date" name="search_to_date" id="search_to_date" class="form-control">
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <input type="button" id="search_by_date_btn" value="Search" class="mt-4 btn btn-success">
+                    </div>
+                </div>
+
+                <div class="row mt-0">
+                    <div class="col-md-8 mt-0">
+                        <label for="search_from_date"><b>Party Name</b>
+                        <span style="font-size: 11px;" class="text-danger-emphasis">(Select party name with date)</span>
+                        </label>
+
+                        <select class="form-select control-label party_booking" name="party" id="party" aria-label="Default select example" required>
+                        {% for party in parties %}                    
+                            <option value="{{ party.id }}">{{ party.party_name }}</option>
+                        {% endfor %}
+                            </select>
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <input type="button" id="search_by_party_btn" value="Search" class="mt-4 btn btn-success">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+<script>
+    // Search by date range only
+    $("#search_by_date_btn").click(function() {
+        var from_date = $("#search_from_date").val();
+        var to_date = $("#search_to_date").val();
+        var token = $("input[name=csrfmiddlewaretoken]").val();
+        var final_data = {
+            from_date: from_date,
+            to_date: to_date,
+            csrfmiddlewaretoken: token
+        }
+        var output = "";
+        if (from_date && to_date) {
+            $.ajax({
+                url: "{% url 'advance_date_wise_search_cash_booking' %}",
+                type: "json",
+                method: "POST",
+                data: final_data,
+                success: function(res) {
+                    if (res.status) {
+                        var details = res.data;
+                        if (res.data) {
+                            for (var i = 0; i < details.length; i++) {
+                                var docDate = new Date(details[i].doc_date);
+                                var day = docDate.getDate();
+                                var monthIndex = docDate.getMonth();
+                                var year = docDate.getFullYear();
+
+                                // Array of abbreviated month names
+                                var monthNames = [
+                                    "jan", "feb", "mar", "apr", "may", "jun",
+                                    "jul", "aug", "sep", "oct", "nov", "dec"
+                                ];
+                                var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+
+                                output += '<tr><td><a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                    '</td><td>' + formattedDate +
+                                    '</td><td>' + details[i].to_destination__name +
+                                    '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
+                                    details[i].sender_name + '</td><td>' + details[i].receiver_name +
+                                    '</td><td>' + details[i].weight + '</td><td>' + details[i].freight_charge +
+                                    '</td><td>' + details[i].amount +
+                                    '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
+                            }
+                            $("#tbody").html(output);
+
+                        } else {
+                            alert("Data not found in between dates.");
+                        }
+                    } else {
+                        alert("Data not found in between dates.");
+                    }
+                }
+            })
+        } else {
+            alert("Select correct date range");
+        }
+    });
+
+    // Search by Party name with date
+    $("#search_by_party_btn").click(function() {
+        var from_date = $("#search_from_date").val();
+        var to_date = $("#search_to_date").val();
+        var party = $("#party").val();
+        var token = $("input[name=csrfmiddlewaretoken]").val();
+        var final_data = {
+            from_date: from_date,
+            to_date: to_date,
+            party: party,
+            csrfmiddlewaretoken: token
+        }
+        var output = "";
+        if (from_date && to_date && party) {
+            $.ajax({
+                url: "{% url 'advance_date_party_wise_search_cash_booking' %}",
+                type: "json",
+                method: "POST",
+                data: final_data,
+                success: function(res) {
+                    if (res.status) {
+                        var details = res.data;
+                        if (res.data) {
+                            for (var i = 0; i < details.length; i++) {
+                                var docDate = new Date(details[i].doc_date);
+                                var day = docDate.getDate();
+                                var monthIndex = docDate.getMonth();
+                                var year = docDate.getFullYear();
+
+                                // Array of abbreviated month names
+                                var monthNames = [
+                                    "jan", "feb", "mar", "apr", "may", "jun",
+                                    "jul", "aug", "sep", "oct", "nov", "dec"
+                                ];
+                                var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+
+                                output += '<tr><td><a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                    '</td><td>' + formattedDate +
+                                    '</td><td>' + details[i].to_destination__name +
+                                    '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
+                                    details[i].sender_name + '</td><td>' + details[i].receiver_name +
+                                    '</td><td>' + details[i].weight + '</td><td>' + details[i].freight_charge +
+                                    '</td><td>' + details[i].amount +
+                                    '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
+                            }
+                            $("#tbody").html(output);
+
+                        } else {
+                            alert("Data not found in between dates with this party.");
+                        }
+                    } else {
+                        alert("Data not found in between dates with this party.");
+                    }
+                }
+            })
+        } else {
+            alert("Select correct date range");
+        }
+    });
+
+    //  Advance search by c note number
+    $("#c_note_num").keydown(function() {
+        if (event.keyCode === 13 || event.keyCode === 9) {
+            var c_note = $("#c_note_num").val();
+            var c_note_length = c_note.length;
+            if (c_note_length === 7 || c_note_length === 0) {
+                var token = $("input[name=csrfmiddlewaretoken]").val();
+                var final_data = {
+                    c_note: c_note,
+                    csrfmiddlewaretoken: token
+                }
+                var output = "";
+                $.ajax({
+                    url: "{% url 'advance_c_note_wise_search_cash_booking' %}",
+                    type: "json",
+                    method: "POST",
+                    data: final_data,
+                    success: function(res) {
+                        if (res.status) {
+                            var details = res.data;
+                            if (res.data.length != 0) {
+                                for (var i = 0; i < details.length; i++) {
+                                    var docDate = new Date(details[i].doc_date);
+                                    var day = docDate.getDate();
+                                    var monthIndex = docDate.getMonth();
+                                    var year = docDate.getFullYear();
+
+                                    // Array of abbreviated month names
+                                    var monthNames = [
+                                        "jan", "feb", "mar", "apr", "may", "jun",
+                                        "jul", "aug", "sep", "oct", "nov", "dec"
+                                    ];
+                                    var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+
+                                    output += '<tr><td><a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                        '</td><td>' + formattedDate +
+                                        '</td><td>' + details[i].to_destination__name +
+                                        '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
+                                        details[i].sender_name + '</td><td>' + details[i].receiver_name +
+                                        '</td><td>' + details[i].weight + '</td><td>' + details[i].freight_charge +
+                                        '</td><td>' + details[i].amount +
+                                        '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
+                                }
+                                $("#tbody").html(output);
+                            } else {
+                                alert("Shipment Not found !");
+                            }
+                        } else {
+                            alert("Insert Correct C. Note number.");
+                        }
+                    }
+                })
+
+            } else {
+                alert("Insert Correct C. Note number.");
+            }
+        }
+    });
+
+    // Set datetime in datetime fields
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    $('#search_from_date').val(now.toISOString().slice(0, 10));
+    $('#search_to_date').val(now.toISOString().slice(0, 10));
+
+    var print_pending = localStorage.getItem('print_id');
+    if (print_pending) {
+        var new_url = "print_cash_booking/" + print_pending
+        window.open(new_url, "_blank");
+    }
+</script>
 
 
 {% endblock content %}

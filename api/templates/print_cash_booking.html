@@ -141,7 +141,7 @@
                     <td colspan="8" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Item Desc:</b> {{ bd.remarks }}</td>
                 </tr>
                 <tr>
-                    <td colspan="5" style="font-size: 8px; border: 0;"><b>Terms & Conditions*</b></td>
+                    <td colspan="5" style="font-size: 8px; border: 0;"><b>Term & Conditions*</b></td>
                     <td colspan="3" style="border: 1px solid black; border-bottom: 0px; border-right: 0px; text-align: center;" rowspan="3">
                         <div id="qrcode">
                             {{ qr_code | safe}}
@@ -269,7 +269,7 @@
                     <td colspan="8" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Item Desc:</b> {{ bd.remarks }}</td>
                 </tr>
                 <tr>
-                    <td colspan="5" style="font-size: 8px; border: 0;"><b>Terms & Conditions*</b></td>
+                    <td colspan="5" style="font-size: 8px; border: 0;"><b>Term & Conditions*</b></td>
                     <td colspan="3" style="border: 1px solid black; border-bottom: 0px; border-right: 0px; text-align: center;" rowspan="3">
                         <div id="qrcode">
                             {{ qr_code | safe}}
@@ -308,8 +308,7 @@
     <script>
         // Generate and set the QR code
         $(document).ready(function() {
-            //     $('#qrcode').qrcode("this plugin is great");
-
+            localStorage.removeItem('print_id');
             window.print();
         });
     </script>

@@ -289,10 +289,15 @@
                                     <input type="number" class="form-control form-control-sm" id="mode_amount" name="mode_amount" value="0">
                                 </div>
                             </div>
-                            <div class="col-md-2 mt-4">
+                            <div class="col-md-2 mt-4 mb-2">
                                 <input type="button" id="save_btn" class="btn btn-success" style="width: 150px;" value="Save">
                             </div>
-
+                            <hr class="mb-2">
+                            <div class="col-md-2 mt-2">
+                                <label>
+                                    <input type="checkbox" id="print_check_box" value="1" checked> Save with Print.
+                                </label>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -300,6 +305,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     $(document).ready(function() {
@@ -478,7 +484,19 @@
                     data: final_data,
                     success: function(data) {
                         if (data.status == 1) {
-                            window.location.assign("{% url 'booking_dashboard' %}");
+                            var with_print = $("#print_check_box").prop("checked");
+                            if (with_print) {
+                                if (id_of) {
+                                    localStorage.setItem('print_id', id_of);
+                                    window.location.assign("{% url 'booking_dashboard' %}");
+                                } else {
+                                    id_of = data.print_id
+                                    localStorage.setItem('print_id', id_of);
+                                    window.location.assign("{% url 'booking_dashboard' %}");
+                                }
+                            } else {
+                                window.location.assign("{% url 'booking_dashboard' %}");
+                            }
                         } else {
                             alert(data.message);
                             $("#c_note_no").focus();
@@ -536,6 +554,7 @@
             }
         };
 
+        $("#ref_courier_name").focus();
     });
 </script>
 

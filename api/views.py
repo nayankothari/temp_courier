@@ -283,10 +283,12 @@ def dashboard(request):
 
 @login_required(login_url="login_auth")
 def booking_dashboard(request):
+    parties = PartyAccounts.objects.filter(user=request.user)
     today_date = datetime.date.today()    
     today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
     context = {
-        "todays_booking": today_bookings
+        "todays_booking": today_bookings,
+        "parties": parties
     }
     return render(request, "booking_dashboard.html", context=context)
 
@@ -391,7 +393,7 @@ def save_cash_booking(request):
                         except:
                             pass
                         messages.success(request, "Shipment booked Successfully.")
-                        return JsonResponse({"status": 1, "message": "Shipment booked Successfully"})                       
+                        return JsonResponse({"status": 1, "message": "Shipment booked Successfully", "print_id": booking_obj.id})                       
                     else:                    
                         return JsonResponse({"status": 0, "message": "C Note Already exists"})         
                 else:                                                                   
@@ -471,7 +473,7 @@ def print_cash_booking(request, sid):
         user_details = BranchNetwork.objects.get(user=request.user)
         c_number = str(booking_details.c_note_number)
         # Generate barcde
-        barcode_svg = BARCODE_CLASS(c_number).render(writer_options={"module_width": float(.32),
+        barcode_svg = BARCODE_CLASS(c_number).render(writer_options={"module_width": float(.29),
                                                 "module_height": float(10)}).decode("utf8")   
         # Generate QR Code        
         qr_url = (f"http://206.189.133.131:8080/tracking/{str(c_number)}")
@@ -489,6 +491,60 @@ def print_cash_booking(request, sid):
         log.exception(e)
     
     return redirect("booking_dashboard")
+
+
+@login_required(login_url="login_auth")
+def advance_date_wise_search_cash_booking(request):
+    if request.method == "POST":
+        from_date = request.POST.get("from_date")        
+        to_date = request.POST.get("to_date")
+        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
+        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
+        to_date = to_date + timedelta(days=1)        
+        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "sender_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+        return JsonResponse({"status": 1, "data": list(data)})
+
+    else:
+        return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def advance_date_party_wise_search_cash_booking(request):
+    if request.method == "POST":
+        from_date = request.POST.get("from_date")        
+        to_date = request.POST.get("to_date")        
+        party = request.POST.get("party")
+        party = PartyAccounts.objects.get(id=party)
+        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
+        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
+        to_date = to_date + timedelta(days=1)        
+        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, party_name=party).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "sender_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+        return JsonResponse({"status": 1, "data": list(data)})
+    else:
+        return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def advance_c_note_wise_search_cash_booking(request):
+    try:
+        if request.method == "POST":                      
+            c_note = request.POST.get("c_note")            
+            try:                             
+                c_note = int(c_note)                                           
+            except:                                
+                if not c_note:
+                    today_date = datetime.date.today()                                    
+                    data = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "sender_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+                    
+                    return JsonResponse({"status": 1, "data": list(data)})
+            data = Booking.objects.filter(user=request.user, c_note_number=c_note).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "sender_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+            return JsonResponse({"status": 1, "data": list(data)})
+        else:
+            return JsonResponse({"status": 0})
+    except Exception as e:
+        log.exception(e)
+        return JsonResponse({"status": 0})
+
 
 # ########################################## Fast Booking details  ###########################
 @login_required(login_url="login_auth")
@@ -908,7 +964,7 @@ def advance_search_by_c_note_load_out(request):
         try:
             status = ParcelStatus.objects.get(name="OUT")            
             c_note_number = Booking.objects.get(c_note_number=c_note_number)   
-            data = Trackinghistory.objects.filter(user=request.user, c_note_number=c_note_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")        
+            data = Trackinghistory.objects.filter(user=request.user, c_note_number=c_note_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_to__name", "remarks")        
             return JsonResponse({"status": 1, "data": list(data)})    
         except:
             return JsonResponse({"status": 0})
@@ -920,7 +976,7 @@ def advance_search_by_ref_num_load_out(request):
         try:
             status = ParcelStatus.objects.get(name="OUT")            
             ref_number = Booking.objects.get(ref_courier_number=ref_number)   
-            data = Trackinghistory.objects.filter(user=request.user, c_note_number=ref_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")                    
+            data = Trackinghistory.objects.filter(user=request.user, c_note_number=ref_number, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_to__name", "remarks")                    
             return JsonResponse({"status": 1, "data": list(data)})    
         except:
             return JsonResponse({"status": 0})
@@ -936,7 +992,37 @@ def advance_search_load_out_by_date(request):
         to_date = to_date + timedelta(days=1)
         status = ParcelStatus.objects.get(name="OUT")        
         data = Trackinghistory.objects.filter(in_out_datetime__range=(from_date, to_date), user=request.user,
-                                              status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_from__name", "remarks")        
+                                              status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_to__name", "remarks")        
+        return JsonResponse({"status": 1, "data": list(data)})
+    else:
+        return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def load_out_auto_search_by_date_and_des(request):
+    if request.method == "POST":
+        date = request.POST.get("date")[:10]
+        to_destination = request.POST.get("destination")         
+        date = datetime.datetime.strptime(date, "%Y-%m-%d").date()        
+        to_date = date + timedelta(days=1)
+        destination = Destination.objects.get(id=to_destination)
+        status = ParcelStatus.objects.get(name="OUT")        
+        data = Trackinghistory.objects.filter(in_out_datetime__range=(date, to_date), user=request.user,
+                                              d_to=destination, status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_to__name", "remarks")        
+        return JsonResponse({"status": 1, "data": list(data)})
+    else:
+        return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def load_out_auto_search_by_date_auto(request):
+    if request.method == "POST":
+        date = request.POST.get("date")[:10]             
+        date = datetime.datetime.strptime(date, "%Y-%m-%d").date()        
+        to_date = date + timedelta(days=1)        
+        status = ParcelStatus.objects.get(name="OUT")        
+        data = Trackinghistory.objects.filter(in_out_datetime__range=(date, to_date), user=request.user,
+                                              status=status).values("id", "c_note_number__c_note_number", "in_out_datetime", "d_to__name", "remarks")        
         return JsonResponse({"status": 1, "data": list(data)})
     else:
         return JsonResponse({"status": 0})
@@ -1504,3 +1590,13 @@ def delete_c_note_details(request):
             log.exception(e)
     return JsonResponse({"status": 0})
 
+
+@login_required(login_url="login_auth")
+def retutn_all_foreign_key_details(request):
+    booking_type = BookingType.objects.all().values("id", "booking_type")
+    ref_courier_names = RefCourier.objects.all().values("id", "name")
+    destinations = Destination.objects.all().values("id", "name")
+    state = State.objects.all().values("id", "state_name")
+    part_master = PartyAccounts.objects.filter(user=request.user).values("id", "party_name")    
+    return JsonResponse({"booking_type": list(booking_type), "ref_courier_names": list(ref_courier_names),
+                         "destinations": list(destinations), "state": list(state), "party_master": list(part_master)})

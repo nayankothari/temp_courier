@@ -138,5 +138,7 @@
     var now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('datetime').value = now.toISOString().slice(0, 16);
+
+    $("#c_note_number").focus();
 </script>
 {% include 'tracking_out_ajax.html' %} {% endblock content %}
