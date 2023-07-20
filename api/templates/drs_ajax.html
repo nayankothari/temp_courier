@@ -8,6 +8,24 @@
 
     // ####################  Get data by docket number only ######################
     $(document).ready(function() {
+        // Default check if item available in basket then use that
+        var dt = $("#datetime").val();
+        var del_boy = $("#delivery_boy").val();
+        var area_nm = $("#area_name").val();
+        var new_var = dt + '_' + area_nm + '_' + del_boy;
+        var saved_data = localStorage.getItem(new_var);
+        if (saved_data) {
+            saved_data = JSON.parse(saved_data);
+            $('#DrsTable tbody').html("");
+            for (var i = 0; i < saved_data.length; i++) {
+                console.log(saved_data);
+                var row = '<tr><td>' + saved_data[i][0] + '</td><td>' + saved_data[i][1] + '</td><td> <input type="text" class="form-control con_name" value="' + saved_data[i][2] + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                $('#DrsTable tbody').append(row);
+            }
+        } else {
+            $('#DrsTable tbody').html("");
+        }
+
         $('#docket_number').on('keydown', function(event) {
             if (event.keyCode === 13 || event.keyCode === 9) {
                 event.preventDefault();
@@ -27,6 +45,32 @@
                             $("#docket_number").val("");
                             var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td> <input type="text" class="form-control con_name" value="' + data.name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                             $('#DrsTable tbody').prepend(row);
+
+                            // To save drs entries in localstorage.
+                            var drs_history = [];
+                            $('#DrsTable tr').each(function() {
+                                var rowData = [];
+                                $(this).find('th, td').each(function() {
+                                    rowData.push($(this).text());
+                                    let con_names = $(this).find(".con_name").val();
+                                    if (con_names) {
+                                        rowData.push(con_names);
+                                    };
+                                });
+                                rowData.push("");
+                                rowData.splice(2, 1);
+                                drs_history.push(rowData);
+                            });
+                            var dt = $("#datetime").val();
+                            var del_boy = $("#delivery_boy").val();
+                            var area_nm = $("#area_name").val();
+                            var new_var = dt + '_' + area_nm + '_' + del_boy;
+                            var local_data = drs_history.slice(1);
+                            var jsonString = JSON.stringify(local_data);
+
+                            localStorage.setItem(new_var, jsonString);
+                            // End of local storage code.
+
                         } else {
                             $('#origin').focus();
                         };
@@ -53,6 +97,30 @@
                         $("#docket_number").val("");
                         var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td> <input type="text" class="form-control con_name" value="' + data.name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                         $('#DrsTable tbody').prepend(row);
+                        // To save drs entries in localstorage.
+                        var drs_history = [];
+                        $('#DrsTable tr').each(function() {
+                            var rowData = [];
+                            $(this).find('th, td').each(function() {
+                                rowData.push($(this).text());
+                                let con_names = $(this).find(".con_name").val();
+                                if (con_names) {
+                                    rowData.push(con_names);
+                                };
+                            });
+                            rowData.push("");
+                            rowData.splice(2, 1);
+                            drs_history.push(rowData);
+                        });
+                        var dt = $("#datetime").val();
+                        var del_boy = $("#delivery_boy").val();
+                        var area_nm = $("#area_name").val();
+                        var new_var = dt + '_' + area_nm + '_' + del_boy;
+                        var local_data = drs_history.slice(1);
+                        var jsonString = JSON.stringify(local_data);
+
+                        localStorage.setItem(new_var, jsonString);
+                        // End of local storage code.
                     } else {
                         $('#origin').focus();
                     };
@@ -84,6 +152,30 @@
                     $("#docket_number").val("");
                     $("#con_name").val("");
                     $('#docket_number').focus();
+                    // To save drs entries in localstorage.
+                    var drs_history = [];
+                    $('#DrsTable tr').each(function() {
+                        var rowData = [];
+                        $(this).find('th, td').each(function() {
+                            rowData.push($(this).text());
+                            let con_names = $(this).find(".con_name").val();
+                            if (con_names) {
+                                rowData.push(con_names);
+                            };
+                        });
+                        rowData.push("");
+                        rowData.splice(2, 1);
+                        drs_history.push(rowData);
+                    });
+                    var dt = $("#datetime").val();
+                    var del_boy = $("#delivery_boy").val();
+                    var area_nm = $("#area_name").val();
+                    var new_var = dt + '_' + area_nm + '_' + del_boy;
+                    var local_data = drs_history.slice(1);
+                    var jsonString = JSON.stringify(local_data);
+
+                    localStorage.setItem(new_var, jsonString);
+                    // End of local storage code.
                 } else {
                     alert("Insert Docket number");
                     $('#docket_number').focus();
@@ -91,6 +183,26 @@
             }
         })
     });
+
+    // ################################# Fetch from local storage ############################
+    $(".for_bl").blur(function() {
+        var dt = $("#datetime").val();
+        var del_boy = $("#delivery_boy").val();
+        var area_nm = $("#area_name").val();
+        var new_var = dt + '_' + area_nm + '_' + del_boy;
+        var saved_data = localStorage.getItem(new_var);
+        if (saved_data) {
+            saved_data = JSON.parse(saved_data);
+            $('#DrsTable tbody').html("");
+            for (var i = 0; i < saved_data.length; i++) {
+                console.log(saved_data);
+                var row = '<tr><td>' + saved_data[i][0] + '</td><td>' + saved_data[i][1] + '</td><td> <input type="text" class="form-control con_name" value="' + saved_data[i][2] + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                $('#DrsTable tbody').append(row);
+            }
+        } else {
+            $('#DrsTable tbody').html("");
+        }
+    })
 
     // ################################## Save DRS Details ####################################
     $("#save_drs").click(function() {
@@ -126,6 +238,11 @@
             data: drs_doc_data_final,
             success: function(response) {
                 if (response.status == 1) {
+                    var dt = $("#datetime").val();
+                    var del_boy = $("#delivery_boy").val();
+                    var area_nm = $("#area_name").val();
+                    var new_var = dt + '_' + area_nm + '_' + del_boy;
+                    var saved_data = localStorage.removeItem(new_var);
                     window.location.href = '/drs'
                 } else {
                     alert(response.message);

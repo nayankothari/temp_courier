@@ -578,8 +578,7 @@ def save_booking(request):
         
         if process_further:
             update_id = request.POST.get("id")                              
-            existing_c_note = Booking.objects.filter(c_note_number=c_note_number)            
-            request.session["next_c_note"] = ""
+            existing_c_note = Booking.objects.filter(c_note_number=c_note_number)                        
             party_name = request.POST.get("party")              
             request.session["party_name"] = party_name
             party_name = PartyAccounts.objects.get(id=party_name)    
@@ -605,7 +604,8 @@ def save_booking(request):
             weight = request.POST.get("weight") 
             qty = request.POST.get("qty")           
             if not update_id:            
-                if not existing_c_note:                            
+                if not existing_c_note:        
+                    request.session["next_c_note"] = ""                    
                     booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
                     c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
                     sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
