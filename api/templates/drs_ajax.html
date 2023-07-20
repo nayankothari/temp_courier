@@ -134,6 +134,30 @@
 
     $('#DrsTable').on('click', '.deleteButton', function() {
         $(this).closest('tr').remove();
+        // To save drs entries in localstorage.
+        var drs_history = [];
+        $('#DrsTable tr').each(function() {
+            var rowData = [];
+            $(this).find('th, td').each(function() {
+                rowData.push($(this).text());
+                let con_names = $(this).find(".con_name").val();
+                if (con_names) {
+                    rowData.push(con_names);
+                };
+            });
+            rowData.push("");
+            rowData.splice(2, 1);
+            drs_history.push(rowData);
+        });
+        var dt = $("#datetime").val();
+        var del_boy = $("#delivery_boy").val();
+        var area_nm = $("#area_name").val();
+        var new_var = dt + '_' + area_nm + '_' + del_boy;
+        var local_data = drs_history.slice(1);
+        var jsonString = JSON.stringify(local_data);
+
+        localStorage.setItem(new_var, jsonString);
+        // End of local storage code.
         $('#docket_number').focus();
     });
 
