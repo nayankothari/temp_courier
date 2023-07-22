@@ -114,5 +114,7 @@ urlpatterns = [
     path(r"delete_c_note_details", delete_c_note_details, name="delete_c_note_details"),
 
     path(r"retutn_all_foreign_key_details", retutn_all_foreign_key_details, name="retutn_all_foreign_key_details"),
+
+    path(r"print_barcode_stickers", print_barcode_stickers, name="print_barcode_stickers"),
 ]
 

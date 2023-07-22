@@ -18,7 +18,6 @@
             saved_data = JSON.parse(saved_data);
             $('#DrsTable tbody').html("");
             for (var i = 0; i < saved_data.length; i++) {
-                console.log(saved_data);
                 var row = '<tr><td>' + saved_data[i][0] + '</td><td>' + saved_data[i][1] + '</td><td> <input type="text" class="form-control con_name" value="' + saved_data[i][2] + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                 $('#DrsTable tbody').append(row);
             }
@@ -219,7 +218,6 @@
             saved_data = JSON.parse(saved_data);
             $('#DrsTable tbody').html("");
             for (var i = 0; i < saved_data.length; i++) {
-                console.log(saved_data);
                 var row = '<tr><td>' + saved_data[i][0] + '</td><td>' + saved_data[i][1] + '</td><td> <input type="text" class="form-control con_name" value="' + saved_data[i][2] + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                 $('#DrsTable tbody').append(row);
             }

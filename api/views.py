@@ -3,17 +3,20 @@ Some of basic django imports that help to render and filter data from database.
 """
 import io
 import ast
-import pyqrcode
+import math
 import base64
 import logging
+import pyqrcode
 import requests
 import datetime
+import barcode
 from PIL import Image
-from django.db.models import F
 from .models import Reasons
+from django.db.models import F
 from datetime import timedelta
 from django.db.models import Max
 from django.contrib import messages
+from barcode.writer import SVGWriter
 from django.http import JsonResponse
 from django.db.models import Q, Count
 from .test_api import get_search_details
@@ -21,13 +24,12 @@ from django.shortcuts import render, redirect
 from django.db.models.functions import Substr
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
+from .models import CNoteGenerator, State, GstModel, Network
 from .models import contactus, Token, BranchNetwork, Destination
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
-from .models import CNoteGenerator, State, GstModel, Network
-import barcode
-from barcode.writer import SVGWriter
+
 
 BARCODE_CLASS = barcode.get_barcode_class("code128")
 
@@ -278,6 +280,36 @@ def logout(request):
 def dashboard(request):
     
     return render(request, "dashboard.html")
+
+# ############################### Print baecode stickers ###############################
+@login_required(login_url="login_auth")
+def print_barcode_stickers(request):
+    def generate_barcode(bcd):
+        barcode_class = barcode.get_barcode_class("code128")
+        barcode_svg = barcode_class(bcd)
+        barcode_svg_ren = barcode_svg.render(writer_options={"module_width": float(.4), "module_height": float(5),
+                                                             "font_size": 12, "text_distance": 4, "quite_zone": 3}).decode("utf-8")
+        barcode_svg_ren = barcode_svg_ren.replace('<text', '<text style="font-weight: bold; text-anchor: middle;"')
+        return barcode_svg_ren
+    group_in_one = 2
+    test_list = []
+    for i in range(2121111, 2121200 + 1):
+        res = generate_barcode(str(i))
+        test_list.append(res)
+    
+    total_round = math.ceil(len(test_list)/group_in_one)
+    counter = 0
+    final_result = []
+    for i in range(total_round):
+        sublist = test_list[counter: counter + group_in_one]
+        final_result.append(sublist)
+        counter += group_in_one
+    
+    multi_index = True
+    if group_in_one <= 1:
+        multi_index = False    
+    return render(request, "print_barcode/print_barcode.html", context={"bcd": final_result})
+
 
 # ###############################3 Dashboard details #####################################
 
@@ -676,7 +708,6 @@ def advance_search_by_date(request):
             return JsonResponse({"ststua": 0})
     else:
         return JsonResponse({"ststua": 0})
-        
 
 @login_required(login_url="login_auth")
 def advance_search_by_c_note(request):

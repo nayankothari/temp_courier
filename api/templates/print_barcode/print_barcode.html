@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airpost Xpress | Barcode</title>
+</head>
+
+<body>
+    <table>
+        <tbody>
+            {% for i in bcd %}
+            <tr>
+                {% for j in i %}
+                <td style="border: 1px solid black; border-radius: 5px; padding: 5px;">
+                    <p style="margin-top: -4px; margin-bottom: 2px; font-size: 20px; text-align: center; font-weight: bold;"><u>Airpost Xpress</u></p>{{ j|safe }}
+                    <p style="margin-top: -12px; margin-bottom: 0px; font-size: 13px; text-align: center;">www.airpostxpress.com</p>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>
