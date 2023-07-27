@@ -141,6 +141,7 @@
     })
 
 
+
     // Setup session objects
     if ("{{ request.session.from_dest }}") {
         $("#from_destination").val("{{ request.session.from_dest }}").change();
@@ -148,6 +149,33 @@
         $("#bookingtype").val("{{ request.session.booking_type }}").change();
         $("#to_destination").val("{{ request.session.to_dest }}").change();
     };
+
+    // Auto load destinations and all details.    
+    $(document).ready(function() {
+        var token = $("input[name='csrfmiddlewaretoken']").val();
+        var final_data = {
+            csrfmiddlewaretoken: token,
+        }
+        $.ajax({
+            url: "{% url 'retutn_all_foreign_key_details' %}",
+            method: "POST",
+            dataType: "json",
+            data: final_data,
+            success: function(res) {
+                if (res.status) {
+                    var des = res.destinations;
+                    $("#to_destination").empty();
+                    for (var i = 0; i < des.length; i++) {
+                        $('#to_destination').append($('<option>', {
+                            value: des[i].id,
+                            text: des[i].name
+                        }));
+                    }
+                }
+            }
+        })
+    });
+    // Above code will help to add destinations using jquery.
 </script>
 
 <!-- https://trackcourier.io/api/v1/get_checkpoints_table/{}/ups/ -->

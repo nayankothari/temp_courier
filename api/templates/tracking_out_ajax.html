@@ -269,4 +269,32 @@
             }
         });
     });
+
+
+    // Auto load destinations and all details.    
+    $(document).ready(function() {
+        var token = $("input[name='csrfmiddlewaretoken']").val();
+        var final_data = {
+            csrfmiddlewaretoken: token,
+        }
+        $.ajax({
+            url: "{% url 'retutn_all_foreign_key_details' %}",
+            method: "POST",
+            dataType: "json",
+            data: final_data,
+            success: function(res) {
+                if (res.status) {
+                    var des = res.destinations;
+                    $("#from_destination").empty();
+                    for (var i = 0; i < des.length; i++) {
+                        $('#from_destination').append($('<option>', {
+                            value: des[i].id,
+                            text: des[i].name
+                        }));
+                    }
+                }
+            }
+        })
+    });
+    // Above code will help to add destinations using jquery.
 </script>

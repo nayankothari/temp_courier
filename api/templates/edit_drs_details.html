@@ -50,9 +50,9 @@
                             <div class="col-md-4">
                                 <label for="origin"><b>Origin:</b></label>
                                 <select class="form-select control-label" id="origin" name="origin">
-                                    {% for des in origins %}
+                                    <!-- {% for des in origins %}
                                     <option value="{{ des.id }}">{{ des.name }}</option>      
-                                    {% endfor %}              
+                                    {% endfor %}               -->
                                 </select>
                             </div>
                             <div class="col-md-4 form-group align-self-center">
@@ -224,5 +224,32 @@
             }
         });
     });
+
+    // Auto load destinations and all details.    
+    $(document).ready(function() {
+        var token = $("input[name='csrfmiddlewaretoken']").val();
+        var final_data = {
+            csrfmiddlewaretoken: token,
+        }
+        $.ajax({
+            url: "{% url 'retutn_all_foreign_key_details' %}",
+            method: "POST",
+            dataType: "json",
+            data: final_data,
+            success: function(res) {
+                if (res.status) {
+                    var des = res.destinations;
+                    $("#origin").empty();
+                    for (var i = 0; i < des.length; i++) {
+                        $('#origin').append($('<option>', {
+                            value: des[i].id,
+                            text: des[i].name
+                        }));
+                    }
+                }
+            }
+        })
+    });
+    // Above code will help to add destinations using jquery.
 </script>
 {% endblock content %}

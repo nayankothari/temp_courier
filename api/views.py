@@ -293,7 +293,7 @@ def print_barcode_stickers(request):
         return barcode_svg_ren
     group_in_one = 2
     test_list = []
-    for i in range(2121111, 2121200 + 1):
+    for i in range(2121111, 2121112 + 1):
         res = generate_barcode(str(i))
         test_list.append(res)
     
@@ -331,11 +331,10 @@ def cash_booking(request):
     booking_type = BookingType.objects.all()
     ref_courier_name = RefCourier.objects.all()
     from_destination = UserAdditionalDetails.objects.get(user=request.user)    
-    destinations = Destination.objects.all()    
+    # destinations = Destination.objects.all()    
     states = State.objects.all()
     gst_rates = GstModel.objects.all()        
-    context = {"destinations": destinations, 
-               "ref_courier_names": ref_courier_name,               
+    context = {"ref_courier_names": ref_courier_name,               
                "booking_type": booking_type,                
                "from_destination": from_destination,
                "states": states, "gst_rates": gst_rates} 
@@ -484,12 +483,10 @@ def edit_cash_booking(request, booking_num):
         booking_details = Booking.objects.get(id=booking_num, user=request.user)
         booking_type = BookingType.objects.all()
         ref_courier_name = RefCourier.objects.all()
-        from_destination = UserAdditionalDetails.objects.get(user=request.user)    
-        destinations = Destination.objects.all()    
+        from_destination = UserAdditionalDetails.objects.get(user=request.user)             
         states = State.objects.all()
         gst_rates = GstModel.objects.all()        
-        context = {"destinations": destinations, 
-                "ref_courier_names": ref_courier_name,               
+        context = {"ref_courier_names": ref_courier_name,               
                 "booking_type": booking_type,                
                 "from_destination": from_destination,
                 "states": states, "gst_rates": gst_rates, 
@@ -581,15 +578,14 @@ def advance_c_note_wise_search_cash_booking(request):
 # ########################################## Fast Booking details  ###########################
 @login_required(login_url="login_auth")
 def bookings(request):    
-    destinations = Destination.objects.all()    
+    # destinations = Destination.objects.all()    
     ref_courier_name = RefCourier.objects.all()    
     booking_type = BookingType.objects.all()
     parties = PartyAccounts.objects.filter(user=request.user)
     today_date = datetime.date.today()    
     today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
     from_destination = UserAdditionalDetails.objects.get(user=request.user)        
-    context = {"destinations": destinations, 
-               "ref_courier_name": ref_courier_name,
+    context = {"ref_courier_name": ref_courier_name,
                "parties": parties, "today_bookings": today_bookings,
                "booking_type": booking_type,
                "total_bookings": len(today_bookings), 
@@ -812,11 +808,11 @@ def delete_party_detail(request):
 
 @login_required(login_url="login_auth")
 def tracking_history_in(request):
-    destinations = Destination.objects.all()
+    # destinations = Destination.objects.all()
     today_date = datetime.date.today()    
     status = ParcelStatus.objects.get(name="IN")  
     today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
-    context = {"destinations": destinations, "doc_in": today_in}    
+    context = {"doc_in": today_in}    
     return render(request, "tracking_history.html", context=context)
 
 
@@ -934,11 +930,11 @@ def advance_search_load_in_by_date(request):
 
 @login_required(login_url="login_auth")
 def tracking_history_out(request):
-    destinations = Destination.objects.all()
+    # destinations = Destination.objects.all()
     today_date = datetime.date.today()    
     status = ParcelStatus.objects.get(name="OUT")
     today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
-    context = {"destinations": destinations, "doc_in": today_in}    
+    context = {"doc_in": today_in}    
     return render(request, "tracking_history_out.html", context=context)
 
 
@@ -1283,8 +1279,8 @@ def drs(request):
 def generate_drs(request):
     area_names = AreaMaster.objects.filter(user=request.user)
     delivery_boy_names = DeliveryBoyMaster.objects.filter(user=request.user)
-    origins = Destination.objects.all()    
-    context = {"area_names": area_names, "delivery_boy": delivery_boy_names, "origins": origins}
+    # origins = Destination.objects.all()    
+    context = {"area_names": area_names, "delivery_boy": delivery_boy_names}
     return render(request, "drs_generate.html", context=context)
 
 @login_required(login_url="login_auth")
@@ -1297,9 +1293,9 @@ def edit_drs_details(request, drs_number):
                 header = header[0]
                 area_names = AreaMaster.objects.filter(user=request.user)
                 delivery_boy_names = DeliveryBoyMaster.objects.filter(user=request.user)
-                origins = Destination.objects.all()
+                # origins = Destination.objects.all()
                 context = {"headers": header, "drs_details": drs_details, "drs_number": drs_number, "area_names": area_names,
-                            "delivery_boy": delivery_boy_names, "origins": origins}
+                            "delivery_boy": delivery_boy_names}
                 return render(request, "edit_drs_details.html", context=context)
             else:
                 return redirect("drs")    
@@ -1624,10 +1620,17 @@ def delete_c_note_details(request):
 
 @login_required(login_url="login_auth")
 def retutn_all_foreign_key_details(request):
-    booking_type = BookingType.objects.all().values("id", "booking_type")
-    ref_courier_names = RefCourier.objects.all().values("id", "name")
-    destinations = Destination.objects.all().values("id", "name")
-    state = State.objects.all().values("id", "state_name")
-    part_master = PartyAccounts.objects.filter(user=request.user).values("id", "party_name")    
-    return JsonResponse({"booking_type": list(booking_type), "ref_courier_names": list(ref_courier_names),
-                         "destinations": list(destinations), "state": list(state), "party_master": list(part_master)})
+    if request.method == "POST":
+        booking_type = BookingType.objects.all().values("id", "booking_type").order_by("booking_type")
+        ref_courier_names = RefCourier.objects.all().values("id", "name").order_by("name")
+        destinations = Destination.objects.all().values("id", "name").order_by("name")
+        state = State.objects.all().values("id", "state_name").order_by("state_name")
+        # part_master = PartyAccounts.objects.filter(user=request.user).values("id", "party_name").order_by("party_name")    
+        return JsonResponse({"status": 1,"booking_type": list(booking_type), "ref_courier_names": list(ref_courier_names),
+                            "destinations": list(destinations), "state": list(state)})
+
+    return JsonResponse({"status": 0})
+
+
+
+

@@ -18,11 +18,7 @@
                         <label for="from_destination"><b>To Destination</b>
                             <span class="red_color">*</span>
                         </label>
-                        <select class="form-select" name="from_destination" id="from_destination" aria-label="Default select example" required>
-                            {% for dest in destinations %}
-                            <!-- <option selected>Open this select menu</option> -->
-                            <option value="{{ dest.id }}">{{ dest.name }}</option>
-                            {% endfor %}
+                        <select class="form-select" name="from_destination" id="from_destination" aria-label="Default select example" required>                            
                         </select>
                     </div>
                 </div>

@@ -1,4 +1,30 @@
 <script>
+    // Auto load destinations and all details.    
+    $(document).ready(function() {
+        var token = $("input[name='csrfmiddlewaretoken']").val();
+        var final_data = {
+            csrfmiddlewaretoken: token,
+        }
+        $.ajax({
+            url: "{% url 'retutn_all_foreign_key_details' %}",
+            method: "POST",
+            dataType: "json",
+            data: final_data,
+            success: function(res) {
+                if (res.status) {
+                    var des = res.destinations;
+                    for (var i = 0; i < des.length; i++) {
+                        $('#origin').append($('<option>', {
+                            value: des[i].id,
+                            text: des[i].name
+                        }));
+                    }
+                }
+            }
+        })
+    });
+    // Above code will help to add destinations using jquery.
+
     var dateInput = document.getElementById('datetime');
     var date = new Date();
     var formattedDate = date.toISOString().split('T')[0];
