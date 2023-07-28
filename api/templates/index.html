@@ -177,6 +177,8 @@
         var logged_in = '{{ request.user.is_authenticated }}';
         if (logged_in == "False") {
             $('#myModal').modal('show');
+        } else {
+            $("#trackingdetails").focus();
         }
     });
 
