@@ -172,9 +172,12 @@
         });
     </script>
 </div>
-<script type="text/javascript ">
+<script type="text/javascript">
     $(window).on('load', function() {
-        $('#myModal').modal('show');
+        var logged_in = '{{ request.user.is_authenticated }}';
+        if (logged_in == "False") {
+            $('#myModal').modal('show');
+        }
     });
 
     $("#tracking_btn").click(function() {
