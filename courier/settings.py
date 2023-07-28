@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-c_mfbb82x)w6odhv)&ghm*w27sj%hvxe5d39yidqql5ls=82(b
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None # Need to remove when upload on server with domain name.
 
 # Application definition
 
