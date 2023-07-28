@@ -78,7 +78,7 @@
                                         <td>{{ booking.doc_date|date:"d-b-Y" }} </td>
                                         <td>{{ booking.to_destination }}</td>
                                         <td>{{ booking.booking_type }}</td>
-                                        <td>{{ booking.sender_name }}</td>
+                                        <td>{{ booking.party_name }}</td>
                                         <td>{{ booking.receiver_name }}</td>
                                         <td>{{ booking.weight }}</td>
                                         <td>{{ booking.freight_charge }}</td>
@@ -179,7 +179,7 @@
                                     '</td><td>' + formattedDate +
                                     '</td><td>' + details[i].to_destination__name +
                                     '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
-                                    details[i].sender_name + '</td><td>' + details[i].receiver_name +
+                                    details[i].party_name__party_name + '</td><td>' + details[i].receiver_name +
                                     '</td><td>' + details[i].weight + '</td><td>' + details[i].freight_charge +
                                     '</td><td>' + details[i].amount +
                                     '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
@@ -239,7 +239,7 @@
                                     '</td><td>' + formattedDate +
                                     '</td><td>' + details[i].to_destination__name +
                                     '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
-                                    details[i].sender_name + '</td><td>' + details[i].receiver_name +
+                                    details[i].party_name__party_name + '</td><td>' + details[i].receiver_name +
                                     '</td><td>' + details[i].weight + '</td><td>' + details[i].freight_charge +
                                     '</td><td>' + details[i].amount +
                                     '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
@@ -297,7 +297,7 @@
                                         '</td><td>' + formattedDate +
                                         '</td><td>' + details[i].to_destination__name +
                                         '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
-                                        details[i].sender_name + '</td><td>' + details[i].receiver_name +
+                                        details[i].party_name__party_name + '</td><td>' + details[i].receiver_name +
                                         '</td><td>' + details[i].weight + '</td><td>' + details[i].freight_charge +
                                         '</td><td>' + details[i].amount +
                                         '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
@@ -327,9 +327,9 @@
     var print_pending = localStorage.getItem('print_id');
     if (print_pending) {
         var new_url = "print_cash_booking/" + print_pending;
-        window.open(new_url, "_blank");
-        // var print_url = '<a href="http://206.189.133.131:8080/' + new_url + '" target="blank"></a>'
-        // $(print_url)[0].click();
+        // window.open(new_url, "_blank");
+        var print_url = '<a href="http://206.189.133.131:8080/' + new_url + '" target="blank"></a>'
+        $(print_url)[0].click();
     }
 </script>
 

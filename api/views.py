@@ -530,7 +530,7 @@ def advance_date_wise_search_cash_booking(request):
         from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
         to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
         to_date = to_date + timedelta(days=1)        
-        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "sender_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
         return JsonResponse({"status": 1, "data": list(data)})
 
     else:
@@ -547,7 +547,7 @@ def advance_date_party_wise_search_cash_booking(request):
         from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
         to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
         to_date = to_date + timedelta(days=1)        
-        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, party_name=party).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "sender_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, party_name=party).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
         return JsonResponse({"status": 1, "data": list(data)})
     else:
         return JsonResponse({"status": 0})
@@ -563,10 +563,10 @@ def advance_c_note_wise_search_cash_booking(request):
             except:                                
                 if not c_note:
                     today_date = datetime.date.today()                                    
-                    data = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "sender_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+                    data = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
                     
                     return JsonResponse({"status": 1, "data": list(data)})
-            data = Booking.objects.filter(user=request.user, c_note_number=c_note).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "sender_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+            data = Booking.objects.filter(user=request.user, c_note_number=c_note).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
             return JsonResponse({"status": 1, "data": list(data)})
         else:
             return JsonResponse({"status": 0})
