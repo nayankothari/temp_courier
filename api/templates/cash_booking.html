@@ -17,7 +17,8 @@
                                 <div class="form-group">
                                     <label for="c_note_no"><b>C Note No.</b></label>
                                     <span class="red_color">*</span>
-                                    <input type="number" class="form-control form-control-sm" id="c_note_no" name="c_note_no" value="{{ request.session.next_c_note_for_cash }}">
+                                    <!-- <input type="number" class="form-control form-control-sm" id="c_note_no" name="c_note_no" value="{{ request.session.next_c_note_for_cash }}"> -->
+                                    <input type="number" class="form-control form-control-sm" id="c_note_no" name="c_note_no">
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -306,6 +307,13 @@
 
 <script>
     $(document).ready(function() {
+
+        // Set new C Note Number
+        var new_c_c_note = localStorage.getItem("c_c_note_num");
+        if (new_c_c_note) {
+            $("#c_note_no").val(new_c_c_note);
+        }
+
         $('.inpt_fld').on('input', function() {
             var gst_rate = $("#gst_rate").find("option:selected").text();
             gst_rate = parseFloat(gst_rate) || 0;
@@ -481,6 +489,12 @@
                     data: final_data,
                     success: function(data) {
                         if (data.status == 1) {
+                            if (id_of) {
+                                var new_c_note = c_note_no;
+                            } else {
+                                var new_c_note = parseInt(c_note_no) + 1;
+                                localStorage.setItem("c_c_note_num", new_c_note);
+                            }
                             var with_print = $("#print_check_box").prop("checked");
                             if (with_print) {
                                 if (id_of) {

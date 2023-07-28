@@ -53,8 +53,8 @@
                         <label for="cnotenumber"><b>C. Note number</b>
                             <span class="red_color">*</span>
                         </label>
-                        <input type="text" name="cnotenumber" id="cnotenumber" class="form-control" value="{{ request.session.next_c_note }}" onfocus="let value = this.value; this.value = null; this.value=value" autofocus required>
-                        <!-- placeholder="C. N. Number"> -->
+                        <!-- <input type="text" name="cnotenumber" id="cnotenumber" class="form-control" value="{{ request.session.next_c_note }}" onfocus="let value = this.value; this.value = null; this.value=value" autofocus required> -->
+                        <input type="text" name="cnotenumber" id="cnotenumber" class="form-control" autofocus required>
                     </div>
                 </div>
                 <!-- for From, To destination -->
@@ -121,7 +121,7 @@
                 <div class="row">
                     <div class="col-md-6 mt-2">
                         <label for="weight"><b>Weight in gms</b></label>
-                        <input type="number" name="weight" id="weight" class="form-control" placeholder="" value="0">
+                        <input type="number" name="weight" id="weight" class="form-control" placeholder="" value="100">
                     </div>
                     <div class="col-md-6 mt-2">
                         <label for="amount"><b>Amount</b></label>
@@ -253,7 +253,21 @@
     $("#party").on("change", function() {
         var new_val = $(this).find("option:selected").text();
         $("#sender_name").val(new_val);
-    })
+    });
+
+    $(document).ready(function() {
+        var new_c_note = "{{ request.session.next_c_note }}"
+        console.log()
+        if (new_c_note) {
+            localStorage.setItem("p_c_note_num", new_c_note);
+            $("#cnotenumber").val(new_c_note);
+        } else {
+            new_c_note = localStorage.getItem("p_c_note_num");
+            if (new_c_note) {
+                $("#cnotenumber").val(new_c_note);
+            }
+        }
+    });
 </script>
 
 <!-- https://stackoverflow.com/questions/1317714/how-can-i-filter-a-date-of-a-datetimefield-in-django -->

@@ -140,16 +140,6 @@
         }
     })
 
-
-
-    // Setup session objects
-    if ("{{ request.session.from_dest }}") {
-        $("#from_destination").val("{{ request.session.from_dest }}").change();
-        $("#party").val("{{ request.session.party_name }}").change();
-        $("#bookingtype").val("{{ request.session.booking_type }}").change();
-        $("#to_destination").val("{{ request.session.to_dest }}").change();
-    };
-
     // Auto load destinations and all details.    
     $(document).ready(function() {
         var token = $("input[name='csrfmiddlewaretoken']").val();
@@ -171,6 +161,13 @@
                             text: des[i].name
                         }));
                     }
+                    // Setup session objects
+                    if ("{{ request.session.from_dest }}") {
+                        $("#from_destination").val("{{ request.session.from_dest }}").change();
+                        $("#party").val("{{ request.session.party_name }}").change();
+                        $("#bookingtype").val("{{ request.session.booking_type }}").change();
+                        $("#to_destination").val("{{ request.session.to_dest }}").change();
+                    };
                 }
             }
         })
