@@ -317,7 +317,7 @@ def print_barcode_stickers(request):
 
 @login_required(login_url="login_auth")
 def booking_dashboard(request):
-    parties = PartyAccounts.objects.filter(user=request.user)
+    parties = PartyAccounts.objects.filter(user=request.user).order_by("party_name")
     today_date = datetime.date.today()    
     today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
     context = {
@@ -617,7 +617,7 @@ def bookings(request):
     # destinations = Destination.objects.all()    
     ref_courier_name = RefCourier.objects.all()    
     booking_type = BookingType.objects.all()
-    parties = PartyAccounts.objects.filter(user=request.user)
+    parties = PartyAccounts.objects.filter(user=request.user).order_by("party_name")
     today_date = datetime.date.today()    
     today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
     from_destination = UserAdditionalDetails.objects.get(user=request.user)        
@@ -771,7 +771,7 @@ def advance_search_for_ref_number(request):
 
 @login_required(login_url="login_auth")
 def part_master(request):
-    parties = PartyAccounts.objects.filter(user=request.user)
+    parties = PartyAccounts.objects.filter(user=request.user).order_by("party_name")
     total_parties = len(parties)
     context = {"parties": parties, "total_parties": total_parties}
     return render(request, "party_master.html", context)
