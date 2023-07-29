@@ -103,7 +103,11 @@
                             <input type="hidden" name="lbl_input" id="lbl_input" value="">
                             <button type="submit" id="bulk_label_btn" class="btn btn-outline-success mt-3" style="margin-right: 10px;"><i class="bi bi-printer"></i> Bulk print label</button>
                         </form>
-                        <!-- <button type="button" id="" class="btn btn-outline-success mt-3">Bulk print Label</button> -->
+                        <form action="{% url 'export_to_excel_bookings' %}" method="POST" id="export_to_excel_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="export_to_excel_input" id="export_to_excel_input" value="">
+                            <button type="submit" id="export_to_excel_btn" class="btn btn-outline-dark mt-3" style="margin-right: 10px;"><i class="bi bi-arrow-down-circle"></i> Export to csv</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -433,6 +437,18 @@
             c_note_details = JSON.stringify(c_note_details)
             $("#lbl_input").val("");
             $("#lbl_input").val(c_note_details);
+        })
+
+
+        $("#export_to_excel_form").submit(function(e) {
+            var c_note_details = [];
+            $("#table-1 tr:not(:first)").each(function() {
+                var firstCell = $(this).find("td:nth-child(2)");
+                c_note_details.push(parseInt(firstCell.text()));
+            });
+            c_note_details = JSON.stringify(c_note_details)
+            $("#export_to_excel_input").val("");
+            $("#export_to_excel_input").val(c_note_details);
         })
     });
 

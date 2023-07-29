@@ -3,6 +3,7 @@ Some of basic django imports that help to render and filter data from database.
 """
 import io
 import ast
+import csv
 import math
 import base64
 import logging
@@ -186,10 +187,7 @@ def contactUs(request):
             contact_obj.save()
             return_message = "Request submitted successfully."       
 
-            return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})
-        else:
-            print("Pending...")
-
+            return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})    
 
     return render(request, "contactus.html", {"today_date": today_date})
 
@@ -334,6 +332,35 @@ def booking_dashboard(request):
     }
     return render(request, "booking_dashboard.html", context=context)
 
+@login_required(login_url="login_auth")
+def export_to_excel_bookings(request):
+    try:
+        if request.method == "POST":
+            list_of_c_notes = request.POST.getlist("export_to_excel_input")
+            list_of_c_notes = list_of_c_notes[0]
+            list_of_c_notes = ast.literal_eval(list_of_c_notes)
+            booking_details = Booking.objects.filter(user=request.user, 
+                c_note_number__in=list_of_c_notes).order_by("ref_courier_number")
+            if booking_details.exists():      
+                file_name = datetime.datetime.now().strftime("Booking_%Y-%m-%d %I:%M.csv")
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+                
+                writer = csv.writer(response)
+                writer.writerow(["C. Note number", "Booking date", "To destination", "Booking type", "Party name",
+                    "Sender name", "Receiver name", "Weight in (G.)", "Ref. Courier name", "Ref. Number"])
+
+                for obj in booking_details:
+                    writer.writerow([obj.c_note_number, obj.doc_date, 
+                                    obj.to_destination, obj.booking_type, obj.party_name, obj.sender_name,
+                                    obj.receiver_name, obj.weight, obj.ref_courier_name, "'" + str(obj.ref_courier_number)])
+                return response
+            return redirect("booking_dashboard")
+        return redirect("booking_dashboard")
+    except Exception as e:
+        log.exception(e)
+        return redirect("booking_dashboard")
+
 # ############################# Bulk label or receipt prints #########################
 
 @login_required(login_url="login_auth")
@@ -372,7 +399,7 @@ def bulk_print_receipt(request):
                 return render(request, "bulk_receipt_print.html", context={"booking_details": result, 
                                                         "bcd": barcode_details, "ud": user_details, "qr_code": qr_code})
         except Exception as e:
-            print(e)            
+            log.exception(e)         
             return redirect("booking_dashboard")    
     return redirect("booking_dashboard") 
 
@@ -413,7 +440,7 @@ def bulk_print_label(request):
                 return render(request, "bulk_label_print.html", context={"booking_details": result, 
                                                         "bcd": barcode_details, "ud": user_details, "qr_code": qr_code})
         except Exception as e:
-            print(e)            
+            log.exception(e)      
             return redirect("booking_dashboard")    
     return redirect("booking_dashboard") 
 
