@@ -4,6 +4,7 @@ Some of basic django imports that help to render and filter data from database.
 import io
 import ast
 import math
+import pdfkit
 import base64
 import logging
 import pyqrcode
@@ -18,11 +19,13 @@ from django.db.models import Max
 from django.contrib import messages
 from barcode.writer import SVGWriter
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.db.models import Q, Count
 from .test_api import get_search_details
 from django.shortcuts import render, redirect
 from django.db.models.functions import Substr
 from django.contrib.auth.models import User, auth
+from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from .models import CNoteGenerator, State, GstModel, Network
 from .models import contactus, Token, BranchNetwork, Destination
@@ -323,6 +326,29 @@ def booking_dashboard(request):
         "parties": parties
     }
     return render(request, "booking_dashboard.html", context=context)
+
+
+@login_required(login_url="login_auth")
+def bulk_print_receipt(request):
+    if request.method == "POST":
+        list_of_c_notes = request.POST.getlist("c_note_numbers[]")
+        booking_details = Booking.objects.filter(user=request.user, c_note_number__in=list_of_c_notes)
+        if booking_details.exists():
+            steps = math.ceil(len(booking_details) / 4)
+            counter = 0
+            result = []
+            for _ in range(steps):                
+                result.append(booking_details[counter: counter + 4])
+                counter += 4
+            html = render_to_string("bulk_receipt_print.html", {"bd": result})
+            
+            pdf_file = pdfkit.from_string(html, False)
+            response = HttpResponse(pdf_file, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="bulk_items.pdf"'
+
+            return response
+        return JsonResponse({"status": 0, "message": "No Records found to print in bulk."})
+    return JsonResponse({"status": 0, "message": "GET method not allowed."}) 
 
 # ############################# Cash Booking details ##############################
 
