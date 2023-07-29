@@ -336,14 +336,21 @@ def bulk_print_receipt(request):
                 barcode_list = {}
                 for i in li_c_notes:
                     barcode_svg = BARCODE_CLASS(str(i)).render(writer_options={"module_width": float(.29),
-                                                    "module_height": float(10)}).decode("utf8")   
-                    barcode_list[str(i)] = barcode_svg
+                                                    "module_height": float(6), "write_text": False}).decode("utf8")   
+                    barcode_list["barcode"] = barcode_svg
+                    break
                 return barcode_list
             
             list_of_c_notes = list_of_c_notes[0]
             list_of_c_notes = ast.literal_eval(list_of_c_notes)                        
             barcode_details = generate_bulk_bcd(list_of_c_notes)     
-
+            qr_url = (f"http://206.189.133.131:8080/")
+            qr_code = pyqrcode.create(qr_url)                
+            svg_buffer = io.BytesIO()
+            qr_code.svg(svg_buffer, scale=10, module_color='#000', background='#fff')
+            svg_buffer.seek(0)        
+            svg_base64 = base64.b64encode(svg_buffer.getvalue()).decode()        
+            qr_code = f'<img src="data:image/svg+xml;base64,{svg_base64}" width="90" height="90" alt="QR Code">'
             booking_details = Booking.objects.filter(user=request.user, c_note_number__in=list_of_c_notes)        
             user_details = BranchNetwork.objects.get(user=request.user)
             if booking_details.exists():
@@ -354,7 +361,48 @@ def bulk_print_receipt(request):
                     result.append(booking_details[counter: counter + 4])
                     counter += 4                
                 return render(request, "bulk_receipt_print.html", context={"booking_details": result, 
-                                                        "bcd": barcode_details, "ud": user_details})
+                                                        "bcd": barcode_details, "ud": user_details, "qr_code": qr_code})
+        except Exception as e:
+            print(e)            
+            return redirect("booking_dashboard")    
+    return redirect("booking_dashboard") 
+
+
+@login_required(login_url="login_auth")
+def bulk_print_label(request):
+    if request.method == "POST":
+        list_of_c_notes = request.POST.getlist("lbl_input")                
+        try:
+            def generate_bulk_bcd(li_c_notes):
+                barcode_list = {}
+                for i in li_c_notes:
+                    barcode_svg = BARCODE_CLASS(str(i)).render(writer_options={"module_width": float(.29),
+                                                    "module_height": float(6), "write_text": False}).decode("utf8")   
+                    barcode_list["barcode"] = barcode_svg
+                    break
+                return barcode_list
+            
+            list_of_c_notes = list_of_c_notes[0]
+            list_of_c_notes = ast.literal_eval(list_of_c_notes)                        
+            barcode_details = generate_bulk_bcd(list_of_c_notes)     
+            qr_url = (f"http://206.189.133.131:8080/")
+            qr_code = pyqrcode.create(qr_url)                
+            svg_buffer = io.BytesIO()
+            qr_code.svg(svg_buffer, scale=10, module_color='#000', background='#fff')
+            svg_buffer.seek(0)        
+            svg_base64 = base64.b64encode(svg_buffer.getvalue()).decode()        
+            qr_code = f'<img src="data:image/svg+xml;base64,{svg_base64}" width="90" height="90" alt="QR Code">'
+            booking_details = Booking.objects.filter(user=request.user, c_note_number__in=list_of_c_notes)        
+            user_details = BranchNetwork.objects.get(user=request.user)
+            if booking_details.exists():
+                steps = math.ceil(len(booking_details) / 4)
+                counter = 0
+                result = []
+                for _ in range(steps):                
+                    result.append(booking_details[counter: counter + 4])
+                    counter += 4                
+                return render(request, "bulk_label_print.html", context={"booking_details": result, 
+                                                        "bcd": barcode_details, "ud": user_details, "qr_code": qr_code})
         except Exception as e:
             print(e)            
             return redirect("booking_dashboard")    
