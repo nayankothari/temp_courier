@@ -244,6 +244,12 @@ def network(request):
     return render(request, "network.html", context=context)
 
 
+def terms_and_conditions(request):
+    return render(request, "terms_and_condition/terms_and_condition.html")
+
+def privacy_and_policy(request):
+    return render(request, "terms_and_condition/privacy_and_policy.html")
+
 def services(request):
     return render(request, "services.html", {"today_date": today_date})
 
@@ -320,12 +326,15 @@ def booking_dashboard(request):
     parties = PartyAccounts.objects.filter(user=request.user).order_by("party_name")
     today_date = datetime.date.today()    
     today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
+    ref_couriers = RefCourier.objects.all()
     context = {
         "todays_booking": today_bookings,
-        "parties": parties
+        "parties": parties,
+        "ref_couriers": ref_couriers
     }
     return render(request, "booking_dashboard.html", context=context)
 
+# ############################# Bulk label or receipt prints #########################
 
 @login_required(login_url="login_auth")
 def bulk_print_receipt(request):
@@ -657,6 +666,23 @@ def advance_c_note_wise_search_cash_booking(request):
     except Exception as e:
         log.exception(e)
         return JsonResponse({"status": 0})
+
+
+@login_required(login_url="login_auth")
+def advance_date_ref_courier_wise_search_cash_booking(request):
+    if request.method == "POST":
+        from_date = request.POST.get("from_date")        
+        to_date = request.POST.get("to_date")        
+        ref_courier = request.POST.get("ref_courier")
+        ref_courier = RefCourier.objects.get(id=ref_courier)
+        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
+        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
+        to_date = to_date + timedelta(days=1)        
+        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, ref_courier_name=ref_courier).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name")        
+        return JsonResponse({"status": 1, "data": list(data)})
+    else:
+        return JsonResponse({"status": 0})
+
 
 
 # ########################################## Fast Booking details  ###########################

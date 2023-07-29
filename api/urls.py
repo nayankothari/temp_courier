@@ -33,6 +33,8 @@ urlpatterns = [
     path(r"network", network, name="network"),
     path(r"services", services, name="services"),  
     path(r"about_us", about_us, name="about_us"),
+    path(r"terms_and_conditions", terms_and_conditions, name="terms_and_conditions"),
+    path(r"privacy_and_policy", privacy_and_policy, name="privacy_and_policy"),
     
     path(r"login_auth", login_auth, name="login_auth"),    
     path(r"logout", logout, name="logout"),
@@ -56,6 +58,7 @@ urlpatterns = [
     path(r"advance_date_wise_search_cash_booking", advance_date_wise_search_cash_booking, name="advance_date_wise_search_cash_booking"),
     path(r"advance_date_party_wise_search_cash_booking", advance_date_party_wise_search_cash_booking, name="advance_date_party_wise_search_cash_booking"),
     path(r"advance_c_note_wise_search_cash_booking", advance_c_note_wise_search_cash_booking, name="advance_c_note_wise_search_cash_booking"),
+    path(r"advance_date_ref_courier_wise_search_cash_booking", advance_date_ref_courier_wise_search_cash_booking, name="advance_date_ref_courier_wise_search_cash_booking"),
 
     path(r"part_master", part_master, name="part_master"),    
     path(r"save_parties", save_parties, name="save_parties"),        

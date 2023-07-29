@@ -145,8 +145,24 @@
                         {% endfor %}
                             </select>
                     </div>
-                    <div class="col-md-4 mb-5">
+                    <div class="col-md-4 mb-2">
                         <input type="button" id="search_by_party_btn" value="Search" class="mt-4 btn btn-success">
+                    </div>
+                </div>
+                <div class="row mt-0">
+                    <div class="col-md-8 mt-0">
+                        <label for="ref_courier_search_enter"><b>Ref. courier name</b>
+                        <span style="font-size: 11px;" class="text-danger-emphasis">(Select ref courier with date)</span>
+                        </label>
+
+                        <select class="form-select control-label party_booking" name="ref_courier_search_enter" id="ref_courier_search_enter" aria-label="Default select example" required>
+                        {% for ref in ref_couriers %}                    
+                            <option value="{{ ref.id }}">{{ ref.name }}</option>
+                        {% endfor %}
+                            </select>
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <input type="button" id="ref_courier_search_btn" value="Search" class="mt-4 btn btn-success">
                     </div>
                 </div>
             </div>
@@ -331,6 +347,68 @@
             }
         }
     });
+
+    // Search by Ref courier name and date    
+    $("#ref_courier_search_btn").click(function() {
+        var from_date = $("#search_from_date").val();
+        var to_date = $("#search_to_date").val();
+        var ref_courier = $("#ref_courier_search_enter").val();
+        var token = $("input[name=csrfmiddlewaretoken]").val();
+        var final_data = {
+            from_date: from_date,
+            to_date: to_date,
+            ref_courier: ref_courier,
+            csrfmiddlewaretoken: token
+        }
+        var output = "";
+        if (from_date && to_date && ref_courier) {
+            $.ajax({
+                url: "{% url 'advance_date_ref_courier_wise_search_cash_booking' %}",
+                type: "json",
+                method: "POST",
+                data: final_data,
+                success: function(res) {
+                    if (res.status) {
+                        var details = res.data;
+                        if (res.data) {
+                            for (var i = 0; i < details.length; i++) {
+                                var docDate = new Date(details[i].doc_date);
+                                var day = docDate.getDate();
+                                var monthIndex = docDate.getMonth();
+                                var year = docDate.getFullYear();
+
+                                // Array of abbreviated month names
+                                var monthNames = [
+                                    "jan", "feb", "mar", "apr", "may", "jun",
+                                    "jul", "aug", "sep", "oct", "nov", "dec"
+                                ];
+                                var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+
+                                output += '<tr><td><a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                    '</td><td>' + formattedDate +
+                                    '</td><td>' + details[i].to_destination__name +
+                                    '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
+                                    details[i].party_name__party_name + '</td><td>' + details[i].receiver_name +
+                                    '</td><td>' + details[i].weight + '</td><td>' + details[i].freight_charge +
+                                    '</td><td>' + details[i].amount +
+                                    '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
+                            }
+                            $("#tbody").html(output);
+
+                        } else {
+                            alert("Data not found in between dates with this ref courier name.");
+                        }
+                    } else {
+                        alert("Data not found in between dates with this ref courier name.");
+                    }
+                }
+            })
+        } else {
+            alert("Select correct date range");
+        }
+    });
+
+
 
     // Print bulk_receipt_btn
     $(document).ready(function() {
