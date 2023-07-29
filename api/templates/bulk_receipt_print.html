@@ -1,0 +1,584 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% load static %}
+    <link rel="stylesheet" href="{% static 'css\\index.css' %}">
+    <link rel="stylesheet" href="{% static 'css\\tracking.css' %}">
+    <link rel="stylesheet" href="{% static 'css\\dashboard.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img\\favicon.ico' %}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <title>Airpost Xpress | Print Preview</title>
+
+    <style>
+        .table-container {
+            width: 365px;
+            height: 490px;
+            border: 4px double black;
+        }
+        
+        table {
+            width: 100%;
+            /* height: 100%; */
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        
+        th,
+        td {
+            border: 1px solid black;
+        }
+        
+        td {
+            width: calc(365px / 8);
+            /* height: 20px; */
+        }
+    </style>
+
+</head>
+
+<body>
+    <div>
+        {% for bd in booking_details %}
+        <div class="d-flex">
+            <div class="table-container d-flex" style="margin-bottom: 32px;">
+                <table>
+                    <tr>
+                        <th style="border: 0px; height: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="border: 0px; border-bottom: 1px solid black; height: 45px;">
+                            <img src="{% static 'img/airpost_logo.png' %}" alt="" width="80%" height="32px" style="padding-left: 45px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship To,</b></td>
+                        <td colspan="4" style="font-size: 9px; border: 0px;">{{ bd.0.receiver_name }}</td>
+                        <td colspan="3" rowspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 1px soild black;">{{ bd.0.c_note_number }}</td>
+                        <!-- To setup barcode image -->
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px; border: 0px;">{{ bd.0.receiver_address }}</td>
+                    </tr>
+                    <tr>
+                        {% if bd.0.pincode %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.0.to_destination }}</b> - {{bd.0.pincode }}</td>
+                        {% else %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.0.to_destination }}</b></td>
+                        {% endif %}
+                    </tr>
+
+                    <tr>
+                        {% if bd.0.state %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ bd.0.state }}</b>, Mob: {{bd.0.receiver_mobile_number }}</td>
+                        {% else %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Mob:</b>{{bd.0.receiver_mobile_number }}</td>
+                        {% endif %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>{{ bd.0.booking_type }}</td>
+                </tr>
+
+                <tr>
+                    <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship By,</b></td>
+                        <td colspan="4" style="font-size: 9px; border: 0px;">{{ bd.0.sender_name }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 1px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Date: {{ bd.0.doc_date | date:"d-m-Y" }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px; border: 0px;">{{ bd.0.sender_address }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 11px; border: 0px;"><b>{{ bd.0.from_destination }}</b> - {{ud.pincode }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 0px; font-size: 11px; text-align: center;"><b>{{ bd.0.booking_mode }}</b></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ ud.state }}</b>, Mob: {{bd.0.sender_mobile }}</td>
+                        {% if bd.0.mode_amount %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>₹ {{ bd.0.mode_amount }}</b></td>
+                        {% else %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b></b></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 10px; border-bottom: 1px solid black;">Party: {{ bd.0.party_name }}</td>
+                        <!-- <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 10px;"><b>Payment: ref_courier_number </b></td> -->
+                        <!-- <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b></b></td> -->
+                    </tr>
+
+                    <tr>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Qty.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Weight (G)</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Ins ch.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Value</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Spl del ch.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Freight</b></td>
+                        <td colspan="2" style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Total Amount</b></td>
+
+                    </tr>
+                    <tr>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.0.pcs }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.0.charged_weight }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.0.insurance_amt }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.0.declared_value }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.0.spl_del_charge }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.0.freight_charge }}</td>
+                        <td colspan="2" style="border-right: 0px; border-top: 1px solid black; font-size: 11px; text-align: center;"><b>₹ {{ bd.0.amount }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Item Desc:</b> {{ bd.0.remarks }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 8px; border: 0;"><b>Term & Conditions*</b></td>
+                        <td colspan="3" style="border: 1px solid black; border-bottom: 0px; border-right: 0px; text-align: center;" rowspan="3">
+                            <div id="qrcode">
+                                {{ qr_code | safe}}
+                            </div>
+                        </td>
+                        <!-- Need to setup QR Code -->
+                    </tr>
+                    <tr>
+                        <td colspan="5" rowspan="3" style="font-size: 7px; border: 0; border-bottom: 1px solid black; padding-top: 0px;">Accurate declaration required. No liability for false info or seized goods. Claims within 15 days. Max liability: Rs. 100 per article. No claims for refusal, delays, incomplete addresses. Prompt service but no guaranteed time.
+                            No gold, silver, bearer cheques, shares, or cash. No claims for cash, jewellery, contraband, passports, or undeclared items. Prohibited: share certificates with blank transfer deeds,. Insurance is mandatory for items valued
+                            at or above Rs. 1000/-.<br>For more information Visit: <b style="font-size: 10px;">www.airpostxpress.com</b> </td>
+                    </tr>
+                    <tr>
+                        <!-- <td colspan="5" style="font-size: 10px; border: 0;">&nbsp; &#8226; Condition 2nd</td> -->
+                    </tr>
+                    <tr>
+                        <!-- <td colspan="5" style="font-size: 10px; border: 0px; border-bottom: 1px solid black;"></td> -->
+                        <td colspan="3" style="font-size: 10px; border: 0px; border-left: 1px solid black; border-bottom: 1px solid black; text-align: center;">Scan To Track</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" style="font-size: 9px; border: 0;"><b>Franchisee:</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 9px; border: 0;">{{ ud.branch_name }}, Mob: {{ ud.branch_incharge_number }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="font-size: 8px; border: 0;">{{ ud.address }}</td>
+                        <td colspan="2" style="font-size: 9px; border: 0; text-align: center;"><b>Sign.</b></td>
+                    </tr>
+                </table>
+            </div>
+            <!-- Second Table -->
+            {% if bd.1.c_note_number %}
+            <div class="table-container d-flex" style="margin-left: 55px; margin-bottom: 32px;">
+                <table>
+                    <tr>
+                        <th style="border: 0px; height: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="border: 0px; border-bottom: 1px solid black; height: 45px;">
+                            <img src="{% static 'img/airpost_logo.png' %}" alt="" width="80%" height="32px" style="padding-left: 45px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship To,</b></td>
+                        <td colspan="4" style="font-size: 9px; border: 0px;">{{ bd.1.receiver_name }}</td>
+                        <td colspan="3" rowspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 1px soild black;">{{ bd.1.c_note_number }}</td>
+                        <!-- To setup barcode image -->
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px; border: 0px;">{{ bd.1.receiver_address }}</td>
+                    </tr>
+                    <tr>
+                        {% if bd.1.pincode %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.1.to_destination }}</b> - {{bd.1.pincode }}</td>
+                        {% else %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.1.to_destination }}</b></td>
+                        {% endif %}
+                    </tr>
+
+                    <tr>
+                        {% if bd.1.state %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ bd.1.state }}</b>, Mob: {{bd.1.receiver_mobile_number }}</td>
+                        {% else %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Mob:</b>{{bd.1.receiver_mobile_number }}</td>
+                        {% endif %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>{{ bd.1.booking_type }}</td>
+                </tr>
+
+                <tr>
+                    <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship By,</b></td>
+                        <td colspan="4" style="font-size: 9px; border: 0px;">{{ bd.1.sender_name }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 1px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Date: {{ bd.1.doc_date | date:"d-m-Y" }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px; border: 0px;">{{ bd.1.sender_address }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 11px; border: 0px;"><b>{{ bd.1.from_destination }}</b> - {{ud.pincode }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 0px; font-size: 11px; text-align: center;"><b>{{ bd.1.booking_mode }}</b></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ ud.state }}</b>, Mob: {{bd.1.sender_mobile }}</td>
+                        {% if bd.1.mode_amount %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>₹ {{ bd.1.mode_amount }}</b></td>
+                        {% else %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b></b></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 10px; border-bottom: 1px solid black;">Party: {{ bd.1.party_name }}</td>
+                        <!-- <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 10px;"><b>Payment: ref_courier_number </b></td> -->
+                        <!-- <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b></b></td> -->
+                    </tr>
+
+                    <tr>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Qty.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Weight (G)</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Ins ch.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Value</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Spl del ch.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Freight</b></td>
+                        <td colspan="2" style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Total Amount</b></td>
+
+                    </tr>
+                    <tr>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.1.pcs }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.1.charged_weight }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.1.insurance_amt }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.1.declared_value }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.1.spl_del_charge }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.1.freight_charge }}</td>
+                        <td colspan="2" style="border-right: 0px; border-top: 1px solid black; font-size: 11px; text-align: center;"><b>₹ {{ bd.1.amount }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Item Desc:</b> {{ bd.1.remarks }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 8px; border: 0;"><b>Term & Conditions*</b></td>
+                        <td colspan="3" style="border: 1px solid black; border-bottom: 0px; border-right: 0px; text-align: center;" rowspan="3">
+                            <div id="qrcode">
+                                {{ qr_code | safe}}
+                            </div>
+                        </td>
+                        <!-- Need to setup QR Code -->
+                    </tr>
+                    <tr>
+                        <td colspan="5" rowspan="3" style="font-size: 7px; border: 0; border-bottom: 1px solid black; padding-top: 0px;">Accurate declaration required. No liability for false info or seized goods. Claims within 15 days. Max liability: Rs. 100 per article. No claims for refusal, delays, incomplete addresses. Prompt service but no guaranteed time.
+                            No gold, silver, bearer cheques, shares, or cash. No claims for cash, jewellery, contraband, passports, or undeclared items. Prohibited: share certificates with blank transfer deeds,. Insurance is mandatory for items valued
+                            at or above Rs. 1000/-.<br>For more information Visit: <b style="font-size: 10px;">www.airpostxpress.com</b> </td>
+                    </tr>
+                    <tr>
+                        <!-- <td colspan="5" style="font-size: 10px; border: 0;">&nbsp; &#8226; Condition 2nd</td> -->
+                    </tr>
+                    <tr>
+                        <!-- <td colspan="5" style="font-size: 10px; border: 0px; border-bottom: 1px solid black;"></td> -->
+                        <td colspan="3" style="font-size: 10px; border: 0px; border-left: 1px solid black; border-bottom: 1px solid black; text-align: center;">Scan To Track</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" style="font-size: 9px; border: 0;"><b>Franchisee:</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 9px; border: 0;">{{ ud.branch_name }}, Mob: {{ ud.branch_incharge_number }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="font-size: 8px; border: 0;">{{ ud.address }}</td>
+                        <td colspan="2" style="font-size: 9px; border: 0; text-align: center;"><b>Sign.</b></td>
+                    </tr>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="d-flex">
+            <!-- Third table -->
+            {% if bd.2.c_note_number %}
+            <div class="table-container d-flex" style="margin-bottom: 32px;">
+                <table>
+                    <tr>
+                        <th style="border: 0px; height: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="border: 0px; border-bottom: 1px solid black; height: 45px;">
+                            <img src="{% static 'img/airpost_logo.png' %}" alt="" width="80%" height="32px" style="padding-left: 45px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship To,</b></td>
+                        <td colspan="4" style="font-size: 9px; border: 0px;">{{ bd.2.receiver_name }}</td>
+                        <td colspan="3" rowspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 1px soild black;">{{ bd.2.c_note_number }}</td>
+                        <!-- To setup barcode image -->
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px; border: 0px;">{{ bd.2.receiver_address }}</td>
+                    </tr>
+                    <tr>
+                        {% if bd.2.pincode %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.2.to_destination }}</b> - {{bd.2.pincode }}</td>
+                        {% else %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.2.to_destination }}</b></td>
+                        {% endif %}
+                    </tr>
+
+                    <tr>
+                        {% if bd.2.state %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ bd.2.state }}</b>, Mob: {{bd.2.receiver_mobile_number }}</td>
+                        {% else %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Mob:</b>{{bd.2.receiver_mobile_number }}</td>
+                        {% endif %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>{{ bd.2.booking_type }}</td>
+                </tr>
+
+                <tr>
+                    <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship By,</b></td>
+                        <td colspan="4" style="font-size: 9px; border: 0px;">{{ bd.2.sender_name }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 1px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Date: {{ bd.2.doc_date | date:"d-m-Y" }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px; border: 0px;">{{ bd.2.sender_address }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 11px; border: 0px;"><b>{{ bd.2.from_destination }}</b> - {{ud.pincode }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 0px; font-size: 11px; text-align: center;"><b>{{ bd.2.booking_mode }}</b></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ ud.state }}</b>, Mob: {{bd.2.sender_mobile }}</td>
+                        {% if bd.2.mode_amount %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>₹ {{ bd.2.mode_amount }}</b></td>
+                        {% else %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b></b></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 10px; border-bottom: 1px solid black;">Party: {{ bd.2.party_name }}</td>
+                        <!-- <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 10px;"><b>Payment: ref_courier_number </b></td> -->
+                        <!-- <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b></b></td> -->
+                    </tr>
+
+                    <tr>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Qty.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Weight (G)</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Ins ch.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Value</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Spl del ch.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Freight</b></td>
+                        <td colspan="2" style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Total Amount</b></td>
+
+                    </tr>
+                    <tr>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.2.pcs }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.2.charged_weight }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.2.insurance_amt }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.2.declared_value }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.2.spl_del_charge }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.2.freight_charge }}</td>
+                        <td colspan="2" style="border-right: 0px; border-top: 1px solid black; font-size: 11px; text-align: center;"><b>₹ {{ bd.2.amount }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Item Desc:</b> {{ bd.2.remarks }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 8px; border: 0;"><b>Term & Conditions*</b></td>
+                        <td colspan="3" style="border: 1px solid black; border-bottom: 0px; border-right: 0px; text-align: center;" rowspan="3">
+                            <div id="qrcode">
+                                {{ qr_code | safe}}
+                            </div>
+                        </td>
+                        <!-- Need to setup QR Code -->
+                    </tr>
+                    <tr>
+                        <td colspan="5" rowspan="3" style="font-size: 7px; border: 0; border-bottom: 1px solid black; padding-top: 0px;">Accurate declaration required. No liability for false info or seized goods. Claims within 15 days. Max liability: Rs. 100 per article. No claims for refusal, delays, incomplete addresses. Prompt service but no guaranteed time.
+                            No gold, silver, bearer cheques, shares, or cash. No claims for cash, jewellery, contraband, passports, or undeclared items. Prohibited: share certificates with blank transfer deeds,. Insurance is mandatory for items valued
+                            at or above Rs. 1000/-.<br>For more information Visit: <b style="font-size: 10px;">www.airpostxpress.com</b> </td>
+                    </tr>
+                    <tr>
+                        <!-- <td colspan="5" style="font-size: 10px; border: 0;">&nbsp; &#8226; Condition 2nd</td> -->
+                    </tr>
+                    <tr>
+                        <!-- <td colspan="5" style="font-size: 10px; border: 0px; border-bottom: 1px solid black;"></td> -->
+                        <td colspan="3" style="font-size: 10px; border: 0px; border-left: 1px solid black; border-bottom: 1px solid black; text-align: center;">Scan To Track</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" style="font-size: 9px; border: 0;"><b>Franchisee:</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 9px; border: 0;">{{ ud.branch_name }}, Mob: {{ ud.branch_incharge_number }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="font-size: 8px; border: 0;">{{ ud.address }}</td>
+                        <td colspan="2" style="font-size: 9px; border: 0; text-align: center;"><b>Sign.</b></td>
+                    </tr>
+                </table>
+            </div>
+            {% endif %}
+            <!-- fourth Table -->
+            {% if bd.3.c_note_number %}
+            <div class="table-container d-flex" style="margin-left: 55px; margin-bottom: 32px;">
+                <table>
+                    <tr>
+                        <th style="border: 0px; height: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                        <th style="border: 0px;"></th>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="border: 0px; border-bottom: 1px solid black; height: 45px;">
+                            <img src="{% static 'img/airpost_logo.png' %}" alt="" width="80%" height="32px" style="padding-left: 45px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship To,</b></td>
+                        <td colspan="4" style="font-size: 9px; border: 0px;">{{ bd.3.receiver_name }}</td>
+                        <td colspan="3" rowspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 1px soild black;">{{ bd.3.c_note_number }}</td>
+                        <!-- To setup barcode image -->
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px; border: 0px;">{{ bd.3.receiver_address }}</td>
+                    </tr>
+                    <tr>
+                        {% if bd.3.pincode %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.3.to_destination }}</b> - {{bd.3.pincode }}</td>
+                        {% else %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-left: 1px solid black;"><b>{{ bd.3.to_destination }}</b></td>
+                        {% endif %}
+                    </tr>
+
+                    <tr>
+                        {% if bd.3.state %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ bd.3.state }}</b>, Mob: {{bd.3.receiver_mobile_number }}</td>
+                        {% else %}
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Mob:</b>{{bd.3.receiver_mobile_number }}</td>
+                        {% endif %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>{{ bd.3.booking_type }}</td>
+                </tr>
+
+                <tr>
+                    <td style="height: 1px; font-size: 10px; border: 0px;"><b>Ship By,</b></td>
+                        <td colspan="4" style="font-size: 9px; border: 0px;">{{ bd.3.sender_name }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 1px; border-bottom: 0; font-size: 11px; text-align: center;"><b>Date: {{ bd.3.doc_date | date:"d-m-Y" }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px; border: 0px;">{{ bd.3.sender_address }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 11px; border: 0px;"><b>{{ bd.3.from_destination }}</b> - {{ud.pincode }}</td>
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; border-bottom: 0px; font-size: 11px; text-align: center;"><b>{{ bd.3.booking_mode }}</b></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="5" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>{{ ud.state }}</b>, Mob: {{bd.3.sender_mobile }}</td>
+                        {% if bd.3.mode_amount %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b>₹ {{ bd.3.mode_amount }}</b></td>
+                        {% else %}
+                        <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b></b></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 10px; border-bottom: 1px solid black;">Party: {{ bd.3.party_name }}</td>
+                        <!-- <td colspan="3" style="border-right: 0px; border-top: 0px; font-size: 10px;"><b>Payment: ref_courier_number </b></td> -->
+                        <!-- <td colspan="2" style="border-right: 0px; border-top: 0px; font-size: 11px; text-align: center;"><b></b></td> -->
+                    </tr>
+
+                    <tr>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Qty.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Weight (G)</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Ins ch.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Value</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Spl del ch.</b></td>
+                        <td style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Freight</b></td>
+                        <td colspan="2" style="border-right: 0px; border-top: 0px; border-bottom: 0; font-size: 10px; text-align: center;"><b>Total Amount</b></td>
+
+                    </tr>
+                    <tr>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.3.pcs }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.3.charged_weight }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.3.insurance_amt }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.3.declared_value }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.3.spl_del_charge }}</td>
+                        <td style="border-right: 0px; border-top: 1px solid black; font-size: 10px; text-align: center;">{{ bd.3.freight_charge }}</td>
+                        <td colspan="2" style="border-right: 0px; border-top: 1px solid black; font-size: 11px; text-align: center;"><b>₹ {{ bd.3.amount }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 11px; border: 0px; border-bottom: 1px solid black;"><b>Item Desc:</b> {{ bd.3.remarks }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 8px; border: 0;"><b>Term & Conditions*</b></td>
+                        <td colspan="3" style="border: 1px solid black; border-bottom: 0px; border-right: 0px; text-align: center;" rowspan="3">
+                            <div id="qrcode">
+                                {{ qr_code | safe}}
+                            </div>
+                        </td>
+                        <!-- Need to setup QR Code -->
+                    </tr>
+                    <tr>
+                        <td colspan="5" rowspan="3" style="font-size: 7px; border: 0; border-bottom: 1px solid black; padding-top: 0px;">Accurate declaration required. No liability for false info or seized goods. Claims within 15 days. Max liability: Rs. 100 per article. No claims for refusal, delays, incomplete addresses. Prompt service but no guaranteed time.
+                            No gold, silver, bearer cheques, shares, or cash. No claims for cash, jewellery, contraband, passports, or undeclared items. Prohibited: share certificates with blank transfer deeds,. Insurance is mandatory for items valued
+                            at or above Rs. 1000/-.<br>For more information Visit: <b style="font-size: 10px;">www.airpostxpress.com</b> </td>
+                    </tr>
+                    <tr>
+                        <!-- <td colspan="5" style="font-size: 10px; border: 0;">&nbsp; &#8226; Condition 2nd</td> -->
+                    </tr>
+                    <tr>
+                        <!-- <td colspan="5" style="font-size: 10px; border: 0px; border-bottom: 1px solid black;"></td> -->
+                        <td colspan="3" style="font-size: 10px; border: 0px; border-left: 1px solid black; border-bottom: 1px solid black; text-align: center;">Scan To Track</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="8" style="font-size: 9px; border: 0;"><b>Franchisee:</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="font-size: 9px; border: 0;">{{ ud.branch_name }}, Mob: {{ ud.branch_incharge_number }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="font-size: 8px; border: 0;">{{ ud.address }}</td>
+                        <td colspan="2" style="font-size: 9px; border: 0; text-align: center;"><b>Sign.</b></td>
+                    </tr>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            window.print();
+        });
+    </script>
+</body>
+
+</html>

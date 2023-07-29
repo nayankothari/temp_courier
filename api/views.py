@@ -4,7 +4,6 @@ Some of basic django imports that help to render and filter data from database.
 import io
 import ast
 import math
-import pdfkit
 import base64
 import logging
 import pyqrcode
@@ -308,9 +307,9 @@ def print_barcode_stickers(request):
         final_result.append(sublist)
         counter += group_in_one
     
-    multi_index = True
-    if group_in_one <= 1:
-        multi_index = False    
+    # multi_index = True
+    # if group_in_one <= 1:
+    #     multi_index = False    
     return render(request, "print_barcode/print_barcode.html", context={"bcd": final_result})
 
 
@@ -331,24 +330,35 @@ def booking_dashboard(request):
 @login_required(login_url="login_auth")
 def bulk_print_receipt(request):
     if request.method == "POST":
-        list_of_c_notes = request.POST.getlist("c_note_numbers[]")
-        booking_details = Booking.objects.filter(user=request.user, c_note_number__in=list_of_c_notes)
-        if booking_details.exists():
-            steps = math.ceil(len(booking_details) / 4)
-            counter = 0
-            result = []
-            for _ in range(steps):                
-                result.append(booking_details[counter: counter + 4])
-                counter += 4
-            html = render_to_string("bulk_receipt_print.html", {"bd": result})
+        list_of_c_notes = request.POST.getlist("receipt_input")                
+        try:
+            def generate_bulk_bcd(li_c_notes):
+                barcode_list = {}
+                for i in li_c_notes:
+                    barcode_svg = BARCODE_CLASS(str(i)).render(writer_options={"module_width": float(.29),
+                                                    "module_height": float(10)}).decode("utf8")   
+                    barcode_list[str(i)] = barcode_svg
+                return barcode_list
             
-            pdf_file = pdfkit.from_string(html, False)
-            response = HttpResponse(pdf_file, content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="bulk_items.pdf"'
+            list_of_c_notes = list_of_c_notes[0]
+            list_of_c_notes = ast.literal_eval(list_of_c_notes)                        
+            barcode_details = generate_bulk_bcd(list_of_c_notes)     
 
-            return response
-        return JsonResponse({"status": 0, "message": "No Records found to print in bulk."})
-    return JsonResponse({"status": 0, "message": "GET method not allowed."}) 
+            booking_details = Booking.objects.filter(user=request.user, c_note_number__in=list_of_c_notes)        
+            user_details = BranchNetwork.objects.get(user=request.user)
+            if booking_details.exists():
+                steps = math.ceil(len(booking_details) / 4)
+                counter = 0
+                result = []
+                for _ in range(steps):                
+                    result.append(booking_details[counter: counter + 4])
+                    counter += 4                
+                return render(request, "bulk_receipt_print.html", context={"booking_details": result, 
+                                                        "bcd": barcode_details, "ud": user_details})
+        except Exception as e:
+            print(e)            
+            return redirect("booking_dashboard")    
+    return redirect("booking_dashboard") 
 
 # ############################# Cash Booking details ##############################
 
