@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block title %} Dashboard {% endblock title %}{% block content %}
 
-<div class="container-fluid">
+<div class="container">
     {% csrf_token %}
     <div class="row">
         <div class="col-12">
@@ -116,27 +116,32 @@
                     <div class="col-md-12">
                         <div class="card text-center rounded-4">
                             <div class="card-body">
-                                <h5 class="card-title text-primary text-center">Ref. couriers bookings</h5>
+                                <h5 class="card-title text-primary text-center">Couriers bookings</h5>
                                 <!-- <hr> -->
-                                <canvas id="day_wise"></canvas>
+                                <div class="chart-container" style="height: 200px; width: 100%; position: relative;">
+                                    <canvas style="width: fit-content; height: fit-content;" id="courier_graph"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12 mt-2">
-                        <div class="card text-center second_space rounded-4">
+                        <div class="card text-center rounded-4">
                             <div class="card-body">
                                 <h5 class="card-title text-primary text-center">Account bookings</h5>
-                                <!-- <hr> -->
-                                <canvas id="monthly"></canvas>
+                                <div class="chart-container" style="height: 300px; width: 100%; position: relative;">
+                                    <canvas style="width: fit-content; height: fit-content;" id="account_graph"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12 mt-2">
-                        <div class="card text-center second_space rounded-4">
+                        <div class="card text-center rounded-4">
                             <div class="card-body">
                                 <h5 class="card-title text-primary text-center">Booking Types</h5>
                                 <!-- <hr> -->
-                                <canvas id="monthly"></canvas>
+                                <div class="chart-container" style="height: 200px; width: 100%; position: relative;">
+                                    <canvas style="width: fit-content; height: fit-content;" id="booking_type_graph"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -148,6 +153,102 @@
 
 <script>
     $(document).ready(function() {
+        var courier_chart = null;
+        var account_chart = null;
+        var booking_chart = null;
+
+        function create_charts() {
+            // Create blanks graphs
+            var bar_options = {
+                animationEnabled: true,
+                responsive: true,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false,
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false,
+                        }
+                    }
+                }
+
+            };
+            // Couriers graph                    
+            var ctx = document.getElementById('courier_graph').getContext('2d');
+            var data_values = {
+                labels: [],
+                datasets: [{
+                    label: 'Couriers',
+                    data: [],
+                    backgroundColor: 'rgba(110, 1, 112, 0.5)',
+                    borderColor: 'rgba(110, 1, 112, 1)',
+                    borderWidth: 1
+                }]
+            };
+            courier_chart = new Chart(ctx, {
+                type: 'bar',
+                data: data_values,
+                options: bar_options
+            });
+            // Party account grapg creation
+            var ctx = document.getElementById('account_graph').getContext('2d');
+            var data_values = {
+                labels: [],
+                datasets: [{
+                    label: 'Party wise bookings',
+                    data: [],
+                    backgroundColor: 'rgba(110, 1, 112, 0.5)',
+                    borderColor: 'rgba(110, 1, 112, 1)',
+                    borderWidth: 1
+                }]
+            };
+            account_chart = new Chart(ctx, {
+                type: 'bar',
+                data: data_values,
+                options: bar_options
+            });
+            //  Booking type graph creation
+            var ctx = document.getElementById('booking_type_graph').getContext('2d');
+            var data_values = {
+                labels: [],
+                datasets: [{
+                    label: 'Booking Type',
+                    data: [],
+                    backgroundColor: 'rgba(110, 1, 112, 0.5)',
+                    borderColor: 'rgba(110, 1, 112, 1)',
+                    borderWidth: 1
+                }]
+            };
+            booking_chart = new Chart(ctx, {
+                type: 'bar',
+                data: data_values,
+                options: bar_options
+            });
+
+
+        };
+        // Update function that update values in chart
+        function update_graph_values(data) {
+            courier_chart.data.labels = data.courier_name;
+            courier_chart.data.datasets[0].data = data.courier_count;
+            courier_chart.update();
+
+            account_chart.data.labels = data.party_name;
+            account_chart.data.datasets[0].data = data.party_count;
+            account_chart.update();
+
+            booking_chart.data.labels = data.booking_type_name;
+            booking_chart.data.datasets[0].data = data.booking_type_count;
+            booking_chart.update();
+
+        };
+        // Call chart function
+        create_charts();
+
         function dataloader() {
             var token = $("input[name='csrfmiddlewaretoken']").val();
             var from_date = $("#from_date").val();
@@ -164,7 +265,6 @@
                 data: final_data,
                 success: function(res) {
                     var res_data = res.data;
-                    console.log(res_data);
                     // Total booking
                     $("label[for='total_booking_count'] b").text(res_data.total_booking.total_bookings);
                     $("label[for='total_booking_sum'] b").text(res_data.total_booking.total_amount);
@@ -188,6 +288,40 @@
                             $("label[for='updated_drs'] b").text(drs_data[i].count);
                         }
                     }
+                    // Preapare graph data
+                    // Courier wise data
+                    var chart_data = {};
+                    var couriers = res_data.courier_data;
+                    var c_names = []
+                    var c_counts = []
+                    for (var i = 0; i < couriers.length; i++) {
+                        c_names.push(couriers[i].name);
+                        c_counts.push(couriers[i].count);
+                    }
+                    // Party name wise data
+                    var parties = res_data.party_wise_breakup;
+                    var p_names = []
+                    var p_counts = []
+                    for (var i = 0; i < parties.length; i++) {
+                        p_names.push(parties[i].name);
+                        p_counts.push(parties[i].count);
+                    }
+                    // Booking type wise data
+                    var booking_types = res_data.booking_type_wise;
+                    var b_names = []
+                    var b_counts = []
+                    for (var i = 0; i < booking_types.length; i++) {
+                        b_names.push(booking_types[i].name);
+                        b_counts.push(booking_types[i].count);
+                    };
+                    // Call update function to update chart values.
+                    chart_data.courier_name = c_names;
+                    chart_data.courier_count = c_counts;
+                    chart_data.party_name = p_names;
+                    chart_data.party_count = p_counts;
+                    chart_data.booking_type_name = b_names;
+                    chart_data.booking_type_count = b_counts;
+                    update_graph_values(chart_data);
                 }
             })
         };

@@ -355,8 +355,7 @@ def dashboard_analysis(request):
             courier_data_dic["name"] = i["booking_type__booking_type"]
             courier_data_dic["count"] = i["count"]
             courier_data.append(courier_data_dic)
-        final_result["booking_type_wise"] = courier_data
-        print(final_result)
+        final_result["booking_type_wise"] = courier_data        
 
         return JsonResponse({"status": 1, "data": final_result})
     return JsonResponse({"status": 0})
