@@ -14,6 +14,7 @@ import barcode
 from PIL import Image
 from .models import Reasons
 from django.db.models import F
+from django.db.models import Count, Sum
 from datetime import timedelta
 from django.db.models import Max
 from django.contrib import messages
@@ -281,12 +282,84 @@ def logout(request):
     auth.logout(request)
     return redirect("login_auth")
 
+# ########################### Main Dashboard Detaiuls ##########################
+@login_required(login_url="login_auth")
+def dashboard(request):    
+    from_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    to_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    return render(request, "dashboard.html", context={"from_date": from_date, "to_date": to_date})
+
 
 @login_required(login_url="login_auth")
-def dashboard(request):
-    
-    return render(request, "dashboard.html")
+def dashboard_analysis(request):    
+    if request.method == "POST":        
+        from_date = request.POST.get("from_date")
+        to_date = request.POST.get("to_date")        
 
+        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")        
+        
+        today_date = to_date + timedelta(days=1)        
+        
+        final_result = {}
+        # Booking result
+        total_bookings = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
+        final_result["total_booking"] = total_bookings        
+        party_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date), booking_mode="A/C").aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
+        final_result["party_booking"] = party_booking
+
+        cash_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).exclude(booking_mode="A/C").aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
+        final_result["cash_booking"] = cash_booking
+
+        # Load IN-OUT result
+        status = ParcelStatus.objects.get(name="OUT")
+        load_out = Trackinghistory.objects.filter(user=request.user, in_out_datetime__range=(from_date, today_date), status=status).count()
+        status = ParcelStatus.objects.get(name="IN")
+        load_in = Trackinghistory.objects.filter(user=request.user, in_out_datetime__range=(from_date, today_date), status=status).count()
+        final_result["load_out"] = load_out
+        final_result["liad_in"] = load_in
+        # DRS result
+        drs_details = DrsMaster.objects.filter(user=request.user, date__range=(from_date, today_date)).values("status").annotate(count=Count("status"))
+        drs_data = []        
+        for i in drs_details:
+            drs_data_dic = {}
+            drs_data_dic["status"] = i["status"]
+            drs_data_dic["count"] = i["count"]
+            drs_data.append(drs_data_dic)
+        final_result["drs_details"] = drs_data
+
+        # Courier wise count
+        courier_wise_details = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).values("ref_courier_name__name").annotate(count=Count("ref_courier_name__name")).order_by("-count")
+        courier_data = []        
+        for i in courier_wise_details:
+            courier_data_dic = {}
+            courier_data_dic["name"] = i["ref_courier_name__name"]
+            courier_data_dic["count"] = i["count"]
+            courier_data.append(courier_data_dic)
+        final_result["courier_data"] = courier_data
+
+        # Party wise details
+        party_wise_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date), booking_mode="A/C").values("party_name__party_name").annotate(count=Count("party_name__party_name")).order_by("-count")
+        courier_data = []        
+        for i in party_wise_booking:
+            courier_data_dic = {}
+            courier_data_dic["name"] = i["party_name__party_name"]
+            courier_data_dic["count"] = i["count"]
+            courier_data.append(courier_data_dic)
+        final_result["party_wise_breakup"] = courier_data
+
+        # Booking type wise details
+        booking_type_wise = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).values("booking_type__booking_type").annotate(count=Count("booking_type__booking_type")).order_by("-count")
+        courier_data = []        
+        for i in booking_type_wise:
+            courier_data_dic = {}
+            courier_data_dic["name"] = i["booking_type__booking_type"]
+            courier_data_dic["count"] = i["count"]
+            courier_data.append(courier_data_dic)
+        final_result["booking_type_wise"] = courier_data
+        print(final_result)
+
+        return JsonResponse({"status": 1, "data": final_result})
+    return JsonResponse({"status": 0})
 # ############################### Print baecode stickers ###############################
 @login_required(login_url="login_auth")
 def print_barcode_stickers(request):
@@ -1104,8 +1177,9 @@ def save_output_load(request):
                             Trackinghistory.objects.create(c_note_number=c_note_number_booking, in_out_datetime=date,
                                     d_from=to_destination, d_to=from_destination, status=status, remarks=remarks, user=user)                                                
                         # data = Trackinghistory.objects.values()
-                        today_date = datetime.date.today()      
-                        today_in = Trackinghistory.objects.filter(user=request.user, last_updated_datetime__startswith=today_date, status=status).order_by("-last_updated_datetime")
+                        # today_date = datetime.date.today()            
+                        date = str(date)[:10]             
+                        today_in = Trackinghistory.objects.filter(user=request.user, in_out_datetime__startswith=date, status=status, d_to=from_destination).order_by("-last_updated_datetime")
                         today_in = list(today_in.values("id", "c_note_number__c_note_number", "d_to__name", "remarks"))
                         return JsonResponse({"status": 1, "data": today_in})
                     except Exception as e:                        

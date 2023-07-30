@@ -40,6 +40,8 @@ urlpatterns = [
     path(r"logout", logout, name="logout"),
     
     path(r"dashboard", dashboard, name="dashboard"),
+    path(r"dashboard_analysis", dashboard_analysis, name="dashboard_analysis"),
+
     path(r"bulk_print_receipt", bulk_print_receipt, name="bulk_print_receipt"),
     path(r"bulk_print_label", bulk_print_label, name="bulk_print_label"),
     path(r"export_to_excel_bookings", export_to_excel_bookings, name="export_to_excel_bookings"),

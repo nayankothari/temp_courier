@@ -1,64 +1,145 @@
 {% extends 'base.html' %} {% block title %} Dashboard {% endblock title %}{% block content %}
-<!-- 
-<div class="container mt-5 alert alert-dark">
-    <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
-            <a href="{% url 'bookings' %}" class="text-decoration-none btn btn-outline-dark mt-3"><b>Booking</b></a>            
-            <div class="btn-group">
-                <button type="button" class="btn btn-outline-dark mt-3 dropdown-toggle nav_login_btn mx-0" data-bs-toggle="dropdown" aria-expanded="false">Tracking</button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'tracking_history_out' %}">Load Out</a></li>
-                    <li><a class="dropdown-item" href="{% url 'tracking_history_in' %}">Load In</a></li>
-                </ul>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-outline-dark mt-3 dropdown-toggle nav_login_btn mx-0" data-bs-toggle="dropdown" aria-expanded="false">More</button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'part_master' %}">Party Master</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div> -->
 
-<div class="container alert alert-dark">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card text-center rounded-4">
-                <div class="card-body">
-                    <h3 class="card-title text-danger text-center">Today's Booking</h3>
-                    <hr>
-                    <h5>Shipment Booked:<b> 500 Pcs</b></h5>
+<div class="container-fluid">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-2 mb-2">
+                <div class="card-header text-center">
+                    <b>Dashboard</b>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card text-center second_space rounded-4">
                 <div class="card-body">
-                    <h3 class="card-title text-danger text-center">Monthly Booking</h3>
-                    <hr>
-                    <h5>Shipment Booked:<b> 500 Pcs</b></h5>
+                    <div class="row justify-content-center">
+                        <div class="col-md-2">
+                            <input type="date" class="form-control" id="from_date" value="{{ from_date }}">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" class="form-control" id="to_date" value="{{ to_date }}">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="button" class="btn btn-success form-control" id="search_by_date" value="Search">
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row mt-4 justify-content-center">
-        <div class="col-md-6">
-            <div class="card text-center rounded-4">
-                <div class="card-body">
-                    <h5 class="card-title text-danger text-center">Today's Booking Graph</h5>
-                    <!-- <hr> -->
-                    <canvas id="day_wise"></canvas>
+                <div class="row justify-content-center">
+                    <div class="col-md-4">
+                        <div class="card text-center rounded-4">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary-emphasis text-center">Total Booking</h3>
+                                <hr>
+                                <div class="d-flex justify-content-center">
+                                    <label for="booking">Shipments:&nbsp;</label>
+                                    <label for="total_booking_count"><b class="text-danger">0</b></label>
+                                    <label for="booking" style="margin-left: 5%;">Amount:&nbsp;<b>₹</b>&nbsp;</label>
+                                    <label for="total_booking_sum"><b class="text-success">0</b>/-</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center rounded-4">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary-emphasis text-center">Cash Booking</h3>
+                                <hr>
+                                <div class="d-flex justify-content-center">
+                                    <label for="booking">Shipments:&nbsp;</label>
+                                    <label for="cash_booking_count"><b class="text-danger">0</b></label>
+                                    <label for="booking" style="margin-left: 5%;">Amount:&nbsp;<b>₹</b>&nbsp;</label>
+                                    <label for="cash_booking_sum"><b class="text-success">0</b>/-</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center rounded-4">
+                            <div class="card-body">
+                                <h3 class="card-title text-primary-emphasis text-center">Account Booking</h3>
+                                <hr>
+                                <div class="d-flex justify-content-center">
+                                    <label for="booking">Shipments:&nbsp;</label>
+                                    <label for="account_booking_count"><b class="text-danger">0</b></label>
+                                    <label for="booking" style="margin-left: 5%;">Amount:&nbsp;<b>₹</b>&nbsp;</label>
+                                    <label for="account_booking_sum"><b class="text-success">0</b>/-</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card text-center second_space rounded-4">
-                <div class="card-body">
-                    <h5 class="card-title text-danger text-center">Monthly Booking Graph</h5>
-                    <!-- <hr> -->
-                    <canvas id="monthly" style="width:100%;max-width:600px"></canvas>
+
+                <div class="row justify-content-center mt-4">
+                    <div class="col-md-4">
+                        <div class="card text-center rounded-4">
+                            <div class="card-body">
+                                <h3 class="card-title text-success text-center">Load OUT</h3>
+                                <hr>
+                                <div class="d-flex justify-content-center">
+                                    <label for="booking">Shipments OUT:&nbsp;</label>
+                                    <label for="load_out_count"><b class="text-danger">0</b></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center rounded-4">
+                            <div class="card-body">
+                                <h3 class="card-title text-success text-center">Load IN</h3>
+                                <hr>
+                                <div class="d-flex justify-content-center">
+                                    <label for="booking">Shipments IN:&nbsp;</label>
+                                    <label for="load_in_count"><b class="text-danger">0</b></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center rounded-4">
+                            <div class="card-body">
+                                <h3 class="card-title text-success text-center">DRS</h3>
+                                <hr>
+                                <div class="d-flex justify-content-center">
+                                    <label for="booking">Pendings:&nbsp;</label>
+                                    <label for="pending_drs"><b class="text-danger">0</b></label>
+                                    <label for="booking" style="margin-left: 5%;">Updated:&nbsp;</label>
+                                    <label for="updated_drs"><b class="text-success">0</b></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row mt-4 justify-content-center">
+                    <div class="col-md-12">
+                        <div class="card text-center rounded-4">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary text-center">Ref. couriers bookings</h5>
+                                <!-- <hr> -->
+                                <canvas id="day_wise"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-2">
+                        <div class="card text-center second_space rounded-4">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary text-center">Account bookings</h5>
+                                <!-- <hr> -->
+                                <canvas id="monthly"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-2">
+                        <div class="card text-center second_space rounded-4">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary text-center">Booking Types</h5>
+                                <!-- <hr> -->
+                                <canvas id="monthly"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,67 +147,57 @@
 </div>
 
 <script>
-    var xValues = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
-    var yValues = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
-
-    new Chart("day_wise", {
-        type: "line",
-        data: {
-            labels: xValues,
-            datasets: [{
-                fill: false,
-                lineTension: 0,
-                backgroundColor: "rgba(0,0,255,1.0)",
-                borderColor: "rgba(0,0,255,0.1)",
-                data: yValues
-            }]
-        },
-        options: {
-            legend: {
-                display: false
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        min: 6,
-                        max: 16
-                    }
-                }],
+    $(document).ready(function() {
+        function dataloader() {
+            var token = $("input[name='csrfmiddlewaretoken']").val();
+            var from_date = $("#from_date").val();
+            var to_date = $("#to_date").val();
+            var final_data = {
+                csrfmiddlewaretoken: token,
+                from_date: from_date,
+                to_date: to_date
             }
-        }
-    });
-</script>
-
-<script>
-    var xValues = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
-    var yValues = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
-
-    new Chart("monthly", {
-        type: "line",
-        data: {
-            labels: xValues,
-            datasets: [{
-                fill: false,
-                lineTension: 0,
-                backgroundColor: "rgba(0,0,255,1.0)",
-                borderColor: "rgba(0,0,255,0.1)",
-                data: yValues
-            }]
-        },
-        options: {
-            legend: {
-                display: false
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        min: 6,
-                        max: 16
+            $.ajax({
+                url: "{% url 'dashboard_analysis' %}",
+                type: "json",
+                method: "POST",
+                data: final_data,
+                success: function(res) {
+                    var res_data = res.data;
+                    console.log(res_data);
+                    // Total booking
+                    $("label[for='total_booking_count'] b").text(res_data.total_booking.total_bookings);
+                    $("label[for='total_booking_sum'] b").text(res_data.total_booking.total_amount);
+                    // Cash Booking
+                    $("label[for='cash_booking_count'] b").text(res_data.cash_booking.total_bookings);
+                    $("label[for='cash_booking_sum'] b").text(res_data.cash_booking.total_amount);
+                    // Account Booking
+                    $("label[for='account_booking_count'] b").text(res_data.party_booking.total_bookings);
+                    $("label[for='account_booking_sum'] b").text(res_data.party_booking.total_amount);
+                    // Load OUT
+                    $("label[for='load_out_count'] b").text(res_data.load_out);
+                    // Load IN
+                    $("label[for='load_in_count'] b").text(res_data.liad_in);
+                    // DRS
+                    var drs_data = res_data.drs_details;
+                    for (var i = 0; i < drs_data.length; i++) {
+                        if (drs_data[i].status === "Pending") {
+                            $("label[for='pending_drs'] b").text(drs_data[i].count);
+                        }
+                        if (drs_data[i].status === "Updated") {
+                            $("label[for='updated_drs'] b").text(drs_data[i].count);
+                        }
                     }
-                }],
-            }
-        }
-    });
+                }
+            })
+        };
+        // This function will load data and show in dashboards.
+        dataloader();
+
+        $("#search_by_date").click(function() {
+            dataloader();
+        })
+    })
 </script>
 
 {% endblock content %}
