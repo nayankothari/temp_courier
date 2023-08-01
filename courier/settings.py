@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-c_mfbb82x)w6odhv)&ghm*w27sj%hvxe5d39yidqql5ls=82(b"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["206.189.136.159", "airpostxpress.com"]
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None # Need to remove when upload on server with domain name.
 
 # Application definition
