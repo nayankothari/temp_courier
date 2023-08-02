@@ -452,7 +452,7 @@ def bulk_print_receipt(request):
             list_of_c_notes = list_of_c_notes[0]
             list_of_c_notes = ast.literal_eval(list_of_c_notes)                        
             barcode_details = generate_bulk_bcd(list_of_c_notes)     
-            qr_url = (f"http://206.189.133.131:8080/")
+            qr_url = (f"http://airpostxpress.com/")
             qr_code = pyqrcode.create(qr_url)                
             svg_buffer = io.BytesIO()
             qr_code.svg(svg_buffer, scale=10, module_color='#000', background='#fff')
@@ -493,7 +493,7 @@ def bulk_print_label(request):
             list_of_c_notes = list_of_c_notes[0]
             list_of_c_notes = ast.literal_eval(list_of_c_notes)                        
             barcode_details = generate_bulk_bcd(list_of_c_notes)     
-            qr_url = (f"http://206.189.133.131:8080/")
+            qr_url = (f"http://airpostxpress.com/")
             qr_code = pyqrcode.create(qr_url)                
             svg_buffer = io.BytesIO()
             qr_code.svg(svg_buffer, scale=10, module_color='#000', background='#fff')
@@ -697,7 +697,7 @@ def print_cash_booking(request, sid):
         barcode_svg = BARCODE_CLASS(c_number).render(writer_options={"module_width": float(.29),
                                                 "module_height": float(10)}).decode("utf8")   
         # Generate QR Code        
-        qr_url = (f"http://206.189.133.131:8080/tracking/{str(c_number)}")
+        qr_url = (f"http://airpostxpress.com/tracking/{str(c_number)}")
         qr_code = pyqrcode.create(qr_url)                
         svg_buffer = io.BytesIO()
         qr_code.svg(svg_buffer, scale=10, module_color='#000', background='#fff')
