@@ -55,7 +55,8 @@
                 <p>If you're ready to experience the difference, we invite you to get in touch with us today. You can reach us by phone, email, or through our website to request a quote or learn more about our services.</p>
                 <div class="row justify-content-center">
                     <div class="col-12 text-center">
-                        <button type="button" class="btn btn-primary" onclick="location.href='https://api.whatsapp.com/send?phone=919529486594&text=Hello Airpost Xpress, I need super fast courier service, please contact me as soon as possible.'"><i class="bi bi-whatsapp"></i> +91 9529486594</button>
+                        <button type="button" class="btn btn-primary" id="contct_us">Contact us</button>
+                        <!-- <button type="button" class="btn btn-primary" onclick="location.href='https://api.whatsapp.com/send?phone=919529486594&text=Hello Airpost Xpress, I need super fast courier service, please contact me as soon as possible.'"><i class="bi bi-whatsapp"></i> +91 123456789</button> -->
                     </div>
                 </div>
             </div>
@@ -205,6 +206,10 @@
                 }
             }
         });
+    });
+
+    $("#contct_us").click(function() {
+        window.location.assign("{% url 'ContactUS' %}");
     });
 </script>
 {% endblock content %}
