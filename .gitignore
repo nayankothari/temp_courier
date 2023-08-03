@@ -3,3 +3,4 @@ db.sqlite3
 *.db
 __pycache__/
 chromium_driver/
+conf.json
