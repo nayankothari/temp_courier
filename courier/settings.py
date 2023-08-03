@@ -28,7 +28,7 @@ DEBUG = False
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ["206.189.136.159", "airpostxpress.com", "www.airpostxpress.com"]
+    ALLOWED_HOSTS = ["143.244.136.147", "airpostxpress.com", "www.airpostxpress.com"]
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None # Need to remove when upload on server with domain name.
 
