@@ -35,13 +35,14 @@
                         <tr>
                             <td style="width:30%;">
                                 <div class="col-md-3">
-                                    <img src="{% static 'img/airpost_logo.png' %}" alt="Airpost Xpress" class="img-fluid" id="nav_img_">
+                                    <img src="{% static '\img\airpost_logo_1.png' %}" alt="Airpost Xpress" class="img-fluid" id="nav_img_">
                                 </div>
                             </td>
                             <td style="font-weight: normal;"><b>DRS No:</b> {{ drs_heaser.drs_no }} <br><b>Area:</b> {{drs_heaser.area_name}} </td>
                             <td style="font-weight: normal;"><b>Date:</b> {{ drs_heaser.date|date:"Y-m-d" }}<br><b>Del. boy:</b> {{ drs_heaser.deliveryboy_name }}</td>
                         </tr>
                         <tr>
+                            <td><b>{{ branch_name }}</b></td>
                             <td colspan="3" style="text-align: center;">{{ address }}</td>
                         </tr>
                     </tbody>
