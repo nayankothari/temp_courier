@@ -184,7 +184,7 @@ def contactUs(request):
         pincode = request.POST.get("pincode")
         message = request.POST.get("message")
         if name and email and country and pincode:            
-            contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message)
+            contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message, status="OPEN")
             contact_obj.save()
             return_message = "Request submitted successfully."       
 

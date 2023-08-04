@@ -234,6 +234,7 @@ class contactus(models.Model):
     mobile_number = models.CharField(max_length=15, blank=True)
     message = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+    status = models.CharField(max_length=50, blank=True, null=False, default="OPEN")
     
     class Meta:
         verbose_name_plural = "Contact us"

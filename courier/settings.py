@@ -20,11 +20,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
+# Configurations file
+json_path = os.path.join(os.getcwd(), "courier/conf/conf.json")
+with open(json_path, "r") as conf:
+    db_details = json.loads(conf.read())
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-c_mfbb82x)w6odhv)&ghm*w27sj%hvxe5d39yidqql5ls=82(b"
+SECRET_KEY = db_details.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = db_details["DEBUG"]
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
@@ -82,9 +88,7 @@ WSGI_APPLICATION = "courier.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-json_path = os.path.join(os.getcwd(), "courier/conf/conf.json")
-with open(json_path, "r") as conf:
-    db_details = json.loads(conf.read())        
+        
 
 if DEBUG:
     DATABASES = {
