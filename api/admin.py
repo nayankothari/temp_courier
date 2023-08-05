@@ -4,6 +4,7 @@ from .models import Trackinghistory, ParcelStatus, BranchNetwork
 from .models import contactus, State, Token, Country, PartyAccounts, Reasons
 from .models import UserAdditionalDetails, BookingType, DeliveryBoyMaster, AreaMaster
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory, GstModel, Network
+from .models import DrsPermission
 
 
 class AdminTracking(admin.ModelAdmin):
@@ -35,3 +36,4 @@ admin.site.register(DrsTransactionHistory)
 admin.site.register(Reasons)
 admin.site.register(GstModel)
 admin.site.register(Network)
+admin.site.register(DrsPermission)

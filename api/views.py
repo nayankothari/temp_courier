@@ -33,6 +33,7 @@ from .models import contactus, Token, BranchNetwork, Destination
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
+from .models import DrsPermission
 
 
 BARCODE_CLASS = barcode.get_barcode_class("code128")
@@ -125,22 +126,25 @@ def tracking(request, tracking_number):
             
             else: # use for internal drs tracking
                 if request.user.is_authenticated:
-                    drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_number).order_by("-created_at")                    
-                    if drs_obj.exists():
-                        if_drs = 1    
-                        only_and_only_drs = 1 
-                        final_status = drs_obj[0]                             
-                        delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
-                        delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
-                        last_status = final_status.status                               
-                        reason = ""                        
-                        if final_status.reason:
-                            reason = final_status.reason
-                        return render(request, "tracking.html", {"tracking_history": [],
-                    "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
-                    "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
-                     "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
-                     "dbd": delivery_boy_detail})
+                    drs_permission = DrsPermission.objects.filter(user=request.user, can_veiw=True)
+                    if drs_permission.exists():
+                        # drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_number).order_by("-created_at")                                        
+                        drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")                    
+                        if drs_obj.exists():
+                            if_drs = 1    
+                            only_and_only_drs = 1 
+                            final_status = drs_obj[0]                             
+                            delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
+                            delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
+                            last_status = final_status.status                               
+                            reason = ""                        
+                            if final_status.reason:
+                                reason = final_status.reason
+                            return render(request, "tracking.html", {"tracking_history": [],
+                        "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
+                        "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
+                        "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
+                        "dbd": delivery_boy_detail})
 
         return redirect("home")        
     except Exception as e:   
@@ -156,10 +160,13 @@ def check_tracking_num(request):
                 if data.exists():
                     return JsonResponse({"status": 1})
                 elif request.user.is_authenticated:
-                    drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_num).order_by("-created_at")
-                    if drs_obj.exists():
-                        return JsonResponse({"status": 1})                            
-
+                    drs_permission = DrsPermission.objects.filter(user=request.user, can_veiw=True)
+                    if drs_permission.exists():
+                        drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_num).order_by("-created_at")
+                        if drs_obj.exists():
+                            return JsonResponse({"status": 1})    
+                    else:                        
+                        return JsonResponse({"status": 0, "message": "DRS Details not available."})
             return JsonResponse({"status": 0, "message": "Insert Correct docket Number"})
         except Exception as e:
             log.exception(e)
@@ -191,6 +198,7 @@ def contactUs(request):
             return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})    
 
     return render(request, "contactus.html", {"today_date": today_date})
+
 
 def network(request):
     message = 1    
@@ -357,8 +365,14 @@ def dashboard_analysis(request):
             courier_data.append(courier_data_dic)
         final_result["booking_type_wise"] = courier_data        
 
+        # Contact us details.
+        if request.user.is_superuser:
+            con_us_details = contactus.objects.filter(created_at__range=(from_date, today_date)).order_by("-created_at").values()
+            final_result["contact_us"] = list(con_us_details)                    
         return JsonResponse({"status": 1, "data": final_result})
     return JsonResponse({"status": 0})
+
+
 # ############################### Print baecode stickers ###############################
 @login_required(login_url="login_auth")
 def print_barcode_stickers(request):
@@ -432,6 +446,22 @@ def export_to_excel_bookings(request):
     except Exception as e:
         log.exception(e)
         return redirect("booking_dashboard")
+
+
+@login_required(login_url="login_auth")
+def close_contact_us(request):
+    if request.method == "POST":
+        sid = request.POST.get("sid")
+        try:
+            details = contactus.objects.get(id=sid)
+            details.status = "RESOLVED"
+            details.save()
+            return JsonResponse({"status": 1})
+        except Exception as e:
+            print(e)
+            log.exception(e)
+            return JsonResponse({"status": 0, "message": "Details not found."})    
+    return JsonResponse({"status": 0, "message": "Get request not allowed."})
 
 # ############################# Bulk label or receipt prints #########################
 

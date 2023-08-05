@@ -319,6 +319,16 @@ class DrsMaster(models.Model):
     def __str__(self):
         return self.drs_no
 
+class DrsPermission(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
+    can_veiw = models.BooleanField(default=True, null=True, blank=False)
+
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name_plural = "DRS Permissions"
+
 
 class DrsTransactionHistory(models.Model):
     docket_number = models.CharField(max_length=40, blank=False, null=True)

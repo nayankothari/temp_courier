@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block title %} Dashboard {% endblock title %}{% block content %}
 
-<div class="container">
+<div class="container-fluid">
     {% csrf_token %}
     <div class="row">
         <div class="col-md-12">
@@ -146,6 +146,33 @@
                         </div>
                     </div>
                 </div>
+                <!-- For Contact Us details -->
+                {% if user.is_superuser %}
+                <hr class="mt-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="text-center mb-3">Contact Us</h3>
+                        <!-- <hr> -->
+                        <div class="table-responsive table table-hover table-bordered table-sm booked_data">
+                            <table class="table" id="DrsTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Country</th>
+                                        <th scope="col">mobile_number</th>
+                                        <th scope="col">message</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -322,6 +349,37 @@
                     chart_data.booking_type_name = b_names;
                     chart_data.booking_type_count = b_counts;
                     update_graph_values(chart_data);
+
+                    // fill contact us details
+                    var su = '{{ user.is_superuser }}';
+                    if (su === "True") {
+                        var contact_us_data = res_data.contact_us;
+                        output = "";
+                        for (var i = 0; i < contact_us_data.length; i++) {
+                            if (contact_us_data[i].status === "OPEN") {
+                                open_btn = '<input type="button" name="contact_btn" class="btn btn-danger contact_us_btn" value="Click to resolve" data-sid="' + contact_us_data[i].id + '">'
+                            } else {
+                                open_btn = '<label for="" class="btn btn-success">RESOLVED</label>'
+                            };
+                            var docDate = new Date(contact_us_data[i].created_at);
+                            var day = docDate.getDate();
+                            var monthIndex = docDate.getMonth();
+                            var year = docDate.getFullYear();
+
+                            // Array of abbreviated month names
+                            var monthNames = [
+                                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                            ];
+                            var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+                            output += '<tr><td>' + formattedDate + '</td><td>' +
+                                contact_us_data[i].name + '</td><td>' + contact_us_data[i].email + '</td><td>' + contact_us_data[i].country + '</td><td>' + contact_us_data[i].mobile_number + '</td><td><textarea class="form-control" id="contact_message" name="contact_message" rows="2">' + contact_us_data[i].message + '</textarea></td><td>' + open_btn + '</td></tr>';
+                        }
+                        $("#tbody").html(output);
+                    } else {
+                        console.log("N U");
+                    }
+
                 }
             })
         };
@@ -330,7 +388,32 @@
 
         $("#search_by_date").click(function() {
             dataloader();
-        })
+        });
+
+        $("tbody").on("click", ".contact_us_btn", function() {
+            var sid = $(this).attr("data-sid");
+            console.log(sid);
+            var token = $("input[name='csrfmiddlewaretoken']").val();
+            var final_dt = {
+                csrfmiddlewaretoken: token,
+                sid: sid
+            };
+            var my_ths = $(this);
+            $.ajax({
+                url: "{% url 'close_contact_us' %}",
+                method: "POST",
+                type: "json",
+                data: final_dt,
+                success: function(res) {
+                    if (res.status == 1) {
+                        console.log("remove");
+                        my_ths.closest("tr").remove();
+                    } else {
+                        alert(res.message);
+                    }
+                }
+            });
+        });
     })
 </script>
 

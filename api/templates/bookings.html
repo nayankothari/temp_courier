@@ -256,8 +256,7 @@
     });
 
     $(document).ready(function() {
-        var new_c_note = "{{ request.session.next_c_note }}"
-        console.log()
+        var new_c_note = "{{ request.session.next_c_note }}";
         if (new_c_note) {
             localStorage.setItem("p_c_note_num", new_c_note);
             $("#cnotenumber").val(new_c_note);

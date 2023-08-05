@@ -1,6 +1,6 @@
 <script>
     $("tbody").on("click", ".edit-btn", function() {
-        let doc_id = $(this).attr("data-sid")
+        let doc_id = $(this).attr("data-sid");
         let csr = $("input[name=csrfmiddlewaretoken").val();
         doc_data = {
             id: doc_id,
