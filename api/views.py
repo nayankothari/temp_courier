@@ -5,6 +5,7 @@ import io
 import ast
 import csv
 import math
+import asyncio
 import base64
 import logging
 import pyqrcode
@@ -34,7 +35,7 @@ from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
 from .models import DrsPermission
-
+from django.db.models.functions import TruncDate
 
 BARCODE_CLASS = barcode.get_barcode_class("code128")
 
@@ -1772,7 +1773,8 @@ def search_drs_by_num_date(request):
 def manifest_show(request):
     today = datetime.date.today() #- timedelta(days=1)
     status = ParcelStatus.objects.get(name="OUT")    
-    data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__gt=today).annotate(date_substr=Substr('in_out_datetime', 1, 10)).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")        
+    # data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__gt=today).annotate(date_substr=Substr('in_out_datetime', 1, 10)).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")        
+    data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__gt=today).annotate(date_substr=TruncDate('in_out_datetime')).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")
     return render(request, "manifest.html", context={"details": data})
 
 
@@ -1783,7 +1785,8 @@ def search_manifest(request):
         date = datetime.datetime.strptime(date, "%Y-%m-%d")
         next_date = date + timedelta(days=1)        
         status = ParcelStatus.objects.get(name="OUT")    
-        data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__range=[date, next_date]).annotate(date_substr=Substr('in_out_datetime', 1, 10)).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")        
+        # data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__range=[date, next_date]).annotate(date_substr=Substr('in_out_datetime', 1, 10)).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")        
+        data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__range=[date, next_date]).annotate(date_substr=TruncDate('in_out_datetime')).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")        
         if data.exists():            
             return JsonResponse({"status": 1, "data": list(data)})
         return JsonResponse({"status": 0, "message": "Manifest not found for selected date."})
@@ -1808,6 +1811,7 @@ def print_manifest(request, sid_num):
     except Exception as e:
         log.exception(e)
         return redirect("manifest_show")
+    
 # ######################################## C Note Details for admi use only #################################
 
 @login_required(login_url="login_auth")

@@ -178,13 +178,13 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="actual_weight"><b>Actual Wt. (gms)</b></label>
-                                    <input type="number" class="form-control form-control-sm wt_field" id="actual_weight" name="actual_weight" value="50">
+                                    <input type="number" oninput="this.value = Math.round(this.value);" class="form-control form-control-sm wt_field" id="actual_weight" name="actual_weight" value="50">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="charged_weight"><b>Charged Wt. (gms)</b></label>
-                                    <input type="number" class="form-control form-control-sm" id="charged_weight" name="charged_weight" value="50">
+                                    <input type="number" oninput="this.value = Math.round(this.value);" class="form-control form-control-sm" id="charged_weight" name="charged_weight" value="50">
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -362,7 +362,6 @@
         $('.wt_field').on('input', function() {
             var actual_weight = $("#actual_weight").val();
             $("#charged_weight").val(actual_weight);
-
         });
         // Set datetime in datetime fields
         var now = new Date();
@@ -412,9 +411,9 @@
                 var qty = $("#qty").val();
                 qty = parseFloat(qty) || 0;
                 var charged_weight = $("#charged_weight").val();
-                charged_weight = parseFloat(charged_weight) || 0;
+                charged_weight = parseInt(charged_weight) || 100;
                 var actual_weight = $("#actual_weight").val();
-                actual_weight = parseFloat(actual_weight) || 0;
+                actual_weight = parseInt(actual_weight) || 100;
                 var declare_value = $("#declare_value").val();
                 declare_value = parseFloat(declare_value) || 0;
                 var freight_charge = $("#freight_charge").val();

@@ -67,7 +67,8 @@ chrome_options.add_argument("disable-gpu")
 def get_search_details(*args, **kwargs):        
     if str(kwargs.get("courier")).__contains__("madhur"):
         try:
-            driver = webdriver.Chrome('D:\Python django folder\Temp_courier\courier\api\chromium_driver\\', chrome_options=chrome_options)
+            # driver = webdriver.Chrome('D:\Python django folder\Temp_courier\courier\api\chromium_driver\\', chrome_options=chrome_options)
+            driver = webdriver.Chrome(chrome_options=chrome_options)
             driver.switch_to.new_window('tab')
             driver.get("https://www.madhurcouriers.in/CNoteTracking")
             search_bar = driver.find_element("id", "ContentPlaceHolder1_txtCNote")
@@ -93,8 +94,9 @@ def get_search_details(*args, **kwargs):
         
     elif str(kwargs.get("courier")).__contains__("goodluck"):
         try:
-            driver = webdriver.Chrome('D:\Python django folder\Temp_courier\courier\api\chromium_driver\\', chrome_options=chrome_options)
-            driver.switch_to.new_window('tab')
+            # driver = webdriver.Chrome('D:\Python django folder\Temp_courier\courier\api\chromium_driver\\', chrome_options=chrome_options)
+            driver = webdriver.Chrome(chrome_options=chrome_options)
+            driver.switch_to.new_window('tab')            
             driver.get("http://94.130.15.229/goodluck/onlinetracking.aspx")
             search_bar = driver.find_element("id", "txtcnote")
             search_bar.clear()
@@ -126,7 +128,8 @@ def get_search_details(*args, **kwargs):
     elif str(kwargs.get("courier")).__contains__("pushpak"):
         url = "https://www.pushpakcourier.net/query.php"
         try:
-            driver = webdriver.Chrome('D:\Python django folder\Temp_courier\courier\api\chromium_driver\\', chrome_options=chrome_options)
+            # driver = webdriver.Chrome('D:\Python django folder\Temp_courier\courier\api\chromium_driver\\', chrome_options=chrome_options)
+            driver = webdriver.Chrome(chrome_options=chrome_options)
             driver.switch_to.new_window('tab')
             driver.get(url)
             search_bar = driver.find_element("name", "trackcode")
