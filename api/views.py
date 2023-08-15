@@ -1800,7 +1800,10 @@ def print_manifest(request, sid_num):
         destination = sid_details[0]
         destination = Destination.objects.get(id=destination)
         date = sid_details[1]
-        date = datetime.datetime.strptime(date, "%Y-%m-%d")    
+        try:
+            date = datetime.datetime.strptime(date, "%Y-%m-%d")    
+        except:
+            date = datetime.datetime.strptime(date, "%b. %d, %Y")    
         next_date = date + timedelta(days=1)       
         status = ParcelStatus.objects.get(name="OUT")    
         data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__range=[date, next_date], d_to=destination)                
