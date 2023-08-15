@@ -61,6 +61,7 @@ from selenium.webdriver.support import expected_conditions as EC
 warnings.filterwarnings("ignore")
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('headless')
+chrome_options.binary_location = "/usr/local/bin/chromedriver"
 chrome_options.add_argument('window-size=1920x1080')
 chrome_options.add_argument("disable-gpu")
 
