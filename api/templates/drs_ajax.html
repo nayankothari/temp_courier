@@ -23,6 +23,7 @@
             }
         })
     });
+
     // Above code will help to add destinations using jquery.
 
     var dateInput = document.getElementById('datetime');
@@ -46,6 +47,14 @@
             for (var i = 0; i < saved_data.length; i++) {
                 var row = '<tr><td>' + saved_data[i][0] + '</td><td>' + saved_data[i][1] + '</td><td> <input type="text" class="form-control con_name" value="' + saved_data[i][2] + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                 $('#DrsTable tbody').append(row);
+            }
+            var table = document.getElementById("DrsTable");
+            var rowCount = table.rows.length;
+            if (rowCount > 1) {
+                rowCount = rowCount - 1;
+                document.getElementById("rowCount").textContent = rowCount;
+            } else {
+                document.getElementById("rowCount").textContent = 0;
             }
         } else {
             $('#DrsTable tbody').html("");
@@ -95,6 +104,14 @@
 
                             localStorage.setItem(new_var, jsonString);
                             // End of local storage code.
+                            var table = document.getElementById("DrsTable");
+                            var rowCount = table.rows.length;
+                            if (rowCount > 1) {
+                                rowCount = rowCount - 1;
+                                document.getElementById("rowCount").textContent = rowCount;
+                            } else {
+                                document.getElementById("rowCount").textContent = 0;
+                            }
 
                         } else {
                             $('#origin').focus();
@@ -145,8 +162,25 @@
                         var jsonString = JSON.stringify(local_data);
 
                         localStorage.setItem(new_var, jsonString);
+                        var table = document.getElementById("DrsTable");
+                        var rowCount = table.rows.length;
+                        if (rowCount > 1) {
+                            rowCount = rowCount - 1;
+                            document.getElementById("rowCount").textContent = rowCount;
+                        } else {
+                            document.getElementById("rowCount").textContent = 0;
+                        }
                         // End of local storage code.
                     } else {
+                        var table = document.getElementById("DrsTable");
+                        var rowCount = table.rows.length;
+                        if (rowCount > 1) {
+                            rowCount = rowCount - 1;
+                            document.getElementById("rowCount").textContent = rowCount;
+                        } else {
+                            document.getElementById("rowCount").textContent = 0;
+                        }
+
                         $('#origin').focus();
                     };
                 }
@@ -155,7 +189,7 @@
     });
 
 
-    // ##################### For delete drs details by html onle ######################
+    // ##################### For delete drs details by html only ######################
 
     $('#DrsTable').on('click', '.deleteButton', function() {
         $(this).closest('tr').remove();
@@ -183,6 +217,14 @@
 
         localStorage.setItem(new_var, jsonString);
         // End of local storage code.
+        var table = document.getElementById("DrsTable");
+        var rowCount = table.rows.length;
+        if (rowCount > 1) {
+            rowCount = rowCount - 1;
+            document.getElementById("rowCount").textContent = rowCount;
+        } else {
+            document.getElementById("rowCount").textContent = 0;
+        }
         $('#docket_number').focus();
     });
 
@@ -224,6 +266,14 @@
                     var jsonString = JSON.stringify(local_data);
 
                     localStorage.setItem(new_var, jsonString);
+                    var table = document.getElementById("DrsTable");
+                    var rowCount = table.rows.length;
+                    if (rowCount > 1) {
+                        rowCount = rowCount - 1;
+                        document.getElementById("rowCount").textContent = rowCount;
+                    } else {
+                        document.getElementById("rowCount").textContent = 0;
+                    }
                     // End of local storage code.
                 } else {
                     alert("Insert Docket number");
@@ -247,8 +297,24 @@
                 var row = '<tr><td>' + saved_data[i][0] + '</td><td>' + saved_data[i][1] + '</td><td> <input type="text" class="form-control con_name" value="' + saved_data[i][2] + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                 $('#DrsTable tbody').append(row);
             }
+            var table = document.getElementById("DrsTable");
+            var rowCount = table.rows.length;
+            if (rowCount > 1) {
+                rowCount = rowCount - 1;
+                document.getElementById("rowCount").textContent = rowCount;
+            } else {
+                document.getElementById("rowCount").textContent = 0;
+            }
         } else {
             $('#DrsTable tbody').html("");
+            var table = document.getElementById("DrsTable");
+            var rowCount = table.rows.length;
+            if (rowCount > 1) {
+                rowCount = rowCount - 1;
+                document.getElementById("rowCount").textContent = rowCount;
+            } else {
+                document.getElementById("rowCount").textContent = 0;
+            }
         }
     })
 

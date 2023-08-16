@@ -72,7 +72,7 @@
         <div class="card mt-4">
             <div class="col-12">
                 <div class="card-header">
-                    DRS Details
+                    <p>DRS Details - <b>Total documents: <span id="rowCount"></span></p></b>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -116,7 +116,16 @@
         $("#area_name").val("{{ headers.area_name.id }}").change();
         $("#delivery_boy").val("{{ headers.deliveryboy_name.id }}").change();
         $("#datetime").val("{{ headers.date|date:'Y-m-d' }}");
+        var table = document.getElementById("DrsTable");
+        var rowCount = table.rows.length;
+        if (rowCount > 1) {
+            rowCount = rowCount - 1;
+            document.getElementById("rowCount").textContent = rowCount;
+        } else {
+            document.getElementById("rowCount").textContent = 0;
+        }
     });
+
 
     $('#area_name').focus();
 
@@ -125,6 +134,14 @@
     $('#DrsTable').on('click', '.deleteButton', function() {
         $(this).closest('tr').remove();
         $('#docket_number').focus();
+        var table = document.getElementById("DrsTable");
+        var rowCount = table.rows.length;
+        if (rowCount > 1) {
+            rowCount = rowCount - 1;
+            document.getElementById("rowCount").textContent = rowCount;
+        } else {
+            document.getElementById("rowCount").textContent = 0;
+        }
     });
 
 
@@ -149,6 +166,14 @@
                             $("#docket_number").val("");
                             var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td> <input type="text" class="form-control con_name" value="' + data.name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                             $('#DrsTable tbody').prepend(row);
+                            var table = document.getElementById("DrsTable");
+                            var rowCount = table.rows.length;
+                            if (rowCount > 1) {
+                                rowCount = rowCount - 1;
+                                document.getElementById("rowCount").textContent = rowCount;
+                            } else {
+                                document.getElementById("rowCount").textContent = 0;
+                            }
                         } else {
                             $('#origin').focus();
                         };
@@ -173,6 +198,14 @@
                     $("#docket_number").val("");
                     $("#con_name").val("");
                     $('#docket_number').focus();
+                    var table = document.getElementById("DrsTable");
+                    var rowCount = table.rows.length;
+                    if (rowCount > 1) {
+                        rowCount = rowCount - 1;
+                        document.getElementById("rowCount").textContent = rowCount;
+                    } else {
+                        document.getElementById("rowCount").textContent = 0;
+                    }
                 } else {
                     alert("Insert Docket number");
                     $('#docket_number').focus();
