@@ -285,6 +285,7 @@
                 from_date: from_date,
                 to_date: to_date
             }
+            $("#search_by_date").attr("disabled", true);
             $.ajax({
                 url: "{% url 'dashboard_analysis' %}",
                 type: "json",
@@ -376,12 +377,14 @@
                                 contact_us_data[i].name + '</td><td>' + contact_us_data[i].email + '</td><td>' + contact_us_data[i].country + '</td><td>' + contact_us_data[i].mobile_number + '</td><td><textarea class="form-control" id="contact_message" name="contact_message" rows="2">' + contact_us_data[i].message + '</textarea></td><td>' + open_btn + '</td></tr>';
                         }
                         $("#tbody").html(output);
+
                     } else {
                         console.log("N U");
                     }
 
                 }
-            })
+            });
+            $("#search_by_date").attr("disabled", false);
         };
         // This function will load data and show in dashboards.
         dataloader();

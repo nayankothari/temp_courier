@@ -335,6 +335,7 @@
                 insurance_amount + gst_amount
             $('#total_amount').val(sum.toFixed(0));
         });
+
         // To modify when change gst rates        
         $("#gst_rate").on("change", function() {
             var gst_rate = $(this).find("option:selected").text();
@@ -393,6 +394,7 @@
                 alert("Insert receiver name.")
                 $("#receiver_name").focus();
             } else {
+                $("#save_btn").attr("disabled", true);
                 var booking_type = $("#booking_type").val();
                 var datetime = $("#datetime").val();
                 var payment_mode = $("#payment_mode").val();
@@ -513,7 +515,8 @@
                         }
 
                     }
-                })
+                });
+                $("#save_btn").attr("disabled", false);
             };
         })
 

@@ -114,7 +114,11 @@
                             }
 
                         } else {
-                            $('#origin').focus();
+                            if (event.shiftKey && event.key === "Tab") {
+                                $("#delivery_boy").focus();
+                            } else {
+                                $('#origin').focus();
+                            }
                         };
                     }
                 });
@@ -180,8 +184,10 @@
                         } else {
                             document.getElementById("rowCount").textContent = 0;
                         }
-
-                        $('#origin').focus();
+                        if (event.shiftKey && event.key === "Tab") {
+                            $("#delivery_boy").focus();
+                        }
+                        // $('#origin').focus();
                     };
                 }
             });
@@ -274,6 +280,7 @@
                     } else {
                         document.getElementById("rowCount").textContent = 0;
                     }
+                    $("#con_name").submit();
                     // End of local storage code.
                 } else {
                     alert("Insert Docket number");

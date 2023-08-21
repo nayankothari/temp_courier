@@ -48,6 +48,7 @@
             to_date: to_date,
             csrfmiddlewaretoken: token
         }
+        $("#date_search_btn").attr("disabled", true);
         $.ajax({
             url: "{% url 'advance_search_by_date' %}",
             method: "POST",
@@ -65,7 +66,8 @@
                     alert("No records found in between dates.");
                 }
             }
-        })
+        });
+        $("#date_search_btn").attr("disabled", false);
     })
 
     // For C NOTE NUMBER wise search
@@ -82,6 +84,7 @@
                 c_note_number: c_note_number,
                 csrfmiddlewaretoken: token
             }
+            $("#c_note_search_btn").attr("disabled", true);
             $.ajax({
                 url: "{% url 'advance_search_by_c_note' %}",
                 method: "POST",
@@ -99,12 +102,13 @@
                         alert("No records found for this consignment number");
                     }
                 }
-            })
+            });
+            $("#c_note_search_btn").attr("disabled", false);
         }
 
     })
 
-    // For C NOTE NUMBER wise search
+    // For REF. NUMBER wise search
     // $("#ref_num_search_search_btn").click(function() {
     $("#ref_num_search_frm").submit(function(e) {
         e.preventDefault();
@@ -118,6 +122,7 @@
                 ref_number: ref_number,
                 csrfmiddlewaretoken: token
             }
+            $("#ref_num_search_search_btn").attr("disabled", true);
             $.ajax({
                 url: "{% url 'advance_search_for_ref_number' %}",
                 method: "POST",
@@ -136,7 +141,8 @@
                         alert("No records found for this Ref. number");
                     }
                 }
-            })
+            });
+            $("#ref_num_search_search_btn").attr("disabled", false);
         }
     })
 

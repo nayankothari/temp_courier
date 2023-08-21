@@ -8,7 +8,7 @@
                     Generate DRS
                 </div>
                 <div class="card-body">
-                    <form action="" method="post">
+                    <form action="" method="post" id="drs_form">
                         {% csrf_token %}
                         <div class="row justify-content-center">
                             <div class="col-md-4">
@@ -53,7 +53,7 @@
                             </div>
                             <div class="col-md-4 form-group align-self-center">
                                 <label for="con_name"><b>Consignee Name</b></label>
-                                <input type="text" name="con_name" id="con_name" class="form-control">
+                                <input type="text" name="con_name" id="con_name" class="form-control" autocomplete="on">
                             </div>
                             <!-- <div class="col-md-1 text-center mt-4">
                                 <button type="button" class="btn btn-primary">Add</button>

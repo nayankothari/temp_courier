@@ -187,6 +187,7 @@
         }
         var output = "";
         if (from_date && to_date) {
+            $("#search_by_date_btn").attr("disabled", true);
             $.ajax({
                 url: "{% url 'advance_date_wise_search_cash_booking' %}",
                 type: "json",
@@ -219,7 +220,7 @@
                                     '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
                             }
                             $("#tbody").html(output);
-
+                            $("#c_note_num").focus();
                         } else {
                             alert("Data not found in between dates.");
                         }
@@ -227,7 +228,8 @@
                         alert("Data not found in between dates.");
                     }
                 }
-            })
+            });
+            $("#search_by_date_btn").attr("disabled", false);
         } else {
             alert("Select correct date range");
         }
@@ -247,6 +249,7 @@
         }
         var output = "";
         if (from_date && to_date && party) {
+            $("#search_by_party_btn").attr("disabled", true);
             $.ajax({
                 url: "{% url 'advance_date_party_wise_search_cash_booking' %}",
                 type: "json",
@@ -279,7 +282,7 @@
                                     '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
                             }
                             $("#tbody").html(output);
-
+                            $("#c_note_num").focus();
                         } else {
                             alert("Data not found in between dates with this party.");
                         }
@@ -287,7 +290,8 @@
                         alert("Data not found in between dates with this party.");
                     }
                 }
-            })
+            });
+            $("#search_by_party_btn").attr("disabled", false);
         } else {
             alert("Select correct date range");
         }
@@ -305,6 +309,7 @@
                     csrfmiddlewaretoken: token
                 }
                 var output = "";
+                $("#c_note_search_btn").attr("disabled", true);
                 $.ajax({
                     url: "{% url 'advance_c_note_wise_search_cash_booking' %}",
                     type: "json",
@@ -337,6 +342,7 @@
                                         '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
                                 }
                                 $("#tbody").html(output);
+                                $("#c_note_num").focus();
                             } else {
                                 alert("Shipment Not found !");
                             }
@@ -344,8 +350,8 @@
                             alert("Insert Correct C. Note number.");
                         }
                     }
-                })
-
+                });
+                $("#c_note_search_btn").attr("disabled", false);
             } else {
                 alert("Insert Correct C. Note number.");
             }
@@ -366,6 +372,7 @@
         }
         var output = "";
         if (from_date && to_date && ref_courier) {
+            $("#ref_courier_search_btn").attr("disabled", true);
             $.ajax({
                 url: "{% url 'advance_date_ref_courier_wise_search_cash_booking' %}",
                 type: "json",
@@ -398,7 +405,7 @@
                                     '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
                             }
                             $("#tbody").html(output);
-
+                            $("#c_note_num").focus();
                         } else {
                             alert("Data not found in between dates with this ref courier name.");
                         }
@@ -406,7 +413,8 @@
                         alert("Data not found in between dates with this ref courier name.");
                     }
                 }
-            })
+            });
+            $("#ref_courier_search_btn").attr("disabled", false);
         } else {
             alert("Select correct date range");
         }
