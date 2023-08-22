@@ -238,7 +238,9 @@
     // ################## Insert default values by consignee name entry #######################
     $(document).ready(function() {
         $('#con_name').on('keydown', function(event) {
-            if (event.keyCode === 13 || event.keyCode === 9) {
+            if (event.shiftKey && event.key === "Tab") {
+                $("#origin").focusin();
+            } else if (event.keyCode === 13 || event.keyCode === 9) {
                 event.preventDefault();
                 var doc_num = $("#docket_number").val();
                 if (doc_num != "") {
