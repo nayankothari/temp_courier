@@ -230,4 +230,15 @@
             alert("Select correct dates.");
         }
     })
+
+    $(document).ready(function() {
+        var ref_num = "{{ booking_details.ref_courier_number }}";
+        if (ref_num) {
+            navigator.clipboard.writeText(ref_num)
+                .then(function() {})
+                .catch(function(err) {
+                    console.error("Error copying text: " + err);
+                });
+        };
+    })
 </script>

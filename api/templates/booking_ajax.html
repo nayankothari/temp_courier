@@ -152,6 +152,7 @@
         var final_data = {
             csrfmiddlewaretoken: token,
         }
+        var new_value = "{{ request.session.p_sender_name }}";
         $.ajax({
             url: "{% url 'retutn_all_foreign_key_details' %}",
             method: "POST",
@@ -174,6 +175,7 @@
                         $("#bookingtype").val("{{ request.session.booking_type }}").change();
                         $("#to_destination").val("{{ request.session.to_dest }}").change();
                     };
+                    $("#sender_name").val(new_value);
                 }
             }
         })

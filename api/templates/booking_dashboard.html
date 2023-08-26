@@ -37,7 +37,7 @@
         <div class="col-md-12 mb-5">
             <div class="card mt-2">
                 <div class="card-header">
-                    Booking Dashboard
+                    Booking Dashboard &nbsp;&nbsp;<b> Total Shipment booked: <span id="rowCount"></span></p></b>
                 </div>
                 <div class="card-body">
                     <div class="row justify-content-end text-end">
@@ -54,7 +54,7 @@
                             <table class="table table-striped" id="table-1">
                                 <thead>
                                     <tr>
-                                        <th>Action</th>
+                                        <th><input type="checkbox" id="selectAll" style="margin-right: 10px;"> Action</th>
                                         <th>Doc No.</th>
                                         <th>Date</th>
                                         <th>To Center</th>
@@ -71,6 +71,7 @@
                                     {% for booking in todays_booking %}
                                     <tr>
                                         <td>
+                                            <input type="checkbox" style="margin-right: 10px;" id="chk_bxk">
                                             <a href="{% url 'edit_cash_booking' booking.id %}" class="text-decoration-none border-0 bg-transparent text-primary editButton"><i class="bi bi-pencil"></i></a>
                                             <a href="{% url 'print_cash_booking' booking.id %}" target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>
                                         </td>
@@ -210,7 +211,7 @@
                                 ];
                                 var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
 
-                                output += '<tr><td><a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
                                     '</td><td>' + formattedDate +
                                     '</td><td>' + details[i].to_destination__name +
                                     '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
@@ -220,7 +221,16 @@
                                     '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
                             }
                             $("#tbody").html(output);
+                            var table = document.getElementById("table-1");
+                            var rowCount = table.rows.length;
+                            if (rowCount > 1) {
+                                rowCount = rowCount - 1;
+                                document.getElementById("rowCount").textContent = rowCount;
+                            } else {
+                                document.getElementById("rowCount").textContent = 0;
+                            }
                             $("#c_note_num").focus();
+
                         } else {
                             alert("Data not found in between dates.");
                         }
@@ -272,7 +282,7 @@
                                 ];
                                 var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
 
-                                output += '<tr><td><a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
                                     '</td><td>' + formattedDate +
                                     '</td><td>' + details[i].to_destination__name +
                                     '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
@@ -282,6 +292,14 @@
                                     '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
                             }
                             $("#tbody").html(output);
+                            var table = document.getElementById("table-1");
+                            var rowCount = table.rows.length;
+                            if (rowCount > 1) {
+                                rowCount = rowCount - 1;
+                                document.getElementById("rowCount").textContent = rowCount;
+                            } else {
+                                document.getElementById("rowCount").textContent = 0;
+                            }
                             $("#c_note_num").focus();
                         } else {
                             alert("Data not found in between dates with this party.");
@@ -332,7 +350,7 @@
                                     ];
                                     var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
 
-                                    output += '<tr><td><a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                    output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
                                         '</td><td>' + formattedDate +
                                         '</td><td>' + details[i].to_destination__name +
                                         '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
@@ -342,6 +360,14 @@
                                         '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
                                 }
                                 $("#tbody").html(output);
+                                var table = document.getElementById("table-1");
+                                var rowCount = table.rows.length;
+                                if (rowCount > 1) {
+                                    rowCount = rowCount - 1;
+                                    document.getElementById("rowCount").textContent = rowCount;
+                                } else {
+                                    document.getElementById("rowCount").textContent = 0;
+                                }
                                 $("#c_note_num").focus();
                             } else {
                                 alert("Shipment Not found !");
@@ -395,7 +421,7 @@
                                 ];
                                 var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
 
-                                output += '<tr><td><a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
                                     '</td><td>' + formattedDate +
                                     '</td><td>' + details[i].to_destination__name +
                                     '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
@@ -405,6 +431,14 @@
                                     '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
                             }
                             $("#tbody").html(output);
+                            var table = document.getElementById("table-1");
+                            var rowCount = table.rows.length;
+                            if (rowCount > 1) {
+                                rowCount = rowCount - 1;
+                                document.getElementById("rowCount").textContent = rowCount;
+                            } else {
+                                document.getElementById("rowCount").textContent = 0;
+                            }
                             $("#c_note_num").focus();
                         } else {
                             alert("Data not found in between dates with this ref courier name.");
@@ -421,43 +455,67 @@
     });
 
 
-
     // Print bulk_receipt_btn
     $(document).ready(function() {
         $("#receipt_bulk_form").submit(function(e) {
             var c_note_details = [];
             $("#table-1 tr:not(:first)").each(function() {
                 var firstCell = $(this).find("td:nth-child(2)");
-                c_note_details.push(parseInt(firstCell.text()));
+                var check_bx = $(this).find("td:nth-child(1) input[type='checkbox']");
+                if (check_bx.prop("checked")) {
+                    c_note_details.push(parseInt(firstCell.text()));
+                }
             });
             c_note_details = JSON.stringify(c_note_details)
             $("#receipt_input").val("");
             $("#receipt_input").val(c_note_details);
-        })
+        });
 
 
         $("#lbl_bulk_form").submit(function(e) {
             var c_note_details = [];
             $("#table-1 tr:not(:first)").each(function() {
                 var firstCell = $(this).find("td:nth-child(2)");
-                c_note_details.push(parseInt(firstCell.text()));
+                var check_bx = $(this).find("td:nth-child(1) input[type='checkbox']");
+                if (check_bx.prop("checked")) {
+                    c_note_details.push(parseInt(firstCell.text()));
+                }
             });
             c_note_details = JSON.stringify(c_note_details)
             $("#lbl_input").val("");
             $("#lbl_input").val(c_note_details);
-        })
+        });
 
 
         $("#export_to_excel_form").submit(function(e) {
             var c_note_details = [];
             $("#table-1 tr:not(:first)").each(function() {
                 var firstCell = $(this).find("td:nth-child(2)");
-                c_note_details.push(parseInt(firstCell.text()));
+                var check_bx = $(this).find("td:nth-child(1) input[type='checkbox']");
+                if (check_bx.prop("checked")) {
+                    c_note_details.push(parseInt(firstCell.text()));
+                }
             });
             c_note_details = JSON.stringify(c_note_details)
             $("#export_to_excel_input").val("");
             $("#export_to_excel_input").val(c_note_details);
-        })
+        });
+
+        document.getElementById("selectAll").addEventListener("click", function() {
+            var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = document.getElementById("selectAll").checked;
+            });
+        });
+
+        var table = document.getElementById("table-1");
+        var rowCount = table.rows.length;
+        if (rowCount > 1) {
+            rowCount = rowCount - 1;
+            document.getElementById("rowCount").textContent = rowCount;
+        } else {
+            document.getElementById("rowCount").textContent = 0;
+        }
     });
 
     // Set datetime in datetime fields

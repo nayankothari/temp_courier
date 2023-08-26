@@ -175,7 +175,10 @@
     $(window).on('load', function() {
         var logged_in = '{{ request.user.is_authenticated }}';
         if (logged_in == "False") {
-            $('#myModal').modal('show');
+            setTimeout(function() {
+                $('#myModal').modal('show');
+            }, 10000);
+
         } else {
             $("#trackingdetails").focus();
         }

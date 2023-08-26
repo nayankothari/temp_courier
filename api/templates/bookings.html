@@ -247,13 +247,10 @@
     document.getElementById('from_datetime').valueAsDate = now;
     document.getElementById('to_datetime').valueAsDate = now;
 
-    var new_value = $("#party").find("option:selected").text();
-    $("#sender_name").val(new_value);
-
-    $("#party").on("change", function() {
-        var new_val = $(this).find("option:selected").text();
-        $("#sender_name").val(new_val);
-    });
+    // $("#party").on("change", function() {
+    //     var new_val = $(this).find("option:selected").text();
+    //     $("#sender_name").val(new_val);
+    // });
 
     $(document).ready(function() {
         var new_c_note = "{{ request.session.next_c_note }}";
@@ -270,6 +267,10 @@
             var new_val = $(this).find("option:selected").text();
             $("#sender_name").val(new_val);
         });
+
+        // var new_value = $("#party").find("option:selected").text();
+        var new_value = "{{ request.session.p_sender_name }}";
+        $("#sender_name").val(new_value);
     });
 </script>
 

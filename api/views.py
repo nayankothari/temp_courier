@@ -861,6 +861,7 @@ def save_booking(request):
             request.session["to_dest"] = to_dest
             to_dest = Destination.objects.get(id=to_dest)
             s_name = request.POST.get("s_name")
+            request.session["p_sender_name"] = s_name
             s_number = request.POST.get("s_number")
             r_name = request.POST.get("r_name")
             r_number = request.POST.get("r_number")        
