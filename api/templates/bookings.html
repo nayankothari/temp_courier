@@ -1,6 +1,31 @@
 {% extends 'base.html' %}{% load static %}{% block title %}Booking{% endblock title %}{% block content %}
-
+<!-- <div id="interactive" class="viewport">
+    <video autoplay="true" preload="auto"></video>
+</div> -->
 <div class="container back_color">
+    <div class="modal fade" id="barcodeModal" tabindex="-1" role="dialog" aria-labelledby="barcodeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="barcodeModalLabel">Barcode Scanner</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                </div>
+                <div class="modal-body">
+                    <div id="interactive" class="viewport">
+                        <video id="video" width="100%" autoplay></video>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <div class="row">
         <div class="col-md-6 mt-3 border-dark">
             <h4 class="alert alert-primary text-center">Book your shipment</h4>
@@ -113,9 +138,22 @@
                         </select>
                     </div>
                     <div class="col-md-6 mt-2">
-                        <label for="receiver_mobile"><b>Ref. Courier Number</b></label>
-                        <input type="text" name="ref_number" id="ref_courier_number" class="form-control" placeholder="">
+                        <label for="ref_courier_number"><b>Ref. Courier Number</b></label>
+                        <div class="input-group">
+                            <input type="text" name="ref_number" id="ref_courier_number" class="form-control" placeholder="">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="brcd_button" data-bs-toggle="modal" data-bs-target="#barcodeModal">
+                                    <i class="bi bi-upc-scan"></i>
+                              </button>
+                            </div>
+                        </div>
                     </div>
+                    <!-- <div class="col-md-2 mt-2">
+                        <label for="ref_courier_number"><b>Scan</b></label>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#barcodeModal">
+                            Scan
+                          </button>
+                    </div> -->
                 </div>
 
                 <div class="row">
@@ -274,6 +312,60 @@
     });
 </script>
 
+<!-- <script>
+    Quagga.init({
+        inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: document.querySelector("#interactive"),
+        },
+        decoder: {
+            readers: ["ean_reader", "upc_reader"],
+        },
+    });
+
+    Quagga.onDetected(function(data) {
+        document.getElementById("ref_courier_number").value = data.codeResult.code;
+        Quagga.stop();
+    });
+
+    Quagga.start();
+</script> -->
 <!-- https://stackoverflow.com/questions/1317714/how-can-i-filter-a-date-of-a-datetimefield-in-django -->
+
+<script>
+    $(document).ready(function() {
+        // Start the camera when the modal is shown
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "interactive", // Element ID for the video element
+            {
+                fps: 10,
+                qrbox: 250
+            } // Optional configuration options
+        );
+        $('#barcodeModal').on('shown.bs.modal', function() {
+            html5QrcodeScanner.render((result) => {
+                document.getElementById("ref_num_search").value = result;
+                $('#barcodeModal').hide();
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            });
+            // .catch((err) => {
+            //     console.error(err);
+            // });
+            // startCamera();            
+        });
+        // Stop the camera when the modal is closed
+        $('#barcodeModal').on('hidden.bs.modal', function() {
+            // html5QrcodeScanner.stop();
+            $('#barcodeModal').hide();
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        });
+    });
+</script>
+
+
+
 
 {% endblock content %}
