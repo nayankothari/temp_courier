@@ -22,34 +22,6 @@
                 </div> -->
             </div>
         </div>
-        <script>
-            $(document).ready(function() {
-                var qg = new Quagga.init({
-                    inputStream: {
-                        name: "Live",
-                        type: "LiveStream",
-                        target: document.querySelector("#interactive"),
-                    },
-                    decoder: {
-                        readers: ["ean_reader", "upc_reader", "code_128_reader"], // Specify the barcode types you want to scan
-                    },
-                });
-                Quagga.onDetected(function(data) {
-                    // Handle the detected barcode result
-                    var barcodeResult = data.codeResult.code;
-                    document.getElementById("ref_num_search").value = barcodeResult;
-                    $("#barcodeModal").hide();
-                });
-
-                $('#barcodeModal').on('shown.bs.modal', function() {
-                    // Quagga.start();
-                });
-                // Stop the camera when the modal is closed
-                $('#barcodeModal').on('hidden.bs.modal', function() {
-                    // Quagga.stop();
-                });
-            });
-        </script>
     </div>
 
 
@@ -360,4 +332,38 @@
     Quagga.start();
 </script> -->
 <!-- https://stackoverflow.com/questions/1317714/how-can-i-filter-a-date-of-a-datetimefield-in-django -->
+<script>
+    $(document).ready(function() {
+        function test() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector("#test"),
+                },
+                decoder: {
+                    readers: ["ean_reader", "upc_reader", "code_128_reader"], // Specify the barcode types you want to scan
+                },
+            });
+            Quagga.onDetected(function(data) {
+                // Handle the detected barcode result
+                var barcodeResult = data.codeResult.code;
+                console.log(barcodeResult);
+                document.getElementById("ref_num_search").value = barcodeResult;
+                $("#barcodeModal").hide();
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            })
+        };
+
+        $('#barcodeModal').on('shown.bs.modal', function() {
+            // Quagga.start();
+            test();
+        });
+        // Stop the camera when the modal is closed
+        $('#barcodeModal').on('hidden.bs.modal', function() {
+            Quagga.stop();
+        });
+    });
+</script>
 {% endblock content %}
