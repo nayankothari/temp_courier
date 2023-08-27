@@ -17,11 +17,39 @@
                         <video id="video" width="100%" autoplay></video>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <!-- <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+                </div> -->
             </div>
         </div>
+        <script>
+            $(document).ready(function() {
+                var qg = new Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: document.querySelector("#interactive"),
+                    },
+                    decoder: {
+                        readers: ["ean_reader", "upc_reader", "code_128_reader"], // Specify the barcode types you want to scan
+                    },
+                });
+                qg.onDetected(function(data) {
+                    // Handle the detected barcode result
+                    var barcodeResult = data.codeResult.code;
+                    document.getElementById("ref_num_search").value = barcodeResult;
+                    $("#barcodeModal").hide();
+                });
+
+                $('#barcodeModal').on('shown.bs.modal', function() {
+                    // Quagga.start();
+                });
+                // Stop the camera when the modal is closed
+                $('#barcodeModal').on('hidden.bs.modal', function() {
+                    // Quagga.stop();
+                });
+            });
+        </script>
     </div>
 
 
@@ -332,40 +360,4 @@
     Quagga.start();
 </script> -->
 <!-- https://stackoverflow.com/questions/1317714/how-can-i-filter-a-date-of-a-datetimefield-in-django -->
-
-<script>
-    $(document).ready(function() {
-        // Start the camera when the modal is shown
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-            "interactive", // Element ID for the video element
-            {
-                fps: 10,
-                qrbox: 250
-            } // Optional configuration options
-        );
-        $('#barcodeModal').on('shown.bs.modal', function() {
-            html5QrcodeScanner.render((result) => {
-                document.getElementById("ref_num_search").value = result;
-                $('#barcodeModal').hide();
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
-            });
-            // .catch((err) => {
-            //     console.error(err);
-            // });
-            // startCamera();            
-        });
-        // Stop the camera when the modal is closed
-        $('#barcodeModal').on('hidden.bs.modal', function() {
-            // html5QrcodeScanner.stop();
-            $('#barcodeModal').hide();
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
-        });
-    });
-</script>
-
-
-
-
 {% endblock content %}
