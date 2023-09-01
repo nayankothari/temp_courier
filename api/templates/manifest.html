@@ -23,7 +23,7 @@
                                 {% for mf in details %}
                                 <tr>
                                     <td>{{ forloop.counter }}.</td>
-                                    <td>{{ mf.date_substr }}</td>
+                                    <td>{{ mf.date_substr|date:"Y-m-d" }}</td>
                                     <td>{{ mf.d_to__name }}</td>
                                     <td>{{ mf.child_count }}</td>
                                     <td>

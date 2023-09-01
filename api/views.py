@@ -1775,7 +1775,7 @@ def manifest_show(request):
     today = datetime.date.today() #- timedelta(days=1)
     status = ParcelStatus.objects.get(name="OUT")    
     # data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__gt=today).annotate(date_substr=Substr('in_out_datetime', 1, 10)).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")        
-    data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__gt=today).annotate(date_substr=TruncDate('in_out_datetime')).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")
+    data = Trackinghistory.objects.filter(user=request.user, status=status, in_out_datetime__gt=today).annotate(date_substr=TruncDate('in_out_datetime')).values("d_to__name", "date_substr", "d_to__id").annotate(child_count=Count('d_to')).order_by("-date_substr")    
     return render(request, "manifest.html", context={"details": data})
 
 
@@ -1804,6 +1804,7 @@ def print_manifest(request, sid_num):
         try:
             date = datetime.datetime.strptime(date, "%Y-%m-%d")    
         except:
+            log.info("{}".format(date))
             date = datetime.datetime.strptime(date, "%b. %d, %Y")    
         next_date = date + timedelta(days=1)       
         status = ParcelStatus.objects.get(name="OUT")    
