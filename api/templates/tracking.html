@@ -29,7 +29,9 @@
                         {% endif %} {% if booking_details.ref_courier_name.type != 'Internal' %}
                         <tr>
                             <th scope="row">Ref. Number</th>
-                            <td>{{ booking_details.ref_courier_number }}</td>
+                            <td>{{ booking_details.ref_courier_number }}
+                                <button type='button' id='copy_btn' class='border-0 bg-transparent text-primary copy_btn' data-sid="{{ booking_details.ref_courier_number }}" title="Copy to clipboard"><span id="cp_clipboard"><i class="bi bi-clipboard"></i></span></button>
+                            </td>
 
                         </tr>
                         {% endif %} {% if only_and_only_drs == 1 %}

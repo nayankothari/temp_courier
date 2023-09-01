@@ -20,7 +20,21 @@
 
     <style>
         .custom-row-height {
-            height: 10px !important;
+            height: 5px !important;
+        }
+        
+        .table-custom tbody tr {
+            line-height: 3px;
+            min-height: 3px;
+            height: 3px;
+            /* Adjust the height as needed */
+        }
+        
+        .table-custom thead tr {
+            line-height: 3px;
+            min-height: 3px;
+            height: 3px;
+            /* Adjust the height as needed */
         }
     </style>
 
@@ -49,7 +63,7 @@
                 </table>
             </div>
             <div class="col-12">
-                <table class="table table-bordered">
+                <table class="table table-bordered table-custom">
                     <thead>
                         <tr>
                             <th scope="col">No.</th>
@@ -61,12 +75,12 @@
                     </thead>
                     <tbody>
                         {% for detail in data %}
-                        <tr class="custom-row-height">
-                            <th scope="row">{{ forloop.counter }}.</th>
-                            <td class="w-22">{{ detail.c_note_number }}</td>
-                            <td class="w-22">{{ detail.c_note_number.to_destination }}</td>
-                            <td class="w-29">{{ detail.c_note_number.pcs }}</td>
-                            <td class="w-18">{{ detail.c_note_number.weight }}</td>
+                        <tr>
+                            <th scope="row" style="font-size: 12px;">{{ forloop.counter }}.</th>
+                            <td class="w-15" style="font-size: 12px;">{{ detail.c_note_number }}</td>
+                            <td class="w-29" style="font-size: 12px;">{{ detail.c_note_number.to_destination }}</td>
+                            <td class="w-29" style="font-size: 12px;">{{ detail.c_note_number.pcs }}</td>
+                            <td class="w-18" style="font-size: 12px;">{{ detail.c_note_number.weight }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

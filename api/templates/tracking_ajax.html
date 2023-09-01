@@ -241,4 +241,15 @@
                 });
         };
     })
+
+    $("#copy_btn").click(function() {
+        ref_n = $("#copy_btn").attr("data-sid");
+        var temp_input = document.createElement("input");
+        temp_input.value = ref_n;
+        document.body.append(temp_input);
+        temp_input.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp_input);
+        document.getElementById("cp_clipboard").innerHTML = '<i class="bi bi-check2-all"></i>';
+    })
 </script>
