@@ -245,7 +245,7 @@
                 var doc_num = $("#docket_number").val();
                 if (doc_num != "") {
                     var origin = $("#origin option:selected").text();
-                    var con_name = $("#con_name").val();
+                    var con_name = $("#con_name").val().toUpperCase();
                     var row = '<tr><td>' + doc_num + '</td><td>' + origin + '</td><td> <input type="text" class="form-control con_name" value="' + con_name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                     $('#DrsTable tbody').prepend(row);
                     $("#docket_number").val("");
@@ -283,8 +283,27 @@
                         document.getElementById("rowCount").textContent = 0;
                     }
 
-
-                    $("#con_name").submit();
+                    // Save consignee names on local storage
+                    // var saved_con_names = localStorage.removeItem("con_names");
+                    var saved_con_names = localStorage.getItem("con_names");
+                    if (saved_con_names) {
+                        saved_con_names = JSON.parse(saved_con_names);
+                    } else {
+                        saved_con_names = [];
+                    }
+                    if ($.inArray(con_name, saved_con_names) === -1) {
+                        if (con_name) {
+                            saved_con_names.push(con_name);
+                            localStorage.setItem("con_names", JSON.stringify(saved_con_names));
+                            var datalist = $("#con_name_datalist");
+                            datalist.empty();
+                            saved_con_names.forEach(function(item) {
+                                var option = $("<option>").attr("value", item);
+                                datalist.append(option);
+                            });
+                        }
+                    }
+                    // $("#con_name").submit();
                     // End of local storage code.
                 } else {
                     alert("Insert Docket number");
@@ -293,6 +312,19 @@
             }
         })
     });
+
+
+    // ################################# Load consignee names from local storage #############
+    // var saved_con_names = localStorage.removeItem("con_names");
+    var saved_con_names = localStorage.getItem("con_names");
+    if (saved_con_names) {
+        saved_con_names = JSON.parse(saved_con_names);
+        var datalist = $("#con_name_datalist");
+        saved_con_names.forEach(function(item) {
+            var option = $("<option>").attr("value", item);
+            datalist.append(option);
+        });
+    }
 
     // ################################# Fetch from local storage ############################
     $(".for_bl").blur(function() {
