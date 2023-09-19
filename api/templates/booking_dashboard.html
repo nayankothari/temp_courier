@@ -71,8 +71,8 @@
                                     {% for booking in todays_booking %}
                                     <tr>
                                         <td>
-                                            <input type="checkbox" style="margin-right: 10px;" id="chk_bxk">
-                                            <a href="{% url 'edit_cash_booking' booking.id %}" class="text-decoration-none border-0 bg-transparent text-primary editButton"><i class="bi bi-pencil"></i></a>
+                                            <input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> {% if booking.booking_mode != 'A/C' %}
+                                            <a href="{% url 'edit_cash_booking' booking.id %}" class="text-decoration-none border-0 bg-transparent text-primary editButton"><i class="bi bi-pencil"></i></a> {% endif %}
                                             <a href="{% url 'print_cash_booking' booking.id %}" target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>
                                         </td>
                                         <td><a class="text-decoration-none" href="{% url 'tracking_page' booking.c_note_number %}" target="_blank">{{ booking.c_note_number }}</a></td>
@@ -210,8 +210,12 @@
                                     "jul", "aug", "sep", "oct", "nov", "dec"
                                 ];
                                 var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
-
-                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                // booking
+                                var edit_ena = ''
+                                if (details[i].booking_mode != 'A/C') {
+                                    edit_ena = '<a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a>'
+                                }
+                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk">' + edit_ena + ' <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
                                     '</td><td>' + formattedDate +
                                     '</td><td>' + details[i].to_destination__name +
                                     '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
@@ -282,7 +286,11 @@
                                 ];
                                 var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
 
-                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                var edit_ena = ''
+                                if (details[i].booking_mode != 'A/C') {
+                                    edit_ena = '<a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a>'
+                                }
+                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk">' + edit_ena + ' <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
                                     '</td><td>' + formattedDate +
                                     '</td><td>' + details[i].to_destination__name +
                                     '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
@@ -349,8 +357,11 @@
                                         "jul", "aug", "sep", "oct", "nov", "dec"
                                     ];
                                     var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
-
-                                    output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                    var edit_ena = ''
+                                    if (details[i].booking_mode != 'A/C') {
+                                        edit_ena = '<a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a>'
+                                    }
+                                    output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk">' + edit_ena + ' <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
                                         '</td><td>' + formattedDate +
                                         '</td><td>' + details[i].to_destination__name +
                                         '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
@@ -420,8 +431,11 @@
                                     "jul", "aug", "sep", "oct", "nov", "dec"
                                 ];
                                 var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
-
-                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a> <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                var edit_ena = ''
+                                if (details[i].booking_mode != 'A/C') {
+                                    edit_ena = '<a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a>'
+                                }
+                                output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk">' + edit_ena + ' <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
                                     '</td><td>' + formattedDate +
                                     '</td><td>' + details[i].to_destination__name +
                                     '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +

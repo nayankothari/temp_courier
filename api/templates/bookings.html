@@ -204,12 +204,14 @@
                     <tbody id="tbody">
                         {% for booking in today_bookings %}
                         <tr>
+                            {% if booking.booking_mode == 'A/C' %}
                             <td><a class="text-decoration-none" href="{% url 'tracking_page' booking.c_note_number %}" target="_blank">{{ booking.c_note_number }}</a></td>
                             <td>{{ booking.to_destination }}</td>
                             <td>{{ booking.ref_courier_name }}</td>
                             <td>
                                 <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="{{ booking.id }}">
                             </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

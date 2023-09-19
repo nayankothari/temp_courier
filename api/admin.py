@@ -13,27 +13,62 @@ class AdminTracking(admin.ModelAdmin):
 class ContactUs(admin.ModelAdmin):
     list_display = ['name', 'country', 'mobile_number', 'created_at']
 
+class BookingDetails(admin.ModelAdmin):
+    list_display = ["c_note_number", "doc_date", "user", "to_destination",
+            "ref_courier_name", "ref_courier_number", "weight", "amount", "booking_mode"]
+
+class AreaDetails(admin.ModelAdmin):
+    list_display = ["area_name", "user"]
+
+class BranchDetails(admin.ModelAdmin):
+    list_display = ["branch_name", "zone", "contact_person", "pincode","user", "status"]
+
+class DrsDetails(admin.ModelAdmin):
+    list_display = ["drs_no", "date", "status", "user"]
 
 
-admin.site.register(Booking)
+class DrspermissionDetails(admin.ModelAdmin):
+    list_display = ["user", "can_veiw"]
+
+class DrsTxnHistoryDetails(admin.ModelAdmin):
+    list_display = ["docket_number", "drs_number", "origin", "status", "user"]
+
+class DeliveryBoyDetails(admin.ModelAdmin):
+    list_display = ["delivery_boy_name", "mobile_number", "alternate_number", "user"]
+
+class DestinationsDetails(admin.ModelAdmin):
+    search_fields = ["name"]
+    list_filter = ["name"]
+
+class NetworkDetails(admin.ModelAdmin):
+    list_display = ["pincode", "user"]
+
+class PartyDetails(admin.ModelAdmin):
+    list_display = ["party_name", "mobile_number", "user"]
+
+class UserAddDetails(admin.ModelAdmin):
+    list_display = ["user", "alias", "destination", "purchase_date", "licence_expire_date", "is_active"]
+
+
+admin.site.register(Booking, BookingDetails)
 admin.site.register(RefCourier)
-admin.site.register(Destination)
+admin.site.register(Destination, DestinationsDetails)
 admin.site.register(Trackinghistory, AdminTracking)
 admin.site.register(ParcelStatus)
-admin.site.register(BranchNetwork)
+admin.site.register(BranchNetwork, BranchDetails)
 admin.site.register(contactus, ContactUs)
 admin.site.register(State)
 admin.site.register(Token)
 admin.site.register(Country)
-admin.site.register(PartyAccounts)
-admin.site.register(UserAdditionalDetails)
+admin.site.register(PartyAccounts, PartyDetails)
+admin.site.register(UserAdditionalDetails, UserAddDetails)
 admin.site.register(BookingType)
-admin.site.register(DeliveryBoyMaster)
-admin.site.register(AreaMaster)
-admin.site.register(DrsNoGenerator)
-admin.site.register(DrsMaster)
-admin.site.register(DrsTransactionHistory)
+admin.site.register(DeliveryBoyMaster, DeliveryBoyDetails)
+admin.site.register(AreaMaster, AreaDetails)
+# admin.site.register(DrsNoGenerator)
+admin.site.register(DrsMaster, DrsDetails)
+admin.site.register(DrsTransactionHistory, DrsTxnHistoryDetails)
 admin.site.register(Reasons)
 admin.site.register(GstModel)
-admin.site.register(Network)
-admin.site.register(DrsPermission)
+admin.site.register(Network, NetworkDetails)
+admin.site.register(DrsPermission, DrspermissionDetails)
