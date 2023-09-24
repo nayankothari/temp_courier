@@ -191,14 +191,16 @@ def contactUs(request):
         email = request.POST.get("email")
         country = request.POST.get("country")
         pincode = request.POST.get("pincode")
-        message = request.POST.get("message")
-        if name and email and country and pincode:            
-            contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message, status="OPEN")
-            contact_obj.save()
-            return_message = "Request submitted successfully."       
+        message = request.POST.get("message")        
+        exclude_names = ["RobertTiz", "RaymondTum"]
+        if str(name) not in exclude_names:
+            if name and email and country and pincode:            
+                contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message, status="OPEN")
+                contact_obj.save()
+                return_message = "Request submitted successfully."       
 
-            return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})    
-
+                return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})    
+        log.warning(f"Getting {str(name)} contact details, {request.user}")
     return render(request, "contactus.html", {"today_date": today_date})
 
 
