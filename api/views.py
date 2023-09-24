@@ -141,6 +141,7 @@ def tracking(request, tracking_number):
                             reason = ""                        
                             if final_status.reason:
                                 reason = final_status.reason
+                            
                             return render(request, "tracking.html", {"tracking_history": [],
                         "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
                         "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,

@@ -29,7 +29,7 @@ urlpatterns = [
     path(r"check_tracking_num", check_tracking_num, name="check_tracking_num"),
     path(r"tracking/track_internal/<str:details>", tracking_with_selenium),    
     
-    path(r"contact_us", contactUs, name="ContactUS"),   
+    path(r"contact-us-form", contactUs, name="ContactUS"),   
     path(r"close_contact_us", close_contact_us, name="close_contact_us"), 
     path(r"network", network, name="network"),
     path(r"services", services, name="services"),  

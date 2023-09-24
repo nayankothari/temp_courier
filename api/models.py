@@ -361,3 +361,19 @@ class CNoteGenerator(models.Model):
     def __str__(self):
         return str(self.from_range) + " To " + str(self.to_range)
     
+
+class Complaints(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    message = models.CharField(max_length=2000, null=True, blank=True)
+    status = models.CharField(max_length=200, null=True, blank=False)
+    by_user = models.CharField(max_length=200, null=True, blank=True)
+    doc_number = models.BigIntegerField()
+    from_counter = models.ForeignKey(User, on_delete=models.PROTECT, related_name="from_counter")
+    to_counter = models.ForeignKey(User, on_delete=models.PROTECT, related_name="to_counter")
+
+    def __str__(self):
+        return self.status
+    
+    class Meta:
+        verbose_name_plural = "Complaint Register"
+
