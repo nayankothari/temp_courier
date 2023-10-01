@@ -312,7 +312,7 @@ def network(request):
             area_name = request.POST.get("area_name")           
             ques = (Q(branch_name__icontains=area_name) | Q(state__state_name__icontains=area_name) 
             | Q(zone__name__icontains=area_name) | Q(area_name__icontains=area_name))
-            data = BranchNetwork.objects.filter(ques)[:50]
+            data = BranchNetwork.objects.filter(ques)[:25]
             if data:                                              
                 message = None
                 context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
