@@ -49,6 +49,9 @@ class PartyDetails(admin.ModelAdmin):
 class UserAddDetails(admin.ModelAdmin):
     list_display = ["user", "alias", "destination", "purchase_date", "licence_expire_date", "is_active"]
 
+class ComplaintsDetails(admin.ModelAdmin):
+    list_display = ["doc_number", "created_at","from_counter", "to_counter", "by_user", "status"]
+
 
 admin.site.register(Booking, BookingDetails)
 admin.site.register(RefCourier)
@@ -72,4 +75,4 @@ admin.site.register(Reasons)
 admin.site.register(GstModel)
 admin.site.register(Network, NetworkDetails)
 admin.site.register(DrsPermission, DrspermissionDetails)
-admin.site.register(Complaints)
+admin.site.register(Complaints, ComplaintsDetails)

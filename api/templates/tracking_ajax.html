@@ -252,4 +252,38 @@
         document.body.removeChild(temp_input);
         document.getElementById("cp_clipboard").innerHTML = '<i class="bi bi-check2-all"></i>';
     })
+
+
+    $(document).ready(function() {
+        $("#complaint-btn").on("click", function() {
+            $("#complaint-model").modal("show");
+        })
+
+        $("#complaint-saveBtn").on("click", function(e) {
+            var doc_n = $("#complaint-btn").attr("data-sid");
+            console.log(doc_n);
+            var message = $("#complaint-message").val();
+            let token = $("input[name='csrfmiddlewaretoken']").val();
+            var final_data = {
+                c_note_nmber: doc_n,
+                csrfmiddlewaretoken: token,
+                message: message
+            }
+            $.ajax({
+                url: "{% url 'reg_new_complaint' %}",
+                method: "POST",
+                dataType: "json",
+                data: final_data,
+                success: function(res) {
+                    if (res.status == 1) {
+                        $("#complaint-message").val("");
+                        $("#complaint-model").modal("hide");
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                }
+            });
+        })
+    })
 </script>

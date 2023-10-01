@@ -34,7 +34,7 @@ from .models import contactus, Token, BranchNetwork, Destination
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
-from .models import DrsPermission
+from .models import DrsPermission, Complaints
 from django.db.models.functions import TruncDate
 
 BARCODE_CLASS = barcode.get_barcode_class("code128")
@@ -59,7 +59,14 @@ def tracking(request, tracking_number):
         tracking_number = int(tracking_number)            
         if tracking_number:
             data = Booking.objects.filter(c_note_number=tracking_number)                        
-            if data.exists():
+            comp_details = Complaints.objects.filter(doc_number=tracking_number).order_by("-created_at")
+            comp_exists = 0
+            show_comp_button = 1
+            if comp_details.exists():
+                comp_exists = 1
+                if (len(comp_details) % 2):
+                    show_comp_button = 0                                
+            if data.exists():                                
                 booking_details = data[0]                                    
                 tracking_history = Trackinghistory.objects.filter(c_note_number=booking_details).order_by('-in_out_datetime')                
                 # print(booking_details.c_note_number, booking_details.from_destination,
@@ -120,10 +127,12 @@ def tracking(request, tracking_number):
                             reason = final_status.reason                                            
                         
                         return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
-                    "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, "reason": reason, "date": final_status.created_at, "dbd": delivery_boy_detail})
+                    "last_status": last_status, "today_date": today_date, "drs_details": if_drs, 
+                    "status": final_status.status, "reason": reason, "date": final_status.created_at,
+                      "dbd": delivery_boy_detail, "comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button})
                 
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
-                "last_status": last_status, "today_date": today_date, "drs_details": if_drs})   
+                "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button})   
             
             else: # use for internal drs tracking
                 if request.user.is_authenticated:
@@ -132,6 +141,9 @@ def tracking(request, tracking_number):
                         # drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_number).order_by("-created_at")                                        
                         drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")                    
                         if drs_obj.exists():
+                            # find booking complaint
+                            comp_exists = 0
+                            show_comp_button = 0
                             if_drs = 1    
                             only_and_only_drs = 1 
                             final_status = drs_obj[0]                             
@@ -146,7 +158,7 @@ def tracking(request, tracking_number):
                         "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
                         "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
                         "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
-                        "dbd": delivery_boy_detail})
+                        "dbd": delivery_boy_detail, "comp_exists": comp_exists, "show_comp_button": show_comp_button})
 
         return redirect("home")        
     except Exception as e:   
@@ -184,7 +196,68 @@ def tracking_with_selenium(request, details):
     return JsonResponse({"status": 1, "data": data})
     # threading.Thread(target=start_in_thread).start()
 
+# ############################# Reg New Complaint ####################################
+def save_commplaint(request):
+    if request.method == "POST":
+        try:
+            message = str(request.POST.get("message")).strip()
+            if message:
+                doc_num = request.POST.get("c_note_nmber")        
+                booking_obj = Booking.objects.filter(c_note_number=int(doc_num))
+                if booking_obj.exists():
+                    from_user = booking_obj[0].user
+                    to_dest = booking_obj[0].to_destination                                                 
+                    to_brn = BranchNetwork.objects.filter(zone=to_dest)                    
+                    if to_brn.exists():
+                        to_brn = to_brn[0].user                        
+                    else:
+                        to_brn = from_user                    
+                    Complaints(message=message, status="OPEN", by_user="CLIENT", to_counter=to_brn,
+                            from_counter=from_user, doc_number=int(doc_num)).save()                            
+                    return JsonResponse({"status": 1})
+                else:
+                    return JsonResponse({"status": 0, "message": "Shipment Not found."})
+            else:
+                return JsonResponse({"status": 0, "message": "Insert Message."})
+                
+        except Exception as e:
+            log.exception(e)
+    return JsonResponse({"status": 0, "message": "Get method not allowed."})
 
+
+def update_compliant_by_counter(request):
+    if request.method == "POST":
+        try:
+            doc_num = request.POST.get("doc_n")
+            doc_num = int(doc_num)
+            message = request.POST.get("message")
+            doc_details = Complaints.objects.filter(doc_number=doc_num).update(status="RESOLVED")
+            if not doc_details:
+                return JsonResponse({"status": 0, "message": "Complaint not found for this shipment number."})
+            user = request.user
+            Complaints(message=message, status="CLOSE", by_user="COUNTER", to_counter=user,
+                        from_counter=user, doc_number=doc_num).save()
+            return JsonResponse({"status": 1})                
+        except Exception as e:
+            log.exception(e)
+            return JsonResponse({"status": 0, "message": "Complaint not found for this shipment number."})
+    return JsonResponse({"status": 0, "message": "Get method not allowed."})
+
+# @login_required(login_url="login_auth")
+def get_complaints(request):
+    if request.user.is_authenticated:
+        user = request.user            
+        complaints = Complaints.objects.filter((Q(from_counter=user) |
+            Q(to_counter=user)) & Q(status="OPEN")).order_by("created_at").values("doc_number",
+                    "created_at", "message")        
+        for complaint in complaints:
+            complaint["created_at"] = complaint["created_at"].strftime("%Y-%m-%d %I:%M:%S %p")
+        return JsonResponse({"status": 1, "complaints": list(complaints)})
+    
+    log.critical(f"{request.user} Someone wants to access complaints without permission.")
+    return JsonResponse({"status": "Authentication failed: Action recorded and share with admin."})
+
+# ################################ Contact us #######################################
 def contactUs(request):    
     if request.method == "POST":
         name = request.POST.get("name")
@@ -217,34 +290,36 @@ def network(request):
                         add_details = Network.objects.filter(user=data[0].user)                                                          
                         message = None                                                                        
                         context = {"head_offices": head_offices, "message": None,
-                                    "data": data, "today_date": today_date, "add_details": add_details}
+                                    "data": data, "today_date": today_date, "add_details": add_details, 
+                                    "by_pincode": 1}
                         return render(request, "network.html", context=context)
                     
                     add_details = Network.objects.filter(pincode=pincode)                    
                     if add_details.exists():
                         data = BranchNetwork.objects.filter(user=add_details[0].user)
-                        context = {"head_offices": head_offices, "message": None, "today_date": today_date, "data": data, "add_details":add_details}
+                        context = {"head_offices": head_offices, "message": None, "today_date": today_date, 
+                                   "data": data, "add_details":add_details, "by_pincode": 1}
                         return render(request, "network.html", context=context)
                     else:                        
-                        context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
+                        context = {"head_offices": head_offices, "message": 1, "today_date": today_date, "by_pincode": 1}
                         return render(request, "network.html", context=context)
                 else:
                     context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
                     return render(request, "network.html", context=context) 
             except Exception as e:
                 log.exception(e)
-        # elif "by_area" in request.POST and request.POST.get("area_name"):
-        #     area_name = request.POST.get("area_name")           
-        #     ques = (Q(branch_name__icontains=area_name) | Q(state__state_name__icontains=area_name) 
-        #     | Q(zone__name__icontains=area_name) | Q(area_name__icontains=area_name))
-        #     data = BranchNetwork.objects.filter(ques)
-        #     if data:                                              
-        #         message = None
-        #         context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
-        #         return render(request, "network.html", context=context)
-        #     else:
-        #         context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
-        #         return render(request, "network.html", context=context)            
+        elif "by_area" in request.POST and request.POST.get("area_name"):
+            area_name = request.POST.get("area_name")           
+            ques = (Q(branch_name__icontains=area_name) | Q(state__state_name__icontains=area_name) 
+            | Q(zone__name__icontains=area_name) | Q(area_name__icontains=area_name))
+            data = BranchNetwork.objects.filter(ques)[:50]
+            if data:                                              
+                message = None
+                context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
+                return render(request, "network.html", context=context)
+            else:
+                context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
+                return render(request, "network.html", context=context)            
         
         else:
             context = {"head_offices": head_offices, "message": 1, "today_date": today_date}

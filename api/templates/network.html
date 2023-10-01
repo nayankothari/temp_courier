@@ -12,16 +12,16 @@
                 <button type="submit" name="by_pincode" class="btn btn-primary btn-sm mb-3">Search</button>
             </form>
         </div>
-        <!-- <div class="col-md-4 text-center mb-5">
+        <div class="col-md-4 text-center mb-5">
             <form class="form-inline networ_search_form" method="POST" action="network">
                 {% csrf_token %}
                 <div class="form-group mx-sm-3 mb-2 mt-4">
-                    <h2><label for="area_name" class="area_name">Area Name</label></h2>
-                    <input type="text" class="form-control" name="area_name" id="area_name" placeholder="Search By State / Zone /Area" required>
+                    <h3><label for="area_name" class="area_name">Area Name</label></h3>
+                    <input type="text" class="form-control form-control-sm" name="area_name" id="area_name" placeholder="Search By State / Zone /Area" required>
                 </div>
-                <button type="submit" name="by_area" class="btn btn-primary mb-3">Search</button>
+                <button type="submit" name="by_area" class="btn btn-primary btn-sm mb-3">Search</button>
             </form>
-        </div> -->
+        </div>
     </div>
 </div>
 
@@ -55,6 +55,8 @@
                 </div> -->
             </div>
         </div>
+        <!-- If search by pincode then use this code -->
+        {% if by_pincode %}
         <div class="col-md-8">
             <div class="table-responsive mt-1">
                 <table class="table table-hover table-bordered table-sm booked_data">
@@ -90,7 +92,7 @@
                 </table>
             </div>
         </div>
-        {% endfor %}
+        {% endif %} {% endfor %}
     </div>
 </div>
 {% endif %} {% if message %}

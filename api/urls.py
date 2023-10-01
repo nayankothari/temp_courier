@@ -27,7 +27,11 @@ urlpatterns = [
     path(r"tracking/", home, name="only_tracking"),
     path(r"tracking/<str:tracking_number>", tracking, name="tracking_page"),    
     path(r"check_tracking_num", check_tracking_num, name="check_tracking_num"),
-    path(r"tracking/track_internal/<str:details>", tracking_with_selenium),    
+    path(r"tracking/track_internal/<str:details>", tracking_with_selenium),  
+      
+    path(r"reg_new_complaint", save_commplaint, name="reg_new_complaint"),
+    path(r'get_complaints', get_complaints, name="get_complaints"),
+    path(r"update_compliant_by_counter", update_compliant_by_counter, name="update_compliant_by_counter"),
     
     path(r"contact-us-form", contactUs, name="ContactUS"),   
     path(r"close_contact_us", close_contact_us, name="close_contact_us"), 

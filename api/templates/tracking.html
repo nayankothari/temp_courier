@@ -1,5 +1,29 @@
 {% extends "base.html" %} {% load static %} {% block title %}Tracking{% endblock title %} {% block content %}
 <div class="container mt-5">
+    <!-- Complaint model -->
+    <div class="modal fade" id="complaint-model">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Raise your query for shipment no. <b>{{ booking_details.c_note_number }}</b></p>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- <input type="hidden" id="hidden-cnote" class="form-control"> -->
+                    <textarea name="complaint-message" class="form-control" id="complaint-message" cols="30" rows="3" placeholder="Write your message here.."></textarea>
+                    <form action="">
+                        {% csrf_token %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="complaint-saveBtn">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="row mt-4">
         <div class="col-12 mt-4">
             <h4 class="text-center"></h4>
@@ -213,15 +237,70 @@
                 </table>
             </div>
         </div>
-
         {% endif %}
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-12 text-center mb-3 mt-3">
-                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-primary">Back to Home</button></a>
+        <!-- For help support -->
+
+        <div class="col-12">
+            <hr>
+            <div class="row justify-content-around">
+                {% if show_comp_button %}
+                <div class="col-6 text-end">
+                    <button class="btn btn-outline-danger btn-sm mb-3" id="complaint-btn" data-sid="{{ booking_details.c_note_number }}">Need help?</button>
+                </div>
+                {% endif %}
+                <div class="col-6 text-start">
+                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-success btn-sm mb-3">Back to Home</button></a>
                 </div>
             </div>
         </div>
+        <!-- For complaint table only... -->
+        {% if comp_exists %}
+        <div class="col-12">
+            <div class="scrollme">
+                <table class="table table-striped table-responsive">
+                    <tbody id="collected_tbody">
+                        <tr>
+                            <th class="tracking_head" colspan="5">Ticket status</th>
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                        </tr>
+
+                        {% for comp in comp_details %}
+                        <tr>
+                            <td>{{ comp.created_at }}</td>
+                            <td>{{ comp.message }}</td>
+                            {% if comp.status == 'OPEN' %}
+                            <td>
+                                <!-- <input type="button" value="Work in progress." class="btn btn-primary btn-sm"> -->
+                                <span style="font-style: italic; font-size: 12px;">Thank you! we are working together to resolve your issue.</span>
+                            </td>
+                            {% elif comp.status == 'CLOSE' %}
+                            <td>
+                                <!-- <input type="button" value="Work in progress." class="btn btn-primary btn-sm"> -->
+                                <span style="font-style: italic; font-size: 12px;">we are happy to inform you that your issue has been resolved, if you ever need assistance again, we are just a message away.</span>
+                            </td>
+                            {% else %}
+                            <td></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+        <!-- <hr> -->
+
+        <!-- <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 text-center mb-3 mt-3">
+                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-primary btn-sm">Back to Home</button></a>
+                </div>
+            </div>
+        </div> -->
     </div>
 </div>
 {% include 'tracking_ajax.html' %} {% endblock content %}

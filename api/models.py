@@ -364,7 +364,7 @@ class CNoteGenerator(models.Model):
 
 class Complaints(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    message = models.CharField(max_length=2000, null=True, blank=True)
+    message = models.TextField(max_length=2000, null=True, blank=True)
     status = models.CharField(max_length=200, null=True, blank=False)
     by_user = models.CharField(max_length=200, null=True, blank=True)
     doc_number = models.BigIntegerField()
