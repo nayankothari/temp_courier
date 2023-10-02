@@ -247,9 +247,16 @@ def update_compliant_by_counter(request):
 def get_complaints(request):
     if request.user.is_authenticated:
         user = request.user            
-        complaints = Complaints.objects.filter((Q(from_counter=user) |
+        if user.is_superuser:
+            print("super user")
+            complaints = Complaints.objects.filter(status="OPEN").order_by("created_at").values("doc_number",
+                    "created_at", "message")
+        else:
+            print("normal user")
+            complaints = Complaints.objects.filter((Q(from_counter=user) |
             Q(to_counter=user)) & Q(status="OPEN")).order_by("created_at").values("doc_number",
-                    "created_at", "message")        
+                    "created_at", "message")    
+            
         for complaint in complaints:
             complaint["created_at"] = complaint["created_at"].strftime("%Y-%m-%d %I:%M:%S %p")
         return JsonResponse({"status": 1, "complaints": list(complaints)})
