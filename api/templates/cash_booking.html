@@ -592,8 +592,37 @@
                 }
             });
         });
+
         // Above code will help to add destinations using jquery.        
+
+        $('#to_destination').select2({
+            theme: 'bootstrap-5'
+        });
+
+        $("#ref_courier_name").select2({
+            theme: 'bootstrap-5'
+        });
+        $("#state").select2({
+            theme: 'bootstrap-5'
+        });
+        $("#booking_mode").select2({
+            theme: 'bootstrap-5'
+        });
+        $("#payment_mode").select2({
+            theme: 'bootstrap-5'
+        });
+        $("#booking_type").select2({
+            theme: 'bootstrap-5'
+        });
+        $("#gst_rate").select2({
+            theme: 'bootstrap-5'
+        });
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+
         $("#ref_courier_name").focus();
+
     });
 </script>
 

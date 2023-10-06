@@ -311,6 +311,20 @@
                 }
             }
         })
+
+        $("#area_name").select2({
+            theme: 'bootstrap-5'
+        });
+        $("#delivery_boy").select2({
+            theme: 'bootstrap-5'
+        });
+        $("#origin").select2({
+            theme: 'bootstrap-5'
+        });
+
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
     });
 
 
