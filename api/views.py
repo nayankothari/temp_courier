@@ -799,7 +799,7 @@ def check_c_note_num(request):
                 booking_obj = Booking.objects.filter(c_note_number=c_note_number, user=request.user)
                 if not booking_obj.exists():
                     return JsonResponse({"status": 1})
-            return JsonResponse({"status": 0, "message": "Insert correct C. Note number number!"})
+            return JsonResponse({"status": 0, "message": "Insert correct C. Note number !"})
         return JsonResponse({"status": 0, "message": "Get method not allowed."})
     except Exception as e:
         log.exception(e)
