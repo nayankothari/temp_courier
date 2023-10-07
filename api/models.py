@@ -162,9 +162,7 @@ class Booking(models.Model):
     # Default fields
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True)
-
-    
+    updated_at = models.DateTimeField(auto_now=True, null=True)    
     
     class Meta:
         verbose_name_plural = "Booking"

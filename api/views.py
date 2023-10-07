@@ -785,6 +785,28 @@ def save_cash_booking(request):
     return JsonResponse({"status": 0, "message": "Get method not allowed."})
 
 @login_required(login_url="login_auth")
+def check_c_note_num(request):
+    try:
+        if request.method == "POST":
+            c_note_number = int(request.POST.get("c_note_number", 1))               
+            process_further = False
+            c_note_details = CNoteGenerator.objects.filter(user=request.user)
+            for i in c_note_details:            
+                if int(i.from_range) <= int(c_note_number) <= int(i.to_range):
+                    process_further = True 
+                    break                                        
+            if process_further:
+                booking_obj = Booking.objects.filter(c_note_number=c_note_number, user=request.user)
+                if not booking_obj.exists():
+                    return JsonResponse({"status": 1})
+            return JsonResponse({"status": 0, "message": "Insert correct C. Note number number!"})
+        return JsonResponse({"status": 0, "message": "Get method not allowed."})
+    except Exception as e:
+        log.exception(e)
+        return JsonResponse({"status": 0, "message": "Insert correct docket number."})
+
+
+@login_required(login_url="login_auth")
 def edit_cash_booking(request, booking_num):
     try:
         booking_num = int(booking_num)

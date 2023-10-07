@@ -96,7 +96,7 @@
                         <label for="to_destination"><b>To Destination</b>
                             <span class="red_color">*</span>
                         </label>
-                        <select class="form-control" name="todest" id="to_destination" aria-label="Default select example" required>                            
+                        <select class="form-control select2" name="todest" id="to_destination" aria-label="Default select example" required>                            
                         </select>
                     </div>
                 </div>
@@ -312,8 +312,7 @@
         var new_value = "{{ request.session.p_sender_name }}";
         $("#sender_name").val(new_value);
 
-        // For select2 entries
-
+        // For select2 entries        
         $('#to_destination').select2({
             theme: 'bootstrap-5'
         });
@@ -332,6 +331,7 @@
         $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
         });
+
     });
 </script>
 

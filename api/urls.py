@@ -53,6 +53,7 @@ urlpatterns = [
 
     path(r"bookings", bookings, name="bookings"),    
     path(r"save_booking", save_booking, name="save_booking"), 
+    path(r"check_c_note_num", check_c_note_num, name="check_c_note_num"),
     path(r"edit_data_retrive", edit_data_retrive, name="edit_data_retrive"),     
     path(r"advance_search_by_date", advance_search_by_date, name="advance_search_by_date"),
     path(r"advance_search_by_c_note", advance_search_by_c_note, name="advance_search_by_c_note"),    

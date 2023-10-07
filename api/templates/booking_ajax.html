@@ -179,6 +179,32 @@
                 }
             }
         })
+
+        $("#cnotenumber").focusout(function() {
+            c_note_n = $("#cnotenumber").val();
+            gst_amount = parseFloat(c_note_n) || 0;
+            if (c_note_n) {
+                var token = $("input[name='csrfmiddlewaretoken']").val();
+                var final_data = {
+                    csrfmiddlewaretoken: token,
+                    c_note_number: c_note_n
+                }
+                $.ajax({
+                    url: "{% url 'check_c_note_num' %}",
+                    method: "POST",
+                    dataType: "json",
+                    data: final_data,
+                    success: function(res) {
+                        if (res.status) {
+                            console.log("pass");
+                        } else {
+                            alert(res.message);
+                        }
+                    }
+                });
+
+            }
+        });
     });
     // Above code will help to add destinations using jquery.
 </script>
