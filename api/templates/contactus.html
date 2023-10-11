@@ -18,7 +18,7 @@
                 {{ return_message }}
             </div>
             {% endif %}
-            <form action="{% url 'ContactUS' %}" method="POST">
+            <form action="" method="POST" id="cntForm">
                 {% csrf_token %}
                 <div class="form-group mt-5">
                     <label for="name" class="text-white">Name</label>
@@ -44,9 +44,55 @@
                     <label for="message" class="text-white">Message</label>
                     <textarea class="form-control" id="message" rows="3" name="message"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary mt-4 mb-5 px-5">Submit</button>
+                <button type="button" id="frm_sbt" class="btn btn-primary mt-4 mb-5 px-5">Submit</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $("#frm_sbt").on("click", function(e) {
+            $(".error-message").remove();
+            // Flag to track validation status
+            var isValid = true;
+
+            // Validate the Name field
+            var name = $("#name").val();
+            if (name.trim() === "") {
+                $("#name").after("<div class='error-message' style='color: red'>Please enter your name.</div>");
+                // $("#name").addClass("has-error");
+                isValid = false;
+            }
+
+            // Validate the Email field
+            var email = $("#email").val();
+            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            if (!emailPattern.test(email)) {
+                $("#email").after("<div class='error-message' style='color: red'>Please enter a valid email address.</div>");
+                isValid = false;
+            }
+
+            // Validate the Mobile Number (Pincode) field
+            var pincode = $("#pincode").val();
+            if (pincode.trim() === "") {
+                $("#pincode").after("<div class='error-message' style='color: red'>Please enter your mobile number.</div>");
+                isValid = false;
+            }
+
+            // Validate the Country field
+            var country = $("#country").val();
+            if (country === "") {
+                $("#country").after("<div class='error-message' style='color: red'>Please select your country.</div>");
+                isValid = false;
+            }
+
+            // Check if there are any errors
+            if (isValid) {
+                // If no errors, submit the form
+                $("#cntForm").submit();
+            }
+        });
+    });
+</script>
 {% endblock content %}

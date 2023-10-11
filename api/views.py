@@ -105,9 +105,9 @@ def tracking(request, tracking_number):
                                 url = str(booking_details.ref_courier_name.multi_name) + "UUUU" + str(booking_details.ref_courier_number)
 
                         if selenium:                            
-                            url = f'For latest updates click on this Ref No. <a id="sele_data" class="text-primary sele_data_1" data-sid="{url}" >{booking_details.c_note_number}</a>'
+                            url = f'Get latest updates <a id="sele_data" class="text-primary sele_data_1" data-sid="{url}" >{booking_details.c_note_number}</a>'
                         else:
-                            url = f'For latest updates click on this Ref No. <a href="{url}" target="_blank">{booking_details.c_note_number}</a>'
+                            url = f'Get latest updates <a href="{url}" target="_blank">{booking_details.c_note_number}</a>'
                         tracking_history["Date"] = ""
                         tracking_history["Location"] = ""
                         tracking_history["CheckpointState"] = ""
@@ -162,7 +162,31 @@ def tracking(request, tracking_number):
 
         return redirect("home")        
     except Exception as e:   
-        log.exception(e)              
+        if request.user.is_authenticated:            
+            drs_permission = DrsPermission.objects.filter(user=request.user, can_veiw=True)
+            if drs_permission.exists():
+                # drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_number).order_by("-created_at")                                        
+                drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")                    
+                if drs_obj.exists():
+                    # find booking complaint
+                    comp_exists = 0
+                    show_comp_button = 0
+                    if_drs = 1    
+                    only_and_only_drs = 1 
+                    final_status = drs_obj[0]                             
+                    delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
+                    delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
+                    last_status = final_status.status                               
+                    reason = ""                        
+                    if final_status.reason:
+                        reason = final_status.reason
+                    
+                    return render(request, "tracking.html", {"tracking_history": [],
+                "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
+                "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
+                "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
+                "dbd": delivery_boy_detail, "comp_exists": comp_exists, "show_comp_button": show_comp_button})            
+        log.exception(e)
         return redirect("home")
 
 def check_tracking_num(request):
@@ -170,17 +194,27 @@ def check_tracking_num(request):
         try:
             tracking_num = request.POST.get("tracking_num")
             if str(tracking_num).strip():
-                data = Booking.objects.filter(c_note_number=tracking_num)                        
-                if data.exists():
-                    return JsonResponse({"status": 1})
-                elif request.user.is_authenticated:
-                    drs_permission = DrsPermission.objects.filter(user=request.user, can_veiw=True)
-                    if drs_permission.exists():
-                        drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_num).order_by("-created_at")
-                        if drs_obj.exists():
-                            return JsonResponse({"status": 1})    
-                    else:                        
-                        return JsonResponse({"status": 0, "message": "DRS Details not available."})
+                try:
+                    data = Booking.objects.filter(c_note_number=tracking_num)                        
+                    if data.exists():
+                        return JsonResponse({"status": 1})
+                    elif request.user.is_authenticated:
+                        drs_permission = DrsPermission.objects.filter(user=request.user, can_veiw=True)
+                        if drs_permission.exists():
+                            drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_num).order_by("-created_at")
+                            if drs_obj.exists():                                
+                                return JsonResponse({"status": 1})    
+                        else:                        
+                            return JsonResponse({"status": 0, "message": "DRS Details not available."})            
+                except:
+                    if request.user.is_authenticated:
+                        drs_permission = DrsPermission.objects.filter(user=request.user, can_veiw=True)
+                        if drs_permission.exists():
+                            drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_num).order_by("-created_at")
+                            if drs_obj.exists():                                
+                                return JsonResponse({"status": 1})    
+                        else:                        
+                            return JsonResponse({"status": 0, "message": "DRS Details not available."})
             return JsonResponse({"status": 0, "message": "Insert Correct docket Number"})
         except Exception as e:
             log.exception(e)
@@ -247,12 +281,10 @@ def update_compliant_by_counter(request):
 def get_complaints(request):
     if request.user.is_authenticated:
         user = request.user            
-        if user.is_superuser:
-            print("super user")
+        if user.is_superuser:            
             complaints = Complaints.objects.filter(status="OPEN").order_by("created_at").values("doc_number",
                     "created_at", "message")
-        else:
-            print("normal user")
+        else:            
             complaints = Complaints.objects.filter((Q(from_counter=user) |
             Q(to_counter=user)) & Q(status="OPEN")).order_by("created_at").values("doc_number",
                     "created_at", "message")    
@@ -266,72 +298,77 @@ def get_complaints(request):
 
 # ################################ Contact us #######################################
 def contactUs(request):    
-    if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        country = request.POST.get("country")
-        pincode = request.POST.get("pincode")
-        message = request.POST.get("message")        
-        exclude_names = ["RobertTiz", "RaymondTum"]
-        if str(name) not in exclude_names:
-            if name and email and country and pincode:            
-                contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message, status="OPEN")
-                contact_obj.save()
-                return_message = "Request submitted successfully."       
+    try:
+        if request.method == "POST":        
+            name = request.POST.get("name")
+            email = request.POST.get("email")
+            country = request.POST.get("country")
+            pincode = request.POST.get("pincode")
+            message = request.POST.get("message")        
+            exclude_names = ["RobertTiz", "RaymondTum"]
+            if str(name) not in exclude_names:
+                if name and email and country and pincode:            
+                    contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message, status="OPEN")
+                    contact_obj.save()
+                    return_message = "Request submitted successfully."       
 
-                return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})    
-        log.warning(f"Getting {str(name)} contact details, {request.user}")
+                    return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})    
+            log.warning(f"Getting {str(name)} contact details, {request.user}")
+    except Exception as e:
+        log.exception(e)
     return render(request, "contactus.html", {"today_date": today_date})
 
 
 def network(request):
     message = 1    
-    head_offices = BranchNetwork.objects.filter(status="R O")            
-    if request.method == "POST":
-        if "by_pincode" in request.POST and request.POST.get("pincode"):
-            try:
-                pincode = int(request.POST.get("pincode"))
-                if len(str(pincode)) == 6:
-                    data = BranchNetwork.objects.filter(pincode=pincode)                                             
-                    if data:        
-                        add_details = Network.objects.filter(user=data[0].user)                                                          
-                        message = None                                                                        
-                        context = {"head_offices": head_offices, "message": None,
-                                    "data": data, "today_date": today_date, "add_details": add_details, 
-                                    "by_pincode": 1}
-                        return render(request, "network.html", context=context)
-                    
-                    add_details = Network.objects.filter(pincode=pincode)                    
-                    if add_details.exists():
-                        data = BranchNetwork.objects.filter(user=add_details[0].user)
-                        context = {"head_offices": head_offices, "message": None, "today_date": today_date, 
-                                   "data": data, "add_details":add_details, "by_pincode": 1}
-                        return render(request, "network.html", context=context)
-                    else:                        
-                        context = {"head_offices": head_offices, "message": 1, "today_date": today_date, "by_pincode": 1}
-                        return render(request, "network.html", context=context)
+    head_offices = BranchNetwork.objects.filter(status="R O") 
+    try:           
+        if request.method == "POST":
+            if "by_pincode" in request.POST and request.POST.get("pincode"):
+                try:
+                    pincode = int(request.POST.get("pincode"))
+                    if len(str(pincode)) == 6:
+                        data = BranchNetwork.objects.filter(pincode=pincode)                                             
+                        if data:        
+                            add_details = Network.objects.filter(user=data[0].user)                                                          
+                            message = None                                                                        
+                            context = {"head_offices": head_offices, "message": None,
+                                        "data": data, "today_date": today_date, "add_details": add_details, 
+                                        "by_pincode": 1}
+                            return render(request, "network.html", context=context)
+                        
+                        add_details = Network.objects.filter(pincode=pincode)                    
+                        if add_details.exists():
+                            data = BranchNetwork.objects.filter(user=add_details[0].user)
+                            context = {"head_offices": head_offices, "message": None, "today_date": today_date, 
+                                    "data": data, "add_details":add_details, "by_pincode": 1}
+                            return render(request, "network.html", context=context)
+                        else:                        
+                            context = {"head_offices": head_offices, "message": 1, "today_date": today_date, "by_pincode": 1}
+                            return render(request, "network.html", context=context)
+                    else:
+                        context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
+                        return render(request, "network.html", context=context) 
+                except Exception as e:
+                    log.exception(e)
+            elif "by_area" in request.POST and request.POST.get("area_name"):
+                area_name = request.POST.get("area_name")           
+                ques = (Q(branch_name__icontains=area_name) | Q(state__state_name__icontains=area_name) 
+                | Q(zone__name__icontains=area_name) | Q(area_name__icontains=area_name))
+                data = BranchNetwork.objects.filter(ques)[:25]
+                if data:                                              
+                    message = None
+                    context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
+                    return render(request, "network.html", context=context)
                 else:
                     context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
-                    return render(request, "network.html", context=context) 
-            except Exception as e:
-                log.exception(e)
-        elif "by_area" in request.POST and request.POST.get("area_name"):
-            area_name = request.POST.get("area_name")           
-            ques = (Q(branch_name__icontains=area_name) | Q(state__state_name__icontains=area_name) 
-            | Q(zone__name__icontains=area_name) | Q(area_name__icontains=area_name))
-            data = BranchNetwork.objects.filter(ques)[:25]
-            if data:                                              
-                message = None
-                context = {"head_offices": head_offices, "message": None, "data": data, "today_date": today_date}
-                return render(request, "network.html", context=context)
+                    return render(request, "network.html", context=context)            
+            
             else:
                 context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
-                return render(request, "network.html", context=context)            
-        
-        else:
-            context = {"head_offices": head_offices, "message": 1, "today_date": today_date}
-            return render(request, "network.html", context=context)
-
+                return render(request, "network.html", context=context)
+    except Exception as e:
+        log.exception(e)
     message = None
     context = {"head_offices": head_offices, "message": message, "today_date": today_date}
     return render(request, "network.html", context=context)
@@ -352,22 +389,28 @@ def about_us(request):
 
 
 def login_auth(request):
-    if request.method == "POST":
-        user_name = request.POST.get("username")
-        password = request.POST.get("password")
-        user = auth.authenticate(username=user_name, password=password)
-        if user:
-            license_exp_date = UserAdditionalDetails.objects.get(user=user).licence_expire_date
-            remaining_time = (license_exp_date - datetime.datetime.now()).days            
-            if not remaining_time <= 0:
-                auth.login(request, user)
-                return redirect("dashboard")
-            
-            context = {"message": "Your license is expired, please connect with support team", "today_date": today_date}
-            return render(request, "login.html", context)
-        else:
-            context = {"message": "Invalid credentials !", "today_date": today_date}
-            return render(request, "login.html", context)
+    try:
+        if request.method == "POST":
+            user_name = request.POST.get("username")
+            password = request.POST.get("password")
+            user = auth.authenticate(username=user_name, password=password)
+            if user:
+                license_exp_date = UserAdditionalDetails.objects.get(user=user).licence_expire_date
+                remaining_time = (license_exp_date - datetime.datetime.now()).days            
+                if not remaining_time <= 0:
+                    auth.login(request, user)
+                    log.info(f"Successfully login by user: {user_name}")
+                    return redirect("dashboard")
+                
+                context = {"message": "Your license is expired, please connect with support team", "today_date": today_date}
+                log.warning(f"Licence expired for user: {user_name}")
+                return render(request, "login.html", context)
+            else:
+                log.error(f"{user_name} try to login with password: {password}, but failed.")
+                context = {"message": "Invalid credentials !", "today_date": today_date}
+                return render(request, "login.html", context)
+    except Exception as e:
+        log.exception(e)
     return render(request, "login.html", {"today_date": today_date})
 
 
@@ -386,76 +429,80 @@ def dashboard(request):
 
 @login_required(login_url="login_auth")
 def dashboard_analysis(request):    
-    if request.method == "POST":        
-        from_date = request.POST.get("from_date")
-        to_date = request.POST.get("to_date")        
+    try:
+        if request.method == "POST":        
+            from_date = request.POST.get("from_date")
+            to_date = request.POST.get("to_date")        
 
-        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")        
-        
-        today_date = to_date + timedelta(days=1)        
-        
-        final_result = {}
-        # Booking result
-        total_bookings = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
-        final_result["total_booking"] = total_bookings        
-        party_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date), booking_mode="A/C").aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
-        final_result["party_booking"] = party_booking
+            to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")        
+            
+            today_date = to_date + timedelta(days=1)        
+            
+            final_result = {}
+            # Booking result
+            total_bookings = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
+            final_result["total_booking"] = total_bookings        
+            party_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date), booking_mode="A/C").aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
+            final_result["party_booking"] = party_booking
 
-        cash_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).exclude(booking_mode="A/C").aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
-        final_result["cash_booking"] = cash_booking
+            cash_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).exclude(booking_mode="A/C").aggregate(total_bookings=Count('id'),total_amount=Sum('amount'))
+            final_result["cash_booking"] = cash_booking
 
-        # Load IN-OUT result
-        status = ParcelStatus.objects.get(name="OUT")
-        load_out = Trackinghistory.objects.filter(user=request.user, in_out_datetime__range=(from_date, today_date), status=status).count()
-        status = ParcelStatus.objects.get(name="IN")
-        load_in = Trackinghistory.objects.filter(user=request.user, in_out_datetime__range=(from_date, today_date), status=status).count()
-        final_result["load_out"] = load_out
-        final_result["liad_in"] = load_in
-        # DRS result
-        drs_details = DrsMaster.objects.filter(user=request.user, date__range=(from_date, today_date)).values("status").annotate(count=Count("status"))
-        drs_data = []        
-        for i in drs_details:
-            drs_data_dic = {}
-            drs_data_dic["status"] = i["status"]
-            drs_data_dic["count"] = i["count"]
-            drs_data.append(drs_data_dic)
-        final_result["drs_details"] = drs_data
+            # Load IN-OUT result
+            status = ParcelStatus.objects.get(name="OUT")
+            load_out = Trackinghistory.objects.filter(user=request.user, in_out_datetime__range=(from_date, today_date), status=status).count()
+            status = ParcelStatus.objects.get(name="IN")
+            load_in = Trackinghistory.objects.filter(user=request.user, in_out_datetime__range=(from_date, today_date), status=status).count()
+            final_result["load_out"] = load_out
+            final_result["liad_in"] = load_in
+            # DRS result
+            drs_details = DrsMaster.objects.filter(user=request.user, date__range=(from_date, today_date)).values("status").annotate(count=Count("status"))
+            drs_data = []        
+            for i in drs_details:
+                drs_data_dic = {}
+                drs_data_dic["status"] = i["status"]
+                drs_data_dic["count"] = i["count"]
+                drs_data.append(drs_data_dic)
+            final_result["drs_details"] = drs_data
 
-        # Courier wise count
-        courier_wise_details = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).values("ref_courier_name__name").annotate(count=Count("ref_courier_name__name")).order_by("-count")
-        courier_data = []        
-        for i in courier_wise_details:
-            courier_data_dic = {}
-            courier_data_dic["name"] = i["ref_courier_name__name"]
-            courier_data_dic["count"] = i["count"]
-            courier_data.append(courier_data_dic)
-        final_result["courier_data"] = courier_data
+            # Courier wise count
+            courier_wise_details = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).values("ref_courier_name__name").annotate(count=Count("ref_courier_name__name")).order_by("-count")
+            courier_data = []        
+            for i in courier_wise_details:
+                courier_data_dic = {}
+                courier_data_dic["name"] = i["ref_courier_name__name"]
+                courier_data_dic["count"] = i["count"]
+                courier_data.append(courier_data_dic)
+            final_result["courier_data"] = courier_data
 
-        # Party wise details
-        party_wise_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date), booking_mode="A/C").values("party_name__party_name").annotate(count=Count("party_name__party_name")).order_by("-count")
-        courier_data = []        
-        for i in party_wise_booking:
-            courier_data_dic = {}
-            courier_data_dic["name"] = i["party_name__party_name"]
-            courier_data_dic["count"] = i["count"]
-            courier_data.append(courier_data_dic)
-        final_result["party_wise_breakup"] = courier_data
+            # Party wise details
+            party_wise_booking = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date), booking_mode="A/C").values("party_name__party_name").annotate(count=Count("party_name__party_name")).order_by("-count")
+            courier_data = []        
+            for i in party_wise_booking:
+                courier_data_dic = {}
+                courier_data_dic["name"] = i["party_name__party_name"]
+                courier_data_dic["count"] = i["count"]
+                courier_data.append(courier_data_dic)
+            final_result["party_wise_breakup"] = courier_data
 
-        # Booking type wise details
-        booking_type_wise = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).values("booking_type__booking_type").annotate(count=Count("booking_type__booking_type")).order_by("-count")
-        courier_data = []        
-        for i in booking_type_wise:
-            courier_data_dic = {}
-            courier_data_dic["name"] = i["booking_type__booking_type"]
-            courier_data_dic["count"] = i["count"]
-            courier_data.append(courier_data_dic)
-        final_result["booking_type_wise"] = courier_data        
+            # Booking type wise details
+            booking_type_wise = Booking.objects.filter(user=request.user, doc_date__range=(from_date, today_date)).values("booking_type__booking_type").annotate(count=Count("booking_type__booking_type")).order_by("-count")
+            courier_data = []        
+            for i in booking_type_wise:
+                courier_data_dic = {}
+                courier_data_dic["name"] = i["booking_type__booking_type"]
+                courier_data_dic["count"] = i["count"]
+                courier_data.append(courier_data_dic)
+            final_result["booking_type_wise"] = courier_data        
 
-        # Contact us details.
-        if request.user.is_superuser:
-            con_us_details = contactus.objects.filter(created_at__range=(from_date, today_date)).order_by("-created_at").values()
-            final_result["contact_us"] = list(con_us_details)                    
-        return JsonResponse({"status": 1, "data": final_result})
+            # Contact us details.
+            if request.user.is_superuser:
+                con_us_details = contactus.objects.filter(created_at__range=(from_date, today_date)).order_by("-created_at").values()
+                final_result["contact_us"] = list(con_us_details)                    
+            return JsonResponse({"status": 1, "data": final_result})
+    except Exception as e:
+        log.exception(e)
+
     return JsonResponse({"status": 0})
 
 
@@ -536,17 +583,20 @@ def export_to_excel_bookings(request):
 
 @login_required(login_url="login_auth")
 def close_contact_us(request):
-    if request.method == "POST":
-        sid = request.POST.get("sid")
-        try:
-            details = contactus.objects.get(id=sid)
-            details.status = "RESOLVED"
-            details.save()
-            return JsonResponse({"status": 1})
-        except Exception as e:
-            print(e)
-            log.exception(e)
-            return JsonResponse({"status": 0, "message": "Details not found."})    
+    try:
+        if request.method == "POST":
+            sid = request.POST.get("sid")
+            try:
+                details = contactus.objects.get(id=sid)
+                details.status = "RESOLVED"
+                details.save()
+                return JsonResponse({"status": 1})
+            except Exception as e:            
+                log.exception(e)
+                return JsonResponse({"status": 0, "message": "Details not found."})    
+    except Exception as e:
+        log.exception(e)
+
     return JsonResponse({"status": 0, "message": "Get request not allowed."})
 
 # ############################# Bulk label or receipt prints #########################
@@ -636,16 +686,20 @@ def bulk_print_label(request):
 
 @login_required(login_url="login_auth")
 def cash_booking(request):
-    booking_type = BookingType.objects.all()
-    ref_courier_name = RefCourier.objects.all()
-    from_destination = UserAdditionalDetails.objects.get(user=request.user)    
-    # destinations = Destination.objects.all()    
-    states = State.objects.all()
-    gst_rates = GstModel.objects.all()        
-    context = {"ref_courier_names": ref_courier_name,               
-               "booking_type": booking_type,                
-               "from_destination": from_destination,
-               "states": states, "gst_rates": gst_rates} 
+    context = {}
+    try:
+        booking_type = BookingType.objects.all()
+        ref_courier_name = RefCourier.objects.all()
+        from_destination = UserAdditionalDetails.objects.get(user=request.user)    
+        # destinations = Destination.objects.all()    
+        states = State.objects.all()
+        gst_rates = GstModel.objects.all()        
+        context = {"ref_courier_names": ref_courier_name,               
+                "booking_type": booking_type,                
+                "from_destination": from_destination,
+                "states": states, "gst_rates": gst_rates} 
+    except Exception as e:
+        log.exception(e)
 
     return render(request, "cash_booking.html", context=context)
 
@@ -854,38 +908,44 @@ def print_cash_booking(request, sid):
 
 @login_required(login_url="login_auth")
 def advance_date_wise_search_cash_booking(request):
-    if request.method == "POST":
-        from_date = request.POST.get("from_date")        
-        to_date = request.POST.get("to_date")
-        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
-        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
-        to_date = to_date + timedelta(days=1)        
-        data = Booking.objects.filter(doc_date__range=(from_date, to_date), 
-                user=request.user).order_by("-created_at").values("id",
-                    "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type",
-                      "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", 
-                      "ref_courier_name__name", "booking_mode")        
-        return JsonResponse({"status": 1, "data": list(data)})
+    try:
+        if request.method == "POST":
+            from_date = request.POST.get("from_date")        
+            to_date = request.POST.get("to_date")
+            from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
+            to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
+            to_date = to_date + timedelta(days=1)        
+            data = Booking.objects.filter(doc_date__range=(from_date, to_date), 
+                    user=request.user).order_by("-created_at").values("id",
+                        "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type",
+                        "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", 
+                        "ref_courier_name__name", "booking_mode")        
+            return JsonResponse({"status": 1, "data": list(data)})
 
-    else:
+        else:            
+            return JsonResponse({"status": 0})
+    except Exception as e:
+        log.exception(e)
         return JsonResponse({"status": 0})
-
 
 @login_required(login_url="login_auth")
 def advance_date_party_wise_search_cash_booking(request):
-    if request.method == "POST":
-        from_date = request.POST.get("from_date")        
-        to_date = request.POST.get("to_date")        
-        party = request.POST.get("party")
-        party = PartyAccounts.objects.get(id=party)
-        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
-        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
-        to_date = to_date + timedelta(days=1)        
-        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, party_name=party).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name", "booking_mode")        
-        return JsonResponse({"status": 1, "data": list(data)})
-    else:
+    try:
+        if request.method == "POST":
+            from_date = request.POST.get("from_date")        
+            to_date = request.POST.get("to_date")        
+            party = request.POST.get("party")
+            party = PartyAccounts.objects.get(id=party)
+            from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
+            to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
+            to_date = to_date + timedelta(days=1)        
+            data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, party_name=party).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name", "booking_mode")        
+            return JsonResponse({"status": 1, "data": list(data)})
+        else:
+            return JsonResponse({"status": 0})
+    except Exception as e:
+        log.exception(e)
         return JsonResponse({"status": 0})
-
 
 @login_required(login_url="login_auth")
 def advance_c_note_wise_search_cash_booking(request):
@@ -911,26 +971,28 @@ def advance_c_note_wise_search_cash_booking(request):
 
 @login_required(login_url="login_auth")
 def advance_date_ref_courier_wise_search_cash_booking(request):
-    if request.method == "POST":
-        from_date = request.POST.get("from_date")        
-        to_date = request.POST.get("to_date")        
-        ref_courier = request.POST.get("ref_courier")
-        ref_courier = RefCourier.objects.get(id=ref_courier)
-        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
-        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
-        to_date = to_date + timedelta(days=1)        
-        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, ref_courier_name=ref_courier).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name", "booking_mode")        
-        return JsonResponse({"status": 1, "data": list(data)})
-    else:
+    try:
+        if request.method == "POST":
+            from_date = request.POST.get("from_date")        
+            to_date = request.POST.get("to_date")        
+            ref_courier = request.POST.get("ref_courier")
+            ref_courier = RefCourier.objects.get(id=ref_courier)
+            from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d")
+            to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d")
+            to_date = to_date + timedelta(days=1)        
+            data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, ref_courier_name=ref_courier).order_by("-created_at").values("id", "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type", "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", "ref_courier_name__name", "booking_mode")        
+            return JsonResponse({"status": 1, "data": list(data)})
+        else:
+            return JsonResponse({"status": 0})
+    except Exception as e:
         return JsonResponse({"status": 0})
-
 
 # ########################################## Fast Booking details  ###########################
 @login_required(login_url="login_auth")
 def bookings(request):    
     # destinations = Destination.objects.all()    
     ref_courier_name = RefCourier.objects.all()    
-    booking_type = BookingType.objects.all()
+    booking_type = BookingType.objects.all().order_by("-booking_type")
     parties = PartyAccounts.objects.filter(user=request.user).order_by("party_name")
     today_date = datetime.date.today()    
     today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
@@ -944,130 +1006,144 @@ def bookings(request):
 
 @login_required(login_url="login_auth")
 def save_booking(request):
-    if request.method == "POST":        
-        c_note_number = request.POST.get("cnotenumber")
-        request.session["success"] = None
-        process_further = False
-        c_note_details = CNoteGenerator.objects.filter(user=request.user)
-        for i in c_note_details:            
-            if int(i.from_range) <= int(c_note_number) <= int(i.to_range):
-                process_further = True 
-                break                            
-        
-        if process_further:
-            update_id = request.POST.get("id")                              
-            existing_c_note = Booking.objects.filter(c_note_number=c_note_number)                        
-            party_name = request.POST.get("party")              
-            request.session["party_name"] = party_name
-            party_name = PartyAccounts.objects.get(id=party_name)    
-            booking_type = request.POST.get("bookingtype")  
-            request.session["booking_type"] = booking_type
-            booking_type = BookingType.objects.get(id=booking_type)
-            booking_datetime = request.POST.get("datetime")        
-            from_dest = request.POST.get("from_destination")
-            request.session["from_dest"] = from_dest
-            from_dest = Destination.objects.get(id=from_dest)
-            to_dest = request.POST.get("todest")
-            request.session["to_dest"] = to_dest
-            to_dest = Destination.objects.get(id=to_dest)
-            s_name = request.POST.get("s_name")
-            request.session["p_sender_name"] = s_name
-            s_number = request.POST.get("s_number")
-            r_name = request.POST.get("r_name")
-            r_number = request.POST.get("r_number")        
-            ref_courier = request.POST.get("ref_courier")        
-            ref_courier = RefCourier.objects.get(id=ref_courier)
-            ref_number = request.POST.get("ref_number")
-            remarks = request.POST.get("remarks")
-            amount = request.POST.get("amount")
-            weight = request.POST.get("weight") 
-            qty = request.POST.get("qty")           
-            if not update_id:            
-                if not existing_c_note:        
-                    request.session["next_c_note"] = ""                    
-                    booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
-                    c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
-                    sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
-                    ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, 
-                    amount=amount, weight=weight, charged_weight=weight, freight_charge=amount, pcs=qty, booking_mode="A/C")                    
-                    booking_obj.save()                          
+    try:
+        if request.method == "POST":        
+            c_note_number = request.POST.get("cnotenumber")
+            request.session["success"] = None
+            process_further = False
+            c_note_details = CNoteGenerator.objects.filter(user=request.user)
+            for i in c_note_details:            
+                if int(i.from_range) <= int(c_note_number) <= int(i.to_range):
+                    process_further = True 
+                    break                            
+            
+            if process_further:
+                update_id = request.POST.get("id")                              
+                existing_c_note = Booking.objects.filter(c_note_number=c_note_number)                        
+                party_name = request.POST.get("party")              
+                request.session["party_name"] = party_name
+                party_name = PartyAccounts.objects.get(id=party_name)    
+                booking_type = request.POST.get("bookingtype")  
+                request.session["booking_type"] = booking_type
+                booking_type = BookingType.objects.get(id=booking_type)
+                booking_datetime = request.POST.get("datetime")        
+                from_dest = request.POST.get("from_destination")
+                request.session["from_dest"] = from_dest
+                from_dest = Destination.objects.get(id=from_dest)
+                to_dest = request.POST.get("todest")
+                request.session["to_dest"] = to_dest
+                to_dest = Destination.objects.get(id=to_dest)
+                s_name = request.POST.get("s_name")
+                request.session["p_sender_name"] = s_name
+                s_number = request.POST.get("s_number")
+                r_name = request.POST.get("r_name")
+                r_number = request.POST.get("r_number")        
+                ref_courier = request.POST.get("ref_courier")        
+                ref_courier = RefCourier.objects.get(id=ref_courier)
+                ref_number = request.POST.get("ref_number")
+                remarks = request.POST.get("remarks")
+                amount = request.POST.get("amount")
+                weight = request.POST.get("weight") 
+                qty = request.POST.get("qty")           
+                if not update_id:            
+                    if not existing_c_note:        
+                        request.session["next_c_note"] = ""                    
+                        booking_obj = Booking.objects.create(doc_date=booking_datetime, party_name=party_name,
+                        c_note_number=c_note_number, from_destination=from_dest, to_destination=to_dest, booking_type=booking_type,
+                        sender_name=s_name, sender_mobile=s_number, receiver_name=r_name, receiver_mobile_number=r_number,
+                        ref_courier_name=ref_courier, ref_courier_number=ref_number, user=request.user, remarks=remarks, 
+                        amount=amount, weight=weight, charged_weight=weight, freight_charge=amount, pcs=qty, booking_mode="A/C")                    
+                        booking_obj.save()                          
+                        request.session["success"] = "success"
+                        try:
+                            request.session["next_c_note"] = int(c_note_number) + 1
+                        except:
+                            pass
+                        messages.success(request, "Shipment booked Successfully.")
+                        return redirect("bookings")
+                    else:
+                        messages.error(request, 'C Note Already exists')            
+                else:            
+                    booking_obj = Booking.objects.get(id=update_id)            
+                    booking_obj.doc_date = booking_datetime
+                    booking_obj.party_name = party_name
+                    booking_obj.booking_type = booking_type
+                    booking_obj.c_note_number = c_note_number
+                    booking_obj.from_destination = from_dest
+                    booking_obj.to_destination = to_dest
+                    booking_obj.sender_name = s_name
+                    booking_obj.sender_mobile = s_number
+                    booking_obj.receiver_name = r_name
+                    booking_obj.receiver_mobile_number = r_number
+                    booking_obj.ref_courier_name = ref_courier
+                    booking_obj.ref_courier_number = ref_number 
+                    booking_obj.remarks = remarks
+                    booking_obj.amount = amount
+                    booking_obj.weight = weight
+                    booking_obj.charged_weight = weight
+                    booking_obj.freight_charge = amount
+                    booking_obj.pcs=qty
+                    booking_obj.user=request.user  
+                    booking_obj.booking_mode = "A/C"                  
+                    booking_obj.save()            
                     request.session["success"] = "success"
-                    try:
-                        request.session["next_c_note"] = int(c_note_number) + 1
-                    except:
-                        pass
-                    messages.success(request, "Shipment booked Successfully.")
-                    return redirect("bookings")
-                else:
-                    messages.error(request, 'C Note Already exists')            
-            else:            
-                booking_obj = Booking.objects.get(id=update_id)            
-                booking_obj.doc_date = booking_datetime
-                booking_obj.party_name = party_name
-                booking_obj.booking_type = booking_type
-                booking_obj.c_note_number = c_note_number
-                booking_obj.from_destination = from_dest
-                booking_obj.to_destination = to_dest
-                booking_obj.sender_name = s_name
-                booking_obj.sender_mobile = s_number
-                booking_obj.receiver_name = r_name
-                booking_obj.receiver_mobile_number = r_number
-                booking_obj.ref_courier_name = ref_courier
-                booking_obj.ref_courier_number = ref_number 
-                booking_obj.remarks = remarks
-                booking_obj.amount = amount
-                booking_obj.weight = weight
-                booking_obj.charged_weight = weight
-                booking_obj.freight_charge = amount
-                booking_obj.pcs=qty
-                booking_obj.user=request.user  
-                booking_obj.booking_mode = "A/C"                  
-                booking_obj.save()            
-                request.session["success"] = "success"
-                messages.success(request, "Shipment updated Successfully.")
-                return redirect("bookings")                       
-        else:
-            messages.success(request, "Invalid C. Note number")
+                    messages.success(request, "Shipment updated Successfully.")
+                    return redirect("bookings")                       
+            else:
+                messages.success(request, "Invalid C. Note number")
+    except Exception as e:
+        log.error(f"Fast booking error for user {request.user}")
+        log.exception(e)    
     return redirect("bookings")
 
 @login_required(login_url="login_auth")
 def edit_data_retrive(request):
-    if request.method == "POST":
-        id = request.POST.get("id")        
-        data = Booking.objects.filter(pk=id).values("id", "doc_date", "party_name", "c_note_number", 
-        "from_destination", "to_destination", "sender_name", "sender_mobile", "receiver_name", "receiver_mobile_number",
-        "ref_courier_name", "ref_courier_number", "booking_type", "amount", "remarks", "weight", "pcs")                      
-        return JsonResponse({"data": list(data)})
+    try:
+        if request.method == "POST":
+            id = request.POST.get("id")        
+            data = Booking.objects.filter(pk=id).values("id", "doc_date", "party_name", "c_note_number", 
+            "from_destination", "to_destination", "sender_name", "sender_mobile", "receiver_name", "receiver_mobile_number",
+            "ref_courier_name", "ref_courier_number", "booking_type", "amount", "remarks", "weight", "pcs")                      
+            return JsonResponse({"data": list(data)})
+    except Exception as e:
+        log.exception(e)
+    return JsonResponse({"status": 0, "data": []})
 
 @login_required(login_url="login_auth")
 def advance_search_by_date(request):
-    if request.method == "POST":
-        from_date =  request.POST.get("from_date")
-        to_date =  request.POST.get("to_date")
+    try:
+        if request.method == "POST":
+            from_date =  request.POST.get("from_date")
+            to_date =  request.POST.get("to_date")
 
-        from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
-        to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
-        to_date = to_date + timedelta(days=1)        
-        data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, booking_mode="A/C").values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")        
-        if data:            
-            return JsonResponse({"status": 1, "data": list(data)})
+            from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
+            to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
+            to_date = to_date + timedelta(days=1)        
+            data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, booking_mode="A/C").values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")        
+            if data:            
+                return JsonResponse({"status": 1, "data": list(data)})
+            else:
+                return JsonResponse({"ststua": 0})
         else:
             return JsonResponse({"ststua": 0})
-    else:
+    except Exception as e:
         return JsonResponse({"ststua": 0})
 
 @login_required(login_url="login_auth")
 def advance_search_by_c_note(request):
-    if request.method == "POST":
-        c_note_number =  request.POST.get("c_note_number")                
-        data = Booking.objects.filter(c_note_number=c_note_number, user=request.user, booking_mode="A/C").values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")
-        if data:            
-            return JsonResponse({"status": 1, "data": list(data)})
+    try:
+        if request.method == "POST":
+            c_note_number =  request.POST.get("c_note_number")                
+            data = Booking.objects.filter(c_note_number=c_note_number, user=request.user, booking_mode="A/C").values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")
+            if data:            
+                return JsonResponse({"status": 1, "data": list(data)})
+            else:
+                return JsonResponse({"ststua": 0})
         else:
             return JsonResponse({"ststua": 0})
-    else:
-        return JsonResponse({"ststua": 0})
-
+    except Exception as e:
+        log.exception(e)
+    return JsonResponse({"ststua": 0})
 
 @login_required(login_url="login_auth")
 def advance_search_for_ref_number(request):

@@ -41,6 +41,8 @@ else:
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None # Need to remove when upload on server with domain name.
 
 # Application definition
+SESSION_COOKIE_AGE = 12 * 60 * 60
+
 
 INSTALLED_APPS = [
     'jazzmin',

@@ -33,7 +33,7 @@ urlpatterns = [
     path(r'get_complaints', get_complaints, name="get_complaints"),
     path(r"update_compliant_by_counter", update_compliant_by_counter, name="update_compliant_by_counter"),
     
-    path(r"contact-us-form", contactUs, name="ContactUS"),   
+    path(r"contact-us-form", contactUs, name="Contact-us"),   
     path(r"close_contact_us", close_contact_us, name="close_contact_us"), 
     path(r"network", network, name="network"),
     path(r"services", services, name="services"),  
