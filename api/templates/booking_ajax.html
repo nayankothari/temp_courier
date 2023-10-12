@@ -198,7 +198,8 @@
                         if (res.status) {
                             console.log("pass");
                         } else {
-                            alert(res.message);
+                            $(".error-message").remove();
+                            $("#cnotenumber").after("<div class='error-message' style='color: red'> Insert correct C. Note number</div>");
                         }
                     }
                 });
