@@ -48,7 +48,8 @@
         <div class="col-md-6">
             <h4 class="alert alert-primary mt-3 text-center">Output Load Details</h4>
             <div class="table-responsive">
-                <table class="table table-hover table-bordered table-sm booked_data">
+                <p><b>Total documents: <span id="rowCount"></span></b></p>
+                <table class="table table-hover table-bordered table-sm booked_data" id="tab_out">
                     <thead>
                         <tr>
                             <th scope="col">C.N. number</th>
@@ -136,5 +137,15 @@
     document.getElementById('datetime').value = now.toISOString().slice(0, 16);
 
     $("#c_note_number").focus();
+    $(document).ready(function() {
+        var table = document.getElementById("tab_out");
+        var rowCount = table.rows.length;
+        if (rowCount > 1) {
+            rowCount = rowCount - 1;
+            document.getElementById("rowCount").textContent = rowCount;
+        } else {
+            document.getElementById("rowCount").textContent = 0;
+        }
+    })
 </script>
 {% include 'tracking_out_ajax.html' %} {% endblock content %}

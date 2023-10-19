@@ -1,4 +1,15 @@
 <script>
+    function check_doc_count() {
+        var tabl = document.getElementById("tab_out");
+        var rowCoun = tabl.rows.length;
+        if (rowCoun > 1) {
+            rowCoun = rowCoun - 1;
+            document.getElementById("rowCount").textContent = rowCoun;
+        } else {
+            document.getElementById("rowCount").textContent = 0;
+        }
+    };
+
     // For tracking document using selenium.
     $("table").on("click", ".sele_data_1", function() {
         let new_url = $(this).attr("data-sid");
@@ -60,7 +71,9 @@
                     $("#c_note_number").val("");
                     $("#remarks").val("");
                     $("#id_of").val("");
+                    check_doc_count();
                     $("#c_note_number").focus();
+
                 } else {
                     alert(data.message);
                 }
@@ -85,6 +98,7 @@
             success: function(data) {
                 if (data.status == 1) {
                     $(my_this).closest("tr").fadeOut();
+                    check_doc_count();
                 } else {
                     alert("unable to delete data, please refresh page.")
                 }
@@ -113,6 +127,7 @@
                     $("#from_destination").val(new_data.d_from).change();
                     $("#c_note_number").val(new_data.c_note_number__c_note_number);
                     $("#remarks").val(new_data.remarks);
+                    check_doc_count();
                 } else {
                     alert("data not retrive from server.")
                 }
@@ -147,6 +162,7 @@
                         }
                         $("#tbody").html(output);
                         $("h4[tabindex=0]").focus();
+                        check_doc_count();
                     } else {
                         alert("No records found for this consignment number");
                     }
@@ -182,6 +198,7 @@
                         }
                         $("#tbody").html(output);
                         $("h4[tabindex=0]").focus();
+                        check_doc_count();
                     } else {
                         alert("No records found for this consignment number");
                     }
@@ -218,6 +235,7 @@
                             }
                             $("#tbody").html(output);
                             $("h4[tabindex=0]").focus();
+                            check_doc_count();
                         } else {
                             alert("Records not found in between dates.");
                         }
@@ -253,7 +271,7 @@
         document.getElementById("cp_clipboard").innerHTML = '<i class="bi bi-check2-all"></i>';
     })
 
-
+    // For raise a new complaint
     $(document).ready(function() {
         $("#complaint-btn").on("click", function() {
             $("#complaint-model").modal("show");

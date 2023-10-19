@@ -1,5 +1,16 @@
 <script>
-    // Save Load output -------------------------------
+    function check_doc_count() {
+        var tabl = document.getElementById("tab_out");
+        var rowCoun = tabl.rows.length;
+        if (rowCoun > 1) {
+            rowCoun = rowCoun - 1;
+            document.getElementById("rowCount").textContent = rowCoun;
+        } else {
+            document.getElementById("rowCount").textContent = 0;
+        }
+    };
+
+    // Save Load output -------------------------------    
     $("#save_btn").click(function(e) {
         e.preventDefault();
         let id_of = $("#id_of").val();
@@ -33,11 +44,15 @@
                     $("#remarks").val("");
                     $("#id_of").val("");
                     $("#c_note_number").focus();
+                    check_doc_count();
                 } else {
                     alert(data.message);
                 }
+
             },
+
         });
+
     });
 
     // delete load input
@@ -57,6 +72,7 @@
             success: function(data) {
                 if (data.status == 1) {
                     $(my_this).closest("tr").fadeOut();
+                    check_doc_count();
                 } else {
                     alert("unable to delete data, please refresh page.")
                 }
@@ -85,6 +101,7 @@
                     $("#from_destination").val(new_data.d_to).change();
                     $("#c_note_number").val(new_data.c_note_number__c_note_number);
                     $("#remarks").val(new_data.remarks);
+                    // check_doc_count();
                 } else {
                     alert("data not retrive from server.")
                 }
@@ -119,11 +136,13 @@
                         }
                         $("#tbody").html(output);
                         $("h4[tabindex=0]").focus();
+                        check_doc_count();
                     } else {
                         alert("No records found for this consignment number");
                     }
                 }
-            })
+            });
+
         }
 
     })
@@ -154,11 +173,13 @@
                         }
                         $("#tbody").html(output);
                         $("h4[tabindex=0]").focus();
+                        check_doc_count();
                     } else {
                         alert("No records found for this consignment number");
                     }
                 }
-            })
+            });
+
         }
     })
 
@@ -190,6 +211,7 @@
                             }
                             $("#tbody").html(output);
                             $("h4[tabindex=0]").focus();
+                            check_doc_count();
                         } else {
                             alert("Records not found in between dates.");
                         }
@@ -197,7 +219,7 @@
                         alert("Records not found in between dates.");
                     }
                 }
-            })
+            });
         } else {
             alert("Select correct dates.");
         }
@@ -227,6 +249,7 @@
                             output += "<tr><td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number__c_note_number + " target='_blank'>" + new_data[i].c_note_number__c_note_number + "</a></td><td>" + new_data[i].d_to__name + "</td><td>" + new_data[i].remarks + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '> <input type="button" class="btn btn-danger btn-sm delete-btn" id="delete_booking" value="Delete" data-sid=' + new_data[i].id + "></td></tr>"
                         }
                         $("#tbody").html(output);
+                        check_doc_count();
                     } else {
                         $("#tbody").html(output);
                     }
@@ -235,6 +258,7 @@
                 }
             }
         });
+
     });
 
 
@@ -260,14 +284,18 @@
                             output += "<tr><td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number__c_note_number + " target='_blank'>" + new_data[i].c_note_number__c_note_number + "</a></td><td>" + new_data[i].d_to__name + "</td><td>" + new_data[i].remarks + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '> <input type="button" class="btn btn-danger btn-sm delete-btn" id="delete_booking" value="Delete" data-sid=' + new_data[i].id + "></td></tr>"
                         }
                         $("#tbody").html(output);
+                        check_doc_count();
                     } else {
                         $("#tbody").html(output);
+                        check_doc_count();
                     }
                 } else {
                     $("#tbody").html(output);
+                    check_doc_count();
                 }
             }
         });
+
     });
 
 

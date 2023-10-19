@@ -24,7 +24,22 @@
         })
     });
 
-    // Above code will help to add destinations using jquery.
+    function check_same_entry(num) {
+        var tble = document.getElementById("DrsTable");
+        var isDuplicate = false;
+        for (var i = 1; i < tble.rows.length; i++) {
+            var existingId = tble.rows[i].cells[0].innerHTML;
+            if (existingId === num) {
+                isDuplicate = true;
+                break;
+            }
+        };
+        if (!isDuplicate) {
+            return true
+        } else {
+            return false
+        }
+    };
 
     var dateInput = document.getElementById('datetime');
     var date = new Date();
@@ -60,6 +75,7 @@
             $('#DrsTable tbody').html("");
         }
 
+        //  Insert values by dockegt number entry focs out.        
         $('#docket_number').on('keydown', function(event) {
             if (event.keyCode === 13 || event.keyCode === 9) {
                 event.preventDefault();
@@ -69,6 +85,77 @@
                     'docket_num': docket_num,
                     'csrfmiddlewaretoken': csr
                 }
+                var chk_ent = check_same_entry(docket_num);
+                if (chk_ent) {
+                    $.ajax({
+                        url: "{% url 'doc_num_from_booking_to_drs' %}",
+                        type: "POST",
+                        data: drs_doc_data,
+                        success: function(response) {
+                            if (response.status == 1) {
+                                let data = response.data;
+                                $("#docket_number").val("");
+                                var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td> <input type="text" class="form-control con_name" value="' + data.name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                                $('#DrsTable tbody').prepend(row);
+                                // To save drs entries in localstorage.
+                                var drs_history = [];
+                                $('#DrsTable tr').each(function() {
+                                    var rowData = [];
+                                    $(this).find('th, td').each(function() {
+                                        rowData.push($(this).text());
+                                        let con_names = $(this).find(".con_name").val();
+                                        if (con_names) {
+                                            rowData.push(con_names);
+                                        };
+                                    });
+                                    rowData.push("");
+                                    rowData.splice(2, 1);
+                                    drs_history.push(rowData);
+                                });
+                                var dt = $("#datetime").val();
+                                var del_boy = $("#delivery_boy").val();
+                                var area_nm = $("#area_name").val();
+                                var new_var = dt + '_' + area_nm + '_' + del_boy;
+                                var local_data = drs_history.slice(1);
+                                var jsonString = JSON.stringify(local_data);
+
+                                localStorage.setItem(new_var, jsonString);
+                                // End of local storage code.
+                                var table = document.getElementById("DrsTable");
+                                var rowCount = table.rows.length;
+                                if (rowCount > 1) {
+                                    rowCount = rowCount - 1;
+                                    document.getElementById("rowCount").textContent = rowCount;
+                                } else {
+                                    document.getElementById("rowCount").textContent = 0;
+                                }
+
+                            } else {
+                                if (event.shiftKey && event.key === "Tab") {
+                                    $("#delivery_boy").focus();
+                                } else {
+                                    $('#origin').focus();
+                                }
+                            };
+                        }
+                    });
+                } else {
+                    alert("Duplicate docket number found.");
+                }
+            }
+        });
+
+        // Get automatically number as required.
+        $('#docket_number').blur(function(event) {
+            event.preventDefault();
+            var docket_num = $(this).val();
+            let csr = $("input[name=csrfmiddlewaretoken").val();
+            let drs_doc_data = {
+                'docket_num': docket_num,
+                'csrfmiddlewaretoken': csr
+            }
+            var chk_ent = check_same_entry(docket_num);
+            if (chk_ent) {
                 $.ajax({
                     url: "{% url 'doc_num_from_booking_to_drs' %}",
                     type: "POST",
@@ -79,7 +166,6 @@
                             $("#docket_number").val("");
                             var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td> <input type="text" class="form-control con_name" value="' + data.name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
                             $('#DrsTable tbody').prepend(row);
-
                             // To save drs entries in localstorage.
                             var drs_history = [];
                             $('#DrsTable tr').each(function() {
@@ -103,7 +189,6 @@
                             var jsonString = JSON.stringify(local_data);
 
                             localStorage.setItem(new_var, jsonString);
-                            // End of local storage code.
                             var table = document.getElementById("DrsTable");
                             var rowCount = table.rows.length;
                             if (rowCount > 1) {
@@ -112,85 +197,25 @@
                             } else {
                                 document.getElementById("rowCount").textContent = 0;
                             }
-
+                            // End of local storage code.
                         } else {
+                            var table = document.getElementById("DrsTable");
+                            var rowCount = table.rows.length;
+                            if (rowCount > 1) {
+                                rowCount = rowCount - 1;
+                                document.getElementById("rowCount").textContent = rowCount;
+                            } else {
+                                document.getElementById("rowCount").textContent = 0;
+                            }
                             if (event.shiftKey && event.key === "Tab") {
                                 $("#delivery_boy").focus();
-                            } else {
-                                $('#origin').focus();
                             }
+                            // $('#origin').focus();
                         };
                     }
                 });
-            }
-        });
-        // Get automatically number as required.
-        $('#docket_number').blur(function(event) {
-            event.preventDefault();
-            var docket_num = $(this).val();
-            let csr = $("input[name=csrfmiddlewaretoken").val();
-            let drs_doc_data = {
-                'docket_num': docket_num,
-                'csrfmiddlewaretoken': csr
-            }
-            $.ajax({
-                url: "{% url 'doc_num_from_booking_to_drs' %}",
-                type: "POST",
-                data: drs_doc_data,
-                success: function(response) {
-                    if (response.status == 1) {
-                        let data = response.data;
-                        $("#docket_number").val("");
-                        var row = '<tr><td>' + docket_num + '</td><td>' + data.origin + '</td><td> <input type="text" class="form-control con_name" value="' + data.name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
-                        $('#DrsTable tbody').prepend(row);
-                        // To save drs entries in localstorage.
-                        var drs_history = [];
-                        $('#DrsTable tr').each(function() {
-                            var rowData = [];
-                            $(this).find('th, td').each(function() {
-                                rowData.push($(this).text());
-                                let con_names = $(this).find(".con_name").val();
-                                if (con_names) {
-                                    rowData.push(con_names);
-                                };
-                            });
-                            rowData.push("");
-                            rowData.splice(2, 1);
-                            drs_history.push(rowData);
-                        });
-                        var dt = $("#datetime").val();
-                        var del_boy = $("#delivery_boy").val();
-                        var area_nm = $("#area_name").val();
-                        var new_var = dt + '_' + area_nm + '_' + del_boy;
-                        var local_data = drs_history.slice(1);
-                        var jsonString = JSON.stringify(local_data);
 
-                        localStorage.setItem(new_var, jsonString);
-                        var table = document.getElementById("DrsTable");
-                        var rowCount = table.rows.length;
-                        if (rowCount > 1) {
-                            rowCount = rowCount - 1;
-                            document.getElementById("rowCount").textContent = rowCount;
-                        } else {
-                            document.getElementById("rowCount").textContent = 0;
-                        }
-                        // End of local storage code.
-                    } else {
-                        var table = document.getElementById("DrsTable");
-                        var rowCount = table.rows.length;
-                        if (rowCount > 1) {
-                            rowCount = rowCount - 1;
-                            document.getElementById("rowCount").textContent = rowCount;
-                        } else {
-                            document.getElementById("rowCount").textContent = 0;
-                        }
-                        if (event.shiftKey && event.key === "Tab") {
-                            $("#delivery_boy").focus();
-                        }
-                        // $('#origin').focus();
-                    };
-                }
-            });
+            }
         })
     });
 
@@ -244,69 +269,74 @@
                 event.preventDefault();
                 var doc_num = $("#docket_number").val();
                 if (doc_num != "") {
-                    var origin = $("#origin option:selected").text();
-                    var con_name = $("#con_name").val().toUpperCase();
-                    var row = '<tr><td>' + doc_num + '</td><td>' + origin + '</td><td> <input type="text" class="form-control con_name" value="' + con_name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
-                    $('#DrsTable tbody').prepend(row);
-                    $("#docket_number").val("");
-                    $("#con_name").val("");
-                    $('#docket_number').focus();
-                    // To save drs entries in localstorage.
-                    var drs_history = [];
-                    $('#DrsTable tr').each(function() {
-                        var rowData = [];
-                        $(this).find('th, td').each(function() {
-                            rowData.push($(this).text());
-                            let con_names = $(this).find(".con_name").val();
-                            if (con_names) {
-                                rowData.push(con_names);
-                            };
-                        });
-                        rowData.push("");
-                        rowData.splice(2, 1);
-                        drs_history.push(rowData);
-                    });
-                    var dt = $("#datetime").val();
-                    var del_boy = $("#delivery_boy").val();
-                    var area_nm = $("#area_name").val();
-                    var new_var = dt + '_' + area_nm + '_' + del_boy;
-                    var local_data = drs_history.slice(1);
-                    var jsonString = JSON.stringify(local_data);
-
-                    localStorage.setItem(new_var, jsonString);
-                    var table = document.getElementById("DrsTable");
-                    var rowCount = table.rows.length;
-                    if (rowCount > 1) {
-                        rowCount = rowCount - 1;
-                        document.getElementById("rowCount").textContent = rowCount;
-                    } else {
-                        document.getElementById("rowCount").textContent = 0;
-                    }
-
-                    // Save consignee names on local storage
-                    // var saved_con_names = localStorage.removeItem("con_names");
-                    var saved_con_names = localStorage.getItem("con_names");
-                    if (saved_con_names) {
-                        saved_con_names = JSON.parse(saved_con_names);
-                    } else {
-                        saved_con_names = [];
-                    }
-                    if ($.inArray(con_name, saved_con_names) === -1) {
-                        if (con_name) {
-                            saved_con_names.push(con_name);
-                            localStorage.setItem("con_names", JSON.stringify(saved_con_names));
-                            var datalist = $("#con_name_datalist");
-                            datalist.empty();
-                            saved_con_names.forEach(function(item) {
-                                var option = $("<option>").attr("value", item);
-                                datalist.append(option);
+                    var check_ent = check_same_entry(doc_num);
+                    if (check_ent) {
+                        var origin = $("#origin option:selected").text();
+                        var con_name = $("#con_name").val().toUpperCase();
+                        var row = '<tr><td>' + doc_num + '</td><td>' + origin + '</td><td> <input type="text" class="form-control con_name" value="' + con_name + '" />' + "</td><td><button type='button' id='myButton' class='border-0 bg-transparent text-primary deleteButton'><i class='bi bi-trash3'></i></button></td></tr>";
+                        $('#DrsTable tbody').prepend(row);
+                        $("#docket_number").val("");
+                        $("#con_name").val("");
+                        $('#docket_number').focus();
+                        // To save drs entries in localstorage.
+                        var drs_history = [];
+                        $('#DrsTable tr').each(function() {
+                            var rowData = [];
+                            $(this).find('th, td').each(function() {
+                                rowData.push($(this).text());
+                                let con_names = $(this).find(".con_name").val();
+                                if (con_names) {
+                                    rowData.push(con_names);
+                                };
                             });
+                            rowData.push("");
+                            rowData.splice(2, 1);
+                            drs_history.push(rowData);
+                        });
+                        var dt = $("#datetime").val();
+                        var del_boy = $("#delivery_boy").val();
+                        var area_nm = $("#area_name").val();
+                        var new_var = dt + '_' + area_nm + '_' + del_boy;
+                        var local_data = drs_history.slice(1);
+                        var jsonString = JSON.stringify(local_data);
+
+                        localStorage.setItem(new_var, jsonString);
+                        var table = document.getElementById("DrsTable");
+                        var rowCount = table.rows.length;
+                        if (rowCount > 1) {
+                            rowCount = rowCount - 1;
+                            document.getElementById("rowCount").textContent = rowCount;
+                        } else {
+                            document.getElementById("rowCount").textContent = 0;
                         }
+
+                        // Save consignee names on local storage
+                        // var saved_con_names = localStorage.removeItem("con_names");
+                        var saved_con_names = localStorage.getItem("con_names");
+                        if (saved_con_names) {
+                            saved_con_names = JSON.parse(saved_con_names);
+                        } else {
+                            saved_con_names = [];
+                        }
+                        if ($.inArray(con_name, saved_con_names) === -1) {
+                            if (con_name) {
+                                saved_con_names.push(con_name);
+                                localStorage.setItem("con_names", JSON.stringify(saved_con_names));
+                                var datalist = $("#con_name_datalist");
+                                datalist.empty();
+                                saved_con_names.forEach(function(item) {
+                                    var option = $("<option>").attr("value", item);
+                                    datalist.append(option);
+                                });
+                            }
+                        }
+                        // $("#con_name").submit();
+                        // End of local storage code.
+                    } else {
+                        alert("Duplicate docket number found.");
                     }
-                    // $("#con_name").submit();
-                    // End of local storage code.
                 } else {
-                    alert("Insert Docket number");
+                    alert("Insert docket number");
                     $('#docket_number').focus();
                 }
             }

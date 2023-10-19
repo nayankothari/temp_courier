@@ -196,7 +196,7 @@
                     data: final_data,
                     success: function(res) {
                         if (res.status) {
-                            console.log("pass");
+                            $(".error-message").remove();
                         } else {
                             $(".error-message").remove();
                             $("#cnotenumber").after("<div class='error-message' style='color: red'> Insert correct C. Note number</div>");
