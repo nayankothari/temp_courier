@@ -56,7 +56,8 @@ def home(request):
 
 def tracking(request, tracking_number):    
     try:            
-        tracking_number = int(tracking_number)            
+        tracking_number = int(tracking_number)  
+        log.info("Search for tracking number: {}".format(tracking_number))     
         if tracking_number:
             data = Booking.objects.filter(c_note_number=tracking_number)                        
             comp_details = Complaints.objects.filter(doc_number=tracking_number).order_by("-created_at")
@@ -187,6 +188,7 @@ def tracking(request, tracking_number):
                 "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
                 "dbd": delivery_boy_detail, "comp_exists": comp_exists, "show_comp_button": show_comp_button})            
         log.exception(e)
+        log.info("Error for finding tracking number: {}".format(tracking_number))        
         return redirect("home")
 
 def check_tracking_num(request):
@@ -995,7 +997,7 @@ def bookings(request):
     booking_type = BookingType.objects.all().order_by("-booking_type")
     parties = PartyAccounts.objects.filter(user=request.user).order_by("party_name")
     today_date = datetime.date.today()    
-    today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
+    today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user, booking_mode="A/C").order_by("-created_at")    
     from_destination = UserAdditionalDetails.objects.get(user=request.user)        
     context = {"ref_courier_name": ref_courier_name,
                "parties": parties, "today_bookings": today_bookings,
@@ -1119,7 +1121,10 @@ def advance_search_by_date(request):
             from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
             to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
             to_date = to_date + timedelta(days=1)        
-            data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user, booking_mode="A/C").values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")        
+            data = Booking.objects.filter(doc_date__range=(from_date, to_date), user=request.user,
+                     booking_mode="A/C").values("id", "c_note_number", "to_destination__name", 
+                                "ref_courier_name__name", "doc_date", "booking_type__booking_type",
+                                "party_name__party_name", "weight")        
             if data:            
                 return JsonResponse({"status": 1, "data": list(data)})
             else:
@@ -1134,7 +1139,10 @@ def advance_search_by_c_note(request):
     try:
         if request.method == "POST":
             c_note_number =  request.POST.get("c_note_number")                
-            data = Booking.objects.filter(c_note_number=c_note_number, user=request.user, booking_mode="A/C").values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")
+            data = Booking.objects.filter(c_note_number=c_note_number, user=request.user, 
+                        booking_mode="A/C").values("id", "c_note_number", 
+                        "to_destination__name", "ref_courier_name__name", "doc_date", "booking_type__booking_type",
+                                "party_name__party_name", "weight")
             if data:            
                 return JsonResponse({"status": 1, "data": list(data)})
             else:
@@ -1149,7 +1157,10 @@ def advance_search_by_c_note(request):
 def advance_search_for_ref_number(request):
     if request.method == "POST":
         ref_number =  request.POST.get("ref_number")                
-        data = Booking.objects.filter(ref_courier_number=ref_number, user=request.user, booking_mode="A/C").values("id", "c_note_number", "to_destination__name", "ref_courier_name__name")
+        data = Booking.objects.filter(ref_courier_number=ref_number, user=request.user,
+                    booking_mode="A/C").values("id", "c_note_number", "to_destination__name",
+                "ref_courier_name__name", "doc_date", "booking_type__booking_type",
+                                "party_name__party_name", "weight")
         if data:            
             return JsonResponse({"status": 1, "data": list(data)})
         else:

@@ -1,4 +1,16 @@
 <script>
+    function check_doc_count() {
+        var tabl = document.getElementById("table-1");
+        var rowCoun = tabl.rows.length;
+        if (rowCoun > 1) {
+            rowCoun = rowCoun - 1;
+            document.getElementById("rowCount").textContent = rowCoun;
+        } else {
+            document.getElementById("rowCount").textContent = 0;
+        }
+    };
+
+    // Load edit details in entry boxes
     $("tbody").on("click", ".edit-btn", function() {
         let doc_id = $(this).attr("data-sid");
         let csr = $("input[name=csrfmiddlewaretoken").val();
@@ -58,10 +70,26 @@
                 if (data.status == 1) {
                     let new_data = data.data;
                     for (i = 0; i < new_data.length; i++) {
-                        output += "<tr><td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
-                        $("#tbody").html(output);
+                        var docDate = new Date(new_data[i].doc_date);
+                        var day = docDate.getDate();
+                        var monthIndex = docDate.getMonth();
+                        var year = docDate.getFullYear();
+
+                        // Array of abbreviated month names
+                        var monthNames = [
+                            "jan", "feb", "mar", "apr", "may", "jun",
+                            "jul", "aug", "sep", "oct", "nov", "dec"
+                        ];
+                        var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+
+                        output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="' + new_data[i].id + '"> <a href="print_cash_booking/' + new_data[i].id + '" target="_blank" class=" btn btn-primary btn-sm" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>' + "<td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" +
+                            formattedDate + "</td><td>" + new_data[i].to_destination__name + "</td><td>" +
+                            new_data[i].party_name__party_name + "</td><td>" + new_data[i].booking_type__booking_type + "</td><td>" + new_data[i].weight + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '</td></tr>'
+
                     }
+                    $("#tbody").html(output);
                     $("h4[tabindex=0]").focus();
+                    check_doc_count();
                 } else {
                     alert("No records found in between dates.");
                 }
@@ -94,10 +122,25 @@
                     if (data.status == 1) {
                         let new_data = data.data;
                         for (i = 0; i < new_data.length; i++) {
-                            output += "<tr><td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
-                            $("#tbody").html(output);
+                            var docDate = new Date(new_data[i].doc_date);
+                            var day = docDate.getDate();
+                            var monthIndex = docDate.getMonth();
+                            var year = docDate.getFullYear();
+
+                            // Array of abbreviated month names
+                            var monthNames = [
+                                "jan", "feb", "mar", "apr", "may", "jun",
+                                "jul", "aug", "sep", "oct", "nov", "dec"
+                            ];
+                            var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+
+                            output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="' + new_data[i].id + '"> <a href="print_cash_booking/' + new_data[i].id + '" target="_blank" class=" btn btn-primary btn-sm" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>' + "<td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" +
+                                formattedDate + "</td><td>" + new_data[i].to_destination__name + "</td><td>" +
+                                new_data[i].party_name__party_name + "</td><td>" + new_data[i].booking_type__booking_type + "</td><td>" + new_data[i].weight + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '</td></tr>'
                         }
+                        $("#tbody").html(output);
                         $("h4[tabindex=0]").focus();
+                        check_doc_count();
                     } else {
                         alert("No records found for this consignment number");
                     }
@@ -132,11 +175,26 @@
                     if (data.status == 1) {
                         let new_data = data.data;
                         for (i = 0; i < new_data.length; i++) {
-                            output += "<tr><td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" + new_data[i].to_destination__name + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '<input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid=' + new_data[i].id + '></td></tr>'
+                            var docDate = new Date(new_data[i].doc_date);
+                            var day = docDate.getDate();
+                            var monthIndex = docDate.getMonth();
+                            var year = docDate.getFullYear();
+
+                            // Array of abbreviated month names
+                            var monthNames = [
+                                "jan", "feb", "mar", "apr", "may", "jun",
+                                "jul", "aug", "sep", "oct", "nov", "dec"
+                            ];
+                            var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+
+                            output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="' + new_data[i].id + '"> <a href="print_cash_booking/' + new_data[i].id + '" target="_blank" class=" btn btn-primary btn-sm" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>' + "<td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" +
+                                formattedDate + "</td><td>" + new_data[i].to_destination__name + "</td><td>" +
+                                new_data[i].party_name__party_name + "</td><td>" + new_data[i].booking_type__booking_type + "</td><td>" + new_data[i].weight + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '</td></tr>'
 
                         }
                         $("#tbody").html(output);
                         $("h4[tabindex=0]").focus();
+                        check_doc_count();
                     } else {
                         alert("No records found for this Ref. number");
                     }
@@ -205,6 +263,20 @@
                 });
 
             }
+        });
+
+        $("#receipt_bulk_form").submit(function(e) {
+            var c_note_details = [];
+            $("#table-1 tr:not(:first)").each(function() {
+                var firstCell = $(this).find("td:nth-child(2)");
+                var check_bx = $(this).find("td:nth-child(1) input[type='checkbox']");
+                if (check_bx.prop("checked")) {
+                    c_note_details.push(parseInt(firstCell.text()));
+                }
+            });
+            c_note_details = JSON.stringify(c_note_details)
+            $("#receipt_input").val("");
+            $("#receipt_input").val(c_note_details);
         });
     });
     // Above code will help to add destinations using jquery.

@@ -212,37 +212,26 @@
         <!-- Showing booked entries from here -->
         <div class="col-md-6 mt-3">
             <h4 class="alert alert-primary text-center" tabindex="0">Booked shipment details</h4>
-            <div class="scrollme table-responsive table-responsive-hori">
-                <p><b>Total documents: <span id="rowCount"></span></b></p>
-                <table class="table table-striped" id="table-1">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-sm booked_data">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="selectAll" style="margin-right: 10px;"> Action</th>
-                            <th>Doc No.</th>
-                            <th>Date</th>
-                            <th>To Center</th>
-                            <th>Sender name</th>
-                            <th>Product</th>
-                            <th>Weight</th>
-                            <th>Ref courier</th>
+                            <th scope="col">C.N. number</th>
+                            <th scope="col">Destination</th>
+                            <th scope="col">By Courier</th>
+                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody id="tbody">
                         {% for booking in today_bookings %}
                         <tr>
                             {% if booking.booking_mode == 'A/C' %}
-                            <td>
-                                <input type="checkbox" style="margin-right: 10px;" id="chk_bxk">
-                                <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="{{ booking.id }}">
-                                <a href="{% url 'print_cash_booking' booking.id %}" target="_blank" class=" btn btn-primary btn-sm" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>
-                            </td>
                             <td><a class="text-decoration-none" href="{% url 'tracking_page' booking.c_note_number %}" target="_blank">{{ booking.c_note_number }}</a></td>
-                            <td>{{ booking.doc_date|date:"d-b-Y" }}</td>
                             <td>{{ booking.to_destination }}</td>
-                            <td>{{ booking.party_name }}</td>
-                            <td>{{ booking.booking_type }}</td>
-                            <td>{{ booking.weight }}</td>
                             <td>{{ booking.ref_courier_name }}</td>
+                            <td>
+                                <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="{{ booking.id }}">
+                            </td>
                             {% endif %}
                         </tr>
                         {% endfor %}
@@ -251,13 +240,6 @@
             </div>
             <div class="text-start">
                 <p>Total <b>{{ total_bookings }}</b> shipment booked today.</p>
-            </div>
-            <div>
-                <form action="{% url 'bulk_print_receipt' %}" method="POST" id="receipt_bulk_form" target="_blank">
-                    {% csrf_token %}
-                    <input type="hidden" name="receipt_input" id="receipt_input" value="">
-                    <button type="submit" id="bulk_receipt_btn" class="btn btn-outline-primary mt-3" style="margin-right: 10px;"><i class="bi bi-printer"></i> Bulk print Receipt</button>
-                </form>
             </div>
 
         </div>
@@ -371,13 +353,6 @@
             document.querySelector('.select2-search__field').focus();
         });
 
-        document.getElementById("selectAll").addEventListener("click", function() {
-            var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = document.getElementById("selectAll").checked;
-            });
-        });
-        check_doc_count();
     });
 </script>
 
