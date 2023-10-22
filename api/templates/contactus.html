@@ -30,19 +30,19 @@
                 </div>
                 <div class="form-group mt-2">
                     <label for="pincode" class="text-white">Mobile Number</label>
-                    <input type="text" class="form-control" id="pincode" aria-describedby="pincode" placeholder="Enter your mobile number" name="pincode" required>
+                    <input type="text" class="form-control" id="pincode" aria-describedby="pincode" placeholder="Enter your mobile number" name="pincode" minlength="8" maxlength="13" required>
                 </div>
                 <div class="form-group mt-2">
                     <label for="country" class="text-white">Country</label>
                     <select class="form-control" id="country" name="country" required>
                       <option>India</option>
-                      <option>Out of India</option>                      
+                      <option>International</option>                      
                     </select>
                 </div>
 
                 <div class="form-group mt-2">
                     <label for="message" class="text-white">Message</label>
-                    <textarea class="form-control" id="message" rows="3" name="message"></textarea>
+                    <textarea class="form-control" id="message" rows="3" name="message" maxlength="250"></textarea>
                 </div>
                 <button type="button" id="frm_sbt" class="btn btn-primary mt-4 mb-5 px-5">Submit</button>
             </form>

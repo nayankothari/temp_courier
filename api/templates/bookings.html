@@ -249,14 +249,14 @@
                     </tbody>
                 </table>
             </div>
-            <div class="text-start">
+            <div class="text-start mt-1">
                 <p>Total <b>{{ total_bookings }}</b> shipment booked today.</p>
             </div>
             <div>
                 <form action="{% url 'bulk_print_receipt' %}" method="POST" id="receipt_bulk_form" target="_blank">
                     {% csrf_token %}
                     <input type="hidden" name="receipt_input" id="receipt_input" value="">
-                    <button type="submit" id="bulk_receipt_btn" class="btn btn-outline-primary mt-3" style="margin-right: 10px;"><i class="bi bi-printer"></i> Bulk print Receipt</button>
+                    <button type="submit" id="bulk_receipt_btn" class="btn btn-outline-primary mt-3 mb-3" style="margin-right: 10px;"><i class="bi bi-printer"></i> Bulk print Receipt</button>
                 </form>
             </div>
 

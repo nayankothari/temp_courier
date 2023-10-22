@@ -22,6 +22,29 @@
 
 
 <div class="container back_color">
+    <!-- Complaint Model -->
+    <div class="modal fade" id="complaint-res-model">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Resolve issue for shipment no. <b id="ship_no">XXXXX</b></p>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- <input type="hidden" id="hidden-cnote" class="form-control"> -->
+                    <textarea name="complaint-message" class="form-control" id="complaint-message" cols="30" rows="3" placeholder="Write your message here.."></textarea>
+                    <form action="">
+                        {% csrf_token %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="complaint-saveBtn">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         {% csrf_token %} {% for message in messages %} {% if request.session.success %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -36,6 +59,28 @@
         {% endif %} {% endfor %}
         <div class="col-md-12 mb-5">
             <div class="card mt-2">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="text-center mb-3 text-danger">Complaints</h3>
+                        <!-- <hr> -->
+                        <div class="table-responsive table table-hover table-bordered table-sm booked_data">
+                            <table class="table" id="complaintTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Sr. No.</th>
+                                        <th scope="col">Docket Number</th>
+                                        <th scope="col">Complaint Date</th>
+                                        <th scope="col">Customer message</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comp-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <hr>
                 <div class="card-header">
                     Booking Dashboard &nbsp;&nbsp;<b> Total Shipment booked: <span id="rowCount"></span></p></b>
                 </div>
@@ -545,7 +590,69 @@
         window.open(new_url, "_blank");
         // var print_url = '<a href="http://206.189.133.131:8080/' + new_url + '" target="blank"></a>'
         // $(print_url)[0].click();
-    }
+    };
+
+
+    // This will get complaints    
+    function get_comp() {
+        $.ajax({
+            url: "{% url 'get_complaints' %}",
+            method: "GET",
+            type: "json",
+            success: function(res) {
+                if (res.status == 1) {
+                    data = res.complaints;
+                    var output_comp = "";
+                    for (var i = 0; i < data.length; i++) {
+                        output_comp += '<tr><td>' + (i + 1) + '</td><td> <a class="text-decoration-none" href=/tracking/' + data[i].doc_number + ' target="_blank">' + data[i].doc_number + '</a> </td><td>' +
+                            data[i].created_at + '</td><td>' + data[i].message + '</td><td> <input type="button" class="btn btn-danger btn-sm response-modl" id="update_complaint" value="Update" data-sid="' + data[i].doc_number + '"></td></tr>';
+                    };
+                    $("#comp-body").html(output_comp);
+                }
+            }
+        })
+    };
+    get_comp();
+    // For open complaint modal        
+    $("tbody").on("click", ".response-modl", function() {
+        $("#complaint-res-model").modal("show");
+        var doc_num = $(this).attr("data-sid");
+        $("#complaint-saveBtn").attr("data-sid", doc_num);
+        $("#ship_no").text(doc_num);
+    })
+
+    $("#complaint-saveBtn").click(function() {
+        var doc_n = $("#complaint-saveBtn").attr("data-sid");
+        var message_update = $("#complaint-message").val().trim();
+        var token = $("input[name='csrfmiddlewaretoken']").val();
+        let my_this = this;
+        if (message_update) {
+            var final_dat = {
+                doc_n: doc_n,
+                message: message_update,
+                csrfmiddlewaretoken: token
+            }
+            $.ajax({
+                url: "{% url 'update_compliant_by_counter' %}",
+                method: "POST",
+                type: "json",
+                data: final_dat,
+                success: function(res) {
+                    if (res.status == 1) {
+                        $("#complaint-message").val("");
+                        $("#complaint-res-model").modal("hide");
+                        get_comp();
+                    } else {
+                        alert(res.message)
+                    }
+                }
+            })
+
+        } else {
+            alert("Insert message.");
+        }
+
+    });
 </script>
 
 {% endblock content %}

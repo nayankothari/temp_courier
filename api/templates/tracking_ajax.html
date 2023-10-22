@@ -10,6 +10,24 @@
         }
     };
 
+    // To check load input duplicate entry.
+    // function check_same_entry(num) {
+    //     var tble = document.getElementById("tab_out");
+    //     var isDuplicate = false;
+    //     for (var i = 1; i < tble.rows.length; i++) {
+    //         var existingId = tble.rows[i].cells[0].innerHTML;
+    //         if (existingId === num) {
+    //             isDuplicate = true;
+    //             break;
+    //         }
+    //     };
+    //     if (!isDuplicate) {
+    //         return true
+    //     } else {
+    //         return false
+    //     }
+    // };
+
     // For tracking document using selenium.
     $("table").on("click", ".sele_data_1", function() {
         let new_url = $(this).attr("data-sid");

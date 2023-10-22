@@ -1,4 +1,16 @@
 <script>
+    // get count of pending DRS.
+    function check_doc_count() {
+        var tabl = document.getElementById("table-1");
+        var rowCoun = tabl.rows.length;
+        if (rowCoun > 1) {
+            rowCoun = rowCoun - 1;
+            document.getElementById("rowCount").textContent = "( " + rowCoun + " DRS Pending, Need to upload first )";
+        } else {
+            document.getElementById("rowCount").textContent = "";
+        }
+    };
+
     // ########################### For delete DRS ################################
     $("#table-1").on("click", ".deleteButton", function() {
         let sid = $(this).attr("data-sid");
@@ -95,4 +107,8 @@
 
         }
     });
+
+    $(document).ready(function() {
+        check_doc_count();
+    })
 </script>

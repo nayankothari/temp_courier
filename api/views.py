@@ -1284,7 +1284,11 @@ def save_input_load(request):
                             saved_data.d_from = from_destination
                             saved_data.in_out_datetime = date
                             saved_data.save()                                               
-                        else:                            
+                        else:            
+                            today_date = str(date)[:10]                            
+                            if_available = Trackinghistory.objects.filter(user=request.user, in_out_datetime__startswith=today_date, status=status, c_note_number=c_note_number_booking)                            
+                            if if_available:
+                                return JsonResponse({"status": 0, "message": "Duplicate entry found."}) 
                             Trackinghistory.objects.create(c_note_number=c_note_number_booking, in_out_datetime=date,
                                     d_from=from_destination, d_to=to_destination, status=status, remarks=remarks, user=user)                                                
                         # data = Trackinghistory.objects.values()
@@ -1381,6 +1385,7 @@ def save_output_load(request):
     if request.method == "POST":
         id_of = request.POST.get("id_of")                
         date = request.POST.get("date")
+        new_dt = str(date)[:10]  
         from_destination = request.POST.get("from_destination")        
         c_note_number = request.POST.get("c_note_number")
         remarks = request.POST.get("remarks")
@@ -1393,7 +1398,7 @@ def save_output_load(request):
                     to_destination = UserAdditionalDetails.objects.get(user=request.user)                
                     to_destination = to_destination.destination
                     try:                        
-                        from_destination = Destination.objects.get(id=from_destination)                        
+                        from_destination = Destination.objects.get(id=from_destination)                                                
                         if id_of:
                             saved_data = Trackinghistory.objects.get(id=id_of)
                             saved_data.c_note_number = c_note_number_booking
@@ -1402,12 +1407,16 @@ def save_output_load(request):
                             saved_data.in_out_datetime = date
                             saved_data.save()                                               
                         else:
+                            if_available = Trackinghistory.objects.filter(c_note_number=c_note_number_booking, 
+                            in_out_datetime__startswith=new_dt, user=request.user, status=status)                            
+                            if if_available:
+                                return JsonResponse({"status": 0, "message": "Duplicate entry found."})                         
                             Trackinghistory.objects.create(c_note_number=c_note_number_booking, in_out_datetime=date,
                                     d_from=to_destination, d_to=from_destination, status=status, remarks=remarks, user=user)                                                
                         # data = Trackinghistory.objects.values()
                         # today_date = datetime.date.today()            
-                        date = str(date)[:10]             
-                        today_in = Trackinghistory.objects.filter(user=request.user, in_out_datetime__startswith=date, status=status, d_to=from_destination).order_by("-last_updated_datetime")
+                        # date = str(date)[:10]                                   
+                        today_in = Trackinghistory.objects.filter(user=request.user, in_out_datetime__startswith=new_dt, status=status, d_to=from_destination).order_by("-last_updated_datetime")
                         today_in = list(today_in.values("id", "c_note_number__c_note_number", "d_to__name", "remarks"))
                         return JsonResponse({"status": 1, "data": today_in})
                     except Exception as e:                        
