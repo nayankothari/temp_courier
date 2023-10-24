@@ -315,6 +315,10 @@ def contactUs(request):
                     return_message = "Request submitted successfully."       
 
                     return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})    
+            else:
+                client_ip = request.META.get('REMOTE_ADDR')
+                log.info("RobertTiz IP : {}".format(client_ip))
+
             log.warning(f"Getting {str(name)} contact details, {request.user}")
     except Exception as e:
         log.exception(e)
