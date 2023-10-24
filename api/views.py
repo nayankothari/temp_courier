@@ -2091,3 +2091,5 @@ def retutn_all_foreign_key_details(request):
 
 
 
+def shipment_book(request):
+    return render(request, 'user_book.html')

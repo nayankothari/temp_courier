@@ -8,8 +8,9 @@
             <!-- <form> -->
             {% csrf_token %}
             <div class="mb-3">
-                <label for="trackingdetails" class="form-label" id="tracking_name">TRACK YOUR SHIPMENT</label>
-                <input type="text" class="form-control" id="trackingdetails" aria-describedby="emailHelp" name="tracking_number" required>
+                <label for="trackingdetails" class="form-label" id="tracking_name">TRACK YOUR SHIPMENT</label> {% if user.is_authenticated %}
+                <input type="text" class="form-control" id="trackingdetails" aria-describedby="tracking details" name="tracking_number" required> {% else %}
+                <input type="number" class="form-control" id="trackingdetails" aria-describedby="tracking details" name="tracking_number" required> {% endif %}
             </div>
             <button type="button" class="btn btn-success" id="tracking_btn">Track shipment</button>
             <!-- </form> -->
@@ -55,6 +56,7 @@
                     <div class="col-12 text-center">
                         <button type="button" class="btn btn-primary" id="contct_us">Contact us</button>
                         <!-- <button type="button" class="btn btn-primary" onclick="location.href='https://api.whatsapp.com/send?phone=919529486594&text=Hello Airpost Xpress, I need super fast courier service, please contact me as soon as possible.'"><i class="bi bi-whatsapp"></i> +91 123456789</button> -->
+                        <a href="{% url 'shipment_book' %}" class="btn btn-success">Book your shipment</a>
                     </div>
                 </div>
             </div>

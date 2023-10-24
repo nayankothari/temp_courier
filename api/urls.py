@@ -33,7 +33,7 @@ urlpatterns = [
     path(r'get_complaints', get_complaints, name="get_complaints"),
     path(r"update_compliant_by_counter", update_compliant_by_counter, name="update_compliant_by_counter"),
     
-    path(r"contact-us-form", contactUs, name="Contact-us"),   
+    path(r"contact-us-form", contactUs, name="Contact-us"),  
     path(r"close_contact_us", close_contact_us, name="close_contact_us"), 
     path(r"network", network, name="network"),
     path(r"services", services, name="services"),  
@@ -130,5 +130,7 @@ urlpatterns = [
     path(r"retutn_all_foreign_key_details", retutn_all_foreign_key_details, name="retutn_all_foreign_key_details"),
 
     path(r"print_barcode_stickers", print_barcode_stickers, name="print_barcode_stickers"),
+    
+    path(r"shipment-book", shipment_book, name="shipment_book"),
 ]
 

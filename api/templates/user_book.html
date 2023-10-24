@@ -1,0 +1,218 @@
+{% extends 'base.html' %}{% load static %}{% block title %}Book Now{% endblock title %}{% block content %}
+
+<div class="container-fluid mt-5">
+    <div class="row mt-5 service_background_img">
+        <div class="col-12 mt-5">
+            <h1 class="text-white mt-5">Book Now</h1>
+        </div>
+        <div class="mb-5">
+            <span><hr class="line"></span>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row justify-content-around mt-0">
+        <div class="col-md-6 mt-5">
+            <h1 class="text-center">Book your shipment now</h1>
+            <hr class="line_for">
+            <!-- <h2 class="text-center">Book Your Shipment Now</h2>
+            <h4></h4><br> -->
+            <p>Book your shipment has never been easier. With our streamlined and user-friendly process, you can ensure the safe and timely delivery of your items. Whether you're sending a gift to a loved one or need to ship important documents, we've got
+                you covered
+                <a href="{% url 'terms_and_conditions' %}">Terms And Condition</a>. </p>
+            <p> Simply select your pickup and delivery locations, choose your preferred shipping options, and relax while we take care of the rest. Don't wait - book your shipment today and experience hassle-free shipping like never before!
+            </p>
+            <!-- Button trigger modal -->
+            <br>
+            <div class="text-center">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Start booking</button>
+            </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Book Your Shipment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+
+                                    <!-- Sender details -->
+                                    <div class="card">
+                                        <div class="card-header text-center">
+                                            <b>Sender Details</b>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="sender_name"><b>Name</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="sender_name" id="sender_name" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="sender_mob"><b>Mobile No.</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="number" name="sender_mob" id="sender_mob" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="sender_pincode"><b>Pincode</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="number" name="sender_pincode" id="sender_pincode" class="form-control form-control-sm mt-2" maxlength="7" minlength="4" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="sender_address"><b>Address</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <textarea class="form-control form-control-sm mt-2" id="sender_address" name="sender_address" rows="2"></textarea>
+                                                </div>
+                                                <div class="text-end mt-2">
+                                                    <button type="button" class="btn btn-primary btn-sm" id="sender_next_btn">Next</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <!-- Receiver details -->
+                                    <div class="card d-none" id="rec_details">
+                                        <div class="card-header text-center">
+                                            <b>Receiver Details</b>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="receiver_name"><b>Name</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="receiver_name" id="receiver_name" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="receiver_mob"><b>Mobile No.</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="receiver_mob" id="receiver_mob" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="receiver_pincode"><b>Pincode</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="receiver_pincode" id="receiver_pincode" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="receiver_address"><b>Address</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <textarea class="form-control form-control-sm mt-2" id="receiver_address" name="receiver_address" rows="2"></textarea>
+                                                </div>
+                                                <div class="text-end mt-2">
+                                                    <button type="button" class="btn btn-primary btn-sm" id="receiver_next_btn">Next</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <!-- Parcel details -->
+                                    <div class="card d-none" id="par_details">
+                                        <div class="card-header text-center">
+                                            <b>Parcel Details</b>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="weight"><b>Weight in (gm)</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="weight" id="weight" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="lenght"><b>Lenght (inc.)</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="lenght" id="lenght" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="breadth"><b>Breadth (inc.)</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="breadth" id="breadth" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="height"><b>Height (inc.)</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="height" id="height" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="item_desc"><b>Item Disc.</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="item_desc" id="item_desc" class="form-control form-control-sm mt-2" autofocus required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="remarks"><b>Remarks:</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <textarea class="form-control form-control-sm mt-2" id="remarks" name="remarks" rows="2"></textarea>
+                                                </div>
+                                                <hr class="mt-3">
+                                                <div class="col-md-4">
+                                                    <label class="mt-2" for="pickup_date"><b>Pickup Date:</b></label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="date" name="pickup_date" id="pickup_date" class="form-control form-control-sm mt-2" required>
+                                                </div>
+                                                <hr class="mt-3">
+                                                <div class="text-center mt-2">
+                                                    <button type="button" class="btn btn-primary btn-sm" id="getprice_btn">Get Price</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Understood</button>
+                        </div> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mt-5">
+            <img src="{% static 'img\second_img.jpg'%}" class="img-fluid" alt="">
+        </div>
+    </div>
+</div>
+
+<script>
+    // This function help to remove next button from sender and show receiver details.
+    $('#sender_next_btn').on("click", function() {
+        $("#rec_details").removeClass("d-none");
+        $("#sender_next_btn").addClass("d-none");
+        $("#receiver_name").focus();
+    });
+
+    $('#receiver_next_btn').on("click", function() {
+        $("#par_details").removeClass("d-none");
+        $("#receiver_next_btn").addClass("d-none");
+        $("#weight").focus();
+        var now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('pickup_date').value = now.toISOString().slice(0, 10);
+    });
+
+    $(document).ready(function() {
+        $('#sender_name').focus();
+    });
+</script>
+{% endblock content %}

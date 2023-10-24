@@ -243,13 +243,16 @@
         <div class="col-12">
             <hr>
             <div class="row justify-content-around">
+                <div class="col-4 text-center">
+                    <a class="btn btn-outline-success btn-sm mb-3" href="{% url 'shipment_book' %}">Book now</a>
+                </div>
                 {% if show_comp_button %}
-                <div class="col-6 text-end">
+                <div class="col-4 text-center">
                     <button class="btn btn-outline-danger btn-sm mb-3" id="complaint-btn" data-sid="{{ booking_details.c_note_number }}">Need help?</button>
                 </div>
                 {% endif %}
-                <div class="col-6 text-start">
-                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-success btn-sm mb-3">Back to Home</button></a>
+                <div class="col-4 text-center">
+                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-primary btn-sm mb-3">Back Home</button></a>
                 </div>
             </div>
         </div>
