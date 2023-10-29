@@ -1,6 +1,7 @@
 import os
 from django.conf import settings
 from django.shortcuts import render
+from django.http import HttpResponseForbidden
 
 
 class CustomErrorMiddleware:    
@@ -27,4 +28,18 @@ class CustomErrorMiddleware:
         # Render and return your custom 500 HTML page
         return render(request, '500.html', status=500)
 
-        
+
+class BlockIPMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.blocked_ips = ['176.111.174.153', '185.234.216.114']  # List of IP addresses to block
+
+    def __call__(self, request):
+        ip_address = request.META.get('REMOTE_ADDR')
+        if ip_address in self.blocked_ips:
+            # You can return a response indicating the IP is blocked
+            return HttpResponseForbidden("Site under maintenance.")
+
+        response = self.get_response(request)
+        return response
+

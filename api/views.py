@@ -31,7 +31,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from .models import CNoteGenerator, State, GstModel, Network
 from .models import contactus, Token, BranchNetwork, Destination
-from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory
+from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory, UserBooking
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
 from .models import DrsPermission, Complaints
@@ -2093,7 +2093,44 @@ def retutn_all_foreign_key_details(request):
     return JsonResponse({"status": 0})
 
 
-
-
-def shipment_book(request):
+def shipment_book(request):    
+    if request.method == "POST":        
+        s_name = request.POST.get("sender_name")
+        s_mob = request.POST.get("sender_mob")
+        s_pincode = request.POST.get("sender_pincode")
+        s_address = request.POST.get("sender_address")
+        r_name = request.POST.get("receiver_name")
+        r_mob = request.POST.get("receiver_mob")
+        r_pincode = request.POST.get("receiver_pincode")
+        r_address = request.POST.get("receiver_address")
+        p_weight = request.POST.get("weight")
+        p_lenght = request.POST.get("lenght")
+        p_breadth = request.POST.get("breadth")
+        p_hieght = request.POST.get("height")
+        p_item = request.POST.get("item_desc")
+        p_remarks = request.POST.get("remarks")
+        p_pickup = request.POST.get("pickup_date")        
+        branch_aloted = False
+        branch_available = BranchNetwork.objects.filter(pincode=s_pincode)
+        if branch_available.exists():
+            branch_available = branch_available[0].user   
+            branch_aloted = True         
+        else:
+            branch_available = Network.objects.filter(pincode=s_pincode)
+            if branch_available.exists():
+                branch_available = branch_available[0].user    
+                branch_aloted = True
+            else:
+                branch_available = User.objects.get(is_superuser=True)                        
+        client_ip = request.META.get('REMOTE_ADDR', None)
+        log.info("User try to book shipment for Pincode: {} - (DIY journey).IP: {}".format(r_pincode, client_ip))
+        UserBooking(s_name=s_name, s_mob=s_mob, s_pincode=s_pincode, s_address=s_address,
+                    r_name=r_name, r_mob=r_mob, r_pincode=r_pincode, r_address=r_address,
+              p_weight=p_weight, p_lenght=p_lenght, p_breadth=p_breadth, p_hieght=p_hieght,
+              p_item=p_item, p_remarks=p_remarks, p_pickup=p_pickup, status="OPEN",
+                assign_user=branch_available, pick_up=False, ip_address=client_ip,
+                branch_aloted=branch_aloted).save()   
+            
+        return render(request, 'user_book.html', context={"return_message": "Congratulations! Your details have been submitted successfully, Our team will contact you shortly."})
+    
     return render(request, 'user_book.html')

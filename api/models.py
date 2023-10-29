@@ -375,3 +375,34 @@ class Complaints(models.Model):
     class Meta:
         verbose_name_plural = "Complaint Register"
 
+
+class UserBooking(models.Model):    
+    s_name = models.CharField(max_length=200, null=True, blank=True)
+    s_mob = models.CharField(max_length=200, null=True, blank=True)
+    s_pincode = models.BigIntegerField(null=True, blank=True)
+    s_address = models.TextField(null=True, blank=True)
+    r_name = models.CharField(max_length=200, null=True, blank=True)
+    r_mob = models.CharField(max_length=200, null=True, blank=True)
+    r_pincode = models.BigIntegerField(null=True, blank=True)
+    r_address = models.TextField(null=True, blank=False)
+    p_weight = models.BigIntegerField(null=True, blank=False)
+    p_lenght = models.CharField(max_length=200, null=True, blank=True)
+    p_breadth = models.CharField(max_length=200, null=True, blank=True)
+    p_hieght = models.CharField(max_length=200, null=True, blank=True)
+    p_item = models.TextField(null=True, blank=True)
+    p_remarks = models.TextField(null=True, blank=True)
+    p_pickup = models.DateTimeField(max_length=200, null=True, blank=True)    
+    status = models.CharField(max_length=200, null=True, blank=True) # OPEN or CLOSED
+    pick_up = models.BooleanField(null=True, blank=True, default=False) # True for pickup done
+    ip_address = models.CharField(null=True, blank=False, max_length=200)
+    office_message = models.CharField(max_length=200, null=True, blank=True)    
+    branch_aloted = models.BooleanField(default=False, null=True, blank=True)
+    assign_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.s_pincode)
+    
+    class Meta:
+        verbose_name_plural = "User Booking"
+
