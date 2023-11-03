@@ -36,6 +36,8 @@ from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
 from .models import DrsPermission, Complaints
 from django.db.models.functions import TruncDate
+from django.db import connection
+
 
 BARCODE_CLASS = barcode.get_barcode_class("code128")
 
@@ -548,7 +550,7 @@ def print_barcode_stickers(request):
 def booking_dashboard(request):
     parties = PartyAccounts.objects.filter(user=request.user).order_by("party_name")
     today_date = datetime.date.today()    
-    today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
+    today_bookings = {} # Booking.objects.filter(created_at__startswith=today_date, user=request.user).order_by("-created_at")    
     ref_couriers = RefCourier.objects.all()
     context = {
         "todays_booking": today_bookings,
@@ -556,6 +558,20 @@ def booking_dashboard(request):
         "ref_couriers": ref_couriers
     }
     return render(request, "booking_dashboard.html", context=context)
+
+
+@login_required(login_url="login_auth")
+def booking_dashboard_return(request):
+    if request.method == "POST":
+        today_date = datetime.date.today()    
+        today_bookings = Booking.objects.filter(created_at__startswith=today_date, 
+                                user=request.user).order_by("-created_at").values("id",
+                        "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type",
+                        "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", 
+                        "ref_courier_name__name", "booking_mode")  
+                        
+        return JsonResponse({"status": 1, "data": list(today_bookings)})
+    return JsonResponse({"status": 0})
 
 @login_required(login_url="login_auth")
 def export_to_excel_bookings(request):
@@ -994,6 +1010,7 @@ def advance_date_ref_courier_wise_search_cash_booking(request):
         return JsonResponse({"status": 0})
 
 # ########################################## Fast Booking details  ###########################
+
 @login_required(login_url="login_auth")
 def bookings(request):    
     # destinations = Destination.objects.all()    
@@ -1001,7 +1018,7 @@ def bookings(request):
     booking_type = BookingType.objects.all().order_by("-booking_type")
     parties = PartyAccounts.objects.filter(user=request.user).order_by("party_name")
     today_date = datetime.date.today()    
-    today_bookings = Booking.objects.filter(created_at__startswith=today_date, user=request.user, booking_mode="A/C").order_by("-created_at")    
+    today_bookings = {} # Booking.objects.filter(created_at__startswith=today_date, user=request.user, booking_mode="A/C").order_by("-created_at")    
     from_destination = UserAdditionalDetails.objects.get(user=request.user)        
     context = {"ref_courier_name": ref_courier_name,
                "parties": parties, "today_bookings": today_bookings,
@@ -1009,6 +1026,20 @@ def bookings(request):
                "total_bookings": len(today_bookings), 
                "from_destination": from_destination}                
     return render(request, "bookings.html", context=context)
+
+
+@login_required(login_url="login_auth")
+def account_booking_return(request):
+    if request.method == "POST":
+        today_date = datetime.date.today()    
+        today_bookings = Booking.objects.filter(created_at__startswith=today_date,
+                user=request.user, booking_mode="A/C").order_by("-created_at").values("id", "c_note_number", "to_destination__name", 
+                                "ref_courier_name__name", "doc_date", "booking_type__booking_type",
+                                "party_name__party_name", "weight")  
+                        
+        return JsonResponse({"status": 1, "data": list(today_bookings)})
+    return JsonResponse({"status": 0})
+
 
 @login_required(login_url="login_auth")
 def save_booking(request):

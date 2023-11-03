@@ -85,7 +85,6 @@
                         output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="' + new_data[i].id + '"> <a href="print_cash_booking/' + new_data[i].id + '" target="_blank" class=" btn btn-primary btn-sm" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>' + "<td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" +
                             formattedDate + "</td><td>" + new_data[i].to_destination__name + "</td><td>" +
                             new_data[i].party_name__party_name + "</td><td>" + new_data[i].booking_type__booking_type + "</td><td>" + new_data[i].weight + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '</td></tr>'
-
                     }
                     $("#tbody").html(output);
                     $("h4[tabindex=0]").focus();
@@ -146,6 +145,7 @@
                     }
                 }
             });
+
             $("#c_note_search_btn").attr("disabled", false);
         }
 
@@ -210,6 +210,7 @@
         var final_data = {
             csrfmiddlewaretoken: token,
         }
+
         var new_value = "{{ request.session.p_sender_name }}";
         $.ajax({
             url: "{% url 'retutn_all_foreign_key_details' %}",
@@ -236,7 +237,45 @@
                     $("#sender_name").val(new_value);
                 }
             }
-        })
+        });
+
+        // Load booking details on page load
+        var token = $("input[name='csrfmiddlewaretoken']").val();
+        var my_data = {
+            csrfmiddlewaretoken: token
+        }
+        var output = "";
+        $.ajax({
+            url: "{% url 'account_booking_return' %}",
+            method: "POST",
+            dataType: "json",
+            data: my_data,
+            success: function(data) {
+                if (data.status == 1) {
+                    let new_data = data.data;
+                    for (i = 0; i < new_data.length; i++) {
+                        var docDate = new Date(new_data[i].doc_date);
+                        var day = docDate.getDate();
+                        var monthIndex = docDate.getMonth();
+                        var year = docDate.getFullYear();
+
+                        // Array of abbreviated month names
+                        var monthNames = [
+                            "jan", "feb", "mar", "apr", "may", "jun",
+                            "jul", "aug", "sep", "oct", "nov", "dec"
+                        ];
+                        var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+
+                        output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk"> <input type="button" class="btn btn-warning btn-sm edit-btn" id="edit_booking" value="Edit" data-sid="' + new_data[i].id + '"> <a href="print_cash_booking/' + new_data[i].id + '" target="_blank" class=" btn btn-primary btn-sm" style="padding-left: 10px;"><i class="bi bi-printer"></i></a>' + "<td><a class='text-decoration-none' href=/tracking/" + new_data[i].c_note_number + " target='_blank'>" + new_data[i].c_note_number + "</a></td><td>" +
+                            formattedDate + "</td><td>" + new_data[i].to_destination__name + "</td><td>" +
+                            new_data[i].party_name__party_name + "</td><td>" + new_data[i].booking_type__booking_type + "</td><td>" + new_data[i].weight + "</td><td>" + new_data[i].ref_courier_name__name + "</td><td>" + '</td></tr>'
+                    }
+                    $("#tbody").html(output);
+                    check_doc_count();
+                }
+            }
+        });
+
 
         $("#cnotenumber").focusout(function() {
             c_note_n = $("#cnotenumber").val();
@@ -278,6 +317,8 @@
             $("#receipt_input").val("");
             $("#receipt_input").val(c_note_details);
         });
+
+
     });
     // Above code will help to add destinations using jquery.
 </script>

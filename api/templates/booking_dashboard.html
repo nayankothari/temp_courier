@@ -560,6 +560,63 @@
             $("#export_to_excel_input").val(c_note_details);
         });
 
+
+        // Load default booking data on page reload.
+        var token = $("input[name=csrfmiddlewaretoken]").val();
+        var final_data = {
+            csrfmiddlewaretoken: token
+        }
+        var output = "";
+        $.ajax({
+            url: "{% url 'booking_dashboard_return' %}",
+            type: "json",
+            method: "POST",
+            data: final_data,
+            success: function(res) {
+                if (res.status) {
+                    var details = res.data;
+                    if (res.data) {
+                        for (var i = 0; i < details.length; i++) {
+                            var docDate = new Date(details[i].doc_date);
+                            var day = docDate.getDate();
+                            var monthIndex = docDate.getMonth();
+                            var year = docDate.getFullYear();
+
+                            // Array of abbreviated month names
+                            var monthNames = [
+                                "jan", "feb", "mar", "apr", "may", "jun",
+                                "jul", "aug", "sep", "oct", "nov", "dec"
+                            ];
+                            var formattedDate = day + '-' + monthNames[monthIndex] + '-' + year;
+                            // booking
+                            var edit_ena = ''
+                            if (details[i].booking_mode != 'A/C') {
+                                edit_ena = '<a href="cash_booking/edit/' + details[i].id + '" class="text-decoration-none border-0 bg-transparent text-primaryeditButton"> <i class="bi bi-pencil"></i></a>'
+                            }
+                            output += '<tr><td><input type="checkbox" style="margin-right: 10px;" id="chk_bxk">' + edit_ena + ' <a href="print_cash_booking/' + details[i].id + '"target="_blank" class="text-decoration-none border-0 bg-transparent text-primary printButton" style="padding-left: 10px;"><i class="bi bi-printer"></i></a></td><td><a class="text-decoration-none" href="tracking/' + details[i].c_note_number + '" target="_blank">' + details[i].c_note_number + '</a></td>' +
+                                '</td><td>' + formattedDate +
+                                '</td><td>' + details[i].to_destination__name +
+                                '</td><td>' + details[i].booking_type__booking_type + '</td><td>' +
+                                details[i].party_name__party_name + '</td><td>' + details[i].receiver_name +
+                                '</td><td>' + details[i].weight + '</td><td>' + details[i].freight_charge +
+                                '</td><td>' + details[i].amount +
+                                '</td><td>' + details[i].ref_courier_name__name + '</td></tr>'
+                        }
+                        $("#tbody").html(output);
+                        var table = document.getElementById("table-1");
+                        var rowCount = table.rows.length;
+                        if (rowCount > 1) {
+                            rowCount = rowCount - 1;
+                            document.getElementById("rowCount").textContent = rowCount;
+                        } else {
+                            document.getElementById("rowCount").textContent = 0;
+                        }
+                        $("#c_note_num").focus();
+                    }
+                }
+            }
+        });
+
         document.getElementById("selectAll").addEventListener("click", function() {
             var checkboxes = document.querySelectorAll("tbody input[type='checkbox']");
             checkboxes.forEach(function(checkbox) {

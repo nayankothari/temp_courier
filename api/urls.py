@@ -58,7 +58,8 @@ urlpatterns = [
     path(r"advance_search_by_date", advance_search_by_date, name="advance_search_by_date"),
     path(r"advance_search_by_c_note", advance_search_by_c_note, name="advance_search_by_c_note"),    
     path(r"advance_search_for_ref_number", advance_search_for_ref_number, name="advance_search_for_ref_number"),
-    
+    path(r"account_booking_return", account_booking_return, name="account_booking_return"),
+
     path(r"booking_dashboard", booking_dashboard, name="booking_dashboard"),
     path(r"cash_booking", cash_booking, name="cash_booking"),
     path(r"save_cash_booking", save_cash_booking, name="save_cash_booking"),
@@ -68,6 +69,7 @@ urlpatterns = [
     path(r"advance_date_party_wise_search_cash_booking", advance_date_party_wise_search_cash_booking, name="advance_date_party_wise_search_cash_booking"),
     path(r"advance_c_note_wise_search_cash_booking", advance_c_note_wise_search_cash_booking, name="advance_c_note_wise_search_cash_booking"),
     path(r"advance_date_ref_courier_wise_search_cash_booking", advance_date_ref_courier_wise_search_cash_booking, name="advance_date_ref_courier_wise_search_cash_booking"),
+    path(r"booking_dashboard_return", booking_dashboard_return, name="booking_dashboard_return"),
 
     path(r"part_master", part_master, name="part_master"),    
     path(r"save_parties", save_parties, name="save_parties"),        
