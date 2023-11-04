@@ -120,7 +120,8 @@ def tracking(request, tracking_number):
                 else:                    
                     final_status = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")
                     if final_status.exists():
-                        final_status = final_status[0]                             
+                        final_status = final_status[0]        
+                        drs_num = final_status.drs_number                                           
                         delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
                         delivery_boy_detail = delivery_boy_detail.deliveryboy_name                        
                         if_drs = 1                        
@@ -132,7 +133,7 @@ def tracking(request, tracking_number):
                         return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
                     "last_status": last_status, "today_date": today_date, "drs_details": if_drs, 
                     "status": final_status.status, "reason": reason, "date": final_status.created_at,
-                      "dbd": delivery_boy_detail, "comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button})
+                      "dbd": delivery_boy_detail, "drs_num": drs_num,"comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button})
                 
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
                 "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button})   
@@ -149,7 +150,8 @@ def tracking(request, tracking_number):
                             show_comp_button = 0
                             if_drs = 1    
                             only_and_only_drs = 1 
-                            final_status = drs_obj[0]                             
+                            final_status = drs_obj[0]                          
+                            drs_num = final_status.drs_number   
                             delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
                             delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
                             last_status = final_status.status                               
@@ -161,7 +163,7 @@ def tracking(request, tracking_number):
                         "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
                         "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
                         "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
-                        "dbd": delivery_boy_detail, "comp_exists": comp_exists, "show_comp_button": show_comp_button})
+                        "dbd": delivery_boy_detail, "drs_num": drs_num,"comp_exists": comp_exists, "show_comp_button": show_comp_button})
 
         return redirect("home")        
     except Exception as e:   
@@ -177,6 +179,7 @@ def tracking(request, tracking_number):
                     if_drs = 1    
                     only_and_only_drs = 1 
                     final_status = drs_obj[0]                             
+                    drs_num = final_status.drs_number     
                     delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
                     delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
                     last_status = final_status.status                               
@@ -188,7 +191,7 @@ def tracking(request, tracking_number):
                 "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
                 "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
                 "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
-                "dbd": delivery_boy_detail, "comp_exists": comp_exists, "show_comp_button": show_comp_button})            
+                "dbd": delivery_boy_detail, "drs_num": drs_num, "comp_exists": comp_exists, "show_comp_button": show_comp_button})            
         log.exception(e)
         log.info("Error for finding tracking number: {}".format(tracking_number))        
         return redirect("home")

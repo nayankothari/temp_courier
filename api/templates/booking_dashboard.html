@@ -624,6 +624,16 @@
             });
         });
 
+        $("#ref_courier_search_enter").select2({
+            theme: 'bootstrap-5'
+        });
+        $("#party").select2({
+            theme: 'bootstrap-5'
+        });
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+
         var table = document.getElementById("table-1");
         var rowCount = table.rows.length;
         if (rowCount > 1) {
