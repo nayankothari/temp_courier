@@ -2168,3 +2168,4 @@ def shipment_book(request):
         return render(request, 'user_book.html', context={"return_message": "Congratulations! Your details have been submitted successfully, Our team will contact you shortly."})
     
     return render(request, 'user_book.html')
+

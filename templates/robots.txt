@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Allow: /services
+Allow: /network
+Allow: /about_us
+Allow: /contact-us-form
+Allow: /terms_and_conditions
+Allow: /privacy_and_policy
+Allow: /logout
+
+User-agent: EtaoSpider
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
