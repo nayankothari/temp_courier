@@ -1,7 +1,11 @@
 import os
+import logging
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponseForbidden
+
+
+log = logging.getLogger(__name__)
 
 
 class CustomErrorMiddleware:    
@@ -23,7 +27,6 @@ class CustomErrorMiddleware:
         # Render and return your custom 404 HTML page            
         return render(request, '404.html', status=404)
         
-
     def handle_500(self, request):        
         # Render and return your custom 500 HTML page
         return render(request, '500.html', status=500)
@@ -35,7 +38,8 @@ class BlockIPMiddleware:
         self.blocked_ips = ['176.111.174.153', '185.234.216.114']  # List of IP addresses to block
 
     def __call__(self, request):
-        ip_address = request.META.get('REMOTE_ADDR')
+        ip_address = request.META.get('REMOTE_ADDR')        
+        log.info("Requested IP: {}".format(ip_address))
         if ip_address in self.blocked_ips:
             # You can return a response indicating the IP is blocked
             return HttpResponseForbidden("Site under maintenance.")
