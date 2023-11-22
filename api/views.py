@@ -1034,7 +1034,22 @@ def bookings(request):
 @login_required(login_url="login_auth")
 def account_booking_return(request):
     if request.method == "POST":
-        today_date = datetime.date.today()    
+        today_date = datetime.date.today()  
+        from_date = request.session.get("f_b_from_date", None)
+        to_date = request.session.get("f_b_to_date", None)        
+        if from_date and to_date:   # To return data of existing searched dates.
+            try:
+                from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
+                to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
+                to_date = to_date + timedelta(days=1)        
+                today_bookings = Booking.objects.filter(doc_date__range=(from_date, to_date),
+                        user=request.user, booking_mode="A/C").order_by("-created_at").values("id", "c_note_number", "to_destination__name", 
+                                        "ref_courier_name__name", "doc_date", "booking_type__booking_type",
+                                        "party_name__party_name", "weight")  
+                return JsonResponse({"status": 1, "data": list(today_bookings)})
+            except Exception as e:
+                log.error("Fast booking search dates are set to blank thats why below error occur.")
+                log.exception(e)
         today_bookings = Booking.objects.filter(created_at__startswith=today_date,
                 user=request.user, booking_mode="A/C").order_by("-created_at").values("id", "c_note_number", "to_destination__name", 
                                 "ref_courier_name__name", "doc_date", "booking_type__booking_type",
@@ -1095,6 +1110,8 @@ def save_booking(request):
                         amount=amount, weight=weight, charged_weight=weight, freight_charge=amount, pcs=qty, booking_mode="A/C")                    
                         booking_obj.save()                          
                         request.session["success"] = "success"
+                        request.session["f_b_from_date"] = None
+                        request.session["f_b_to_date"] = None
                         try:
                             request.session["next_c_note"] = int(c_note_number) + 1
                         except:
@@ -1155,7 +1172,8 @@ def advance_search_by_date(request):
         if request.method == "POST":
             from_date =  request.POST.get("from_date")
             to_date =  request.POST.get("to_date")
-
+            request.session["f_b_from_date"] = from_date
+            request.session["f_b_to_date"] = to_date      
             from_date = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
             to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
             to_date = to_date + timedelta(days=1)        
