@@ -38,7 +38,7 @@ else:
     ALLOWED_HOSTS = ["143.244.136.147", "airpostxpress.com", "www.airpostxpress.com", "www.saroorifoods.com", 
                      "saroorifoods.com", ".vinayagaflourandoilmill.in", "www.vinayagaflourandoilmill.in"]
 
-SECURE_CROSS_ORIGIN_OPENER_POLICY = None # Need to remove when upload on server with domain name.
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin' # Need to remove when upload on server with domain name.
 
 # Application definition
 SESSION_COOKIE_AGE = 12 * 60 * 60
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "api",
     "courier",
     "rest_framework",
+    "ckeditor",
 ]
 
 MIDDLEWARE = [
@@ -214,3 +215,123 @@ JAZZMIN_SETTINGS = {
     }
 
 
+#####
+# CK EDITOR CONFIG
+####
+
+
+#########
+#  CKEDITOR CONFIGURATION #
+#########
+
+CKEDITOR_JQUERY_URL = "https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+
+CKEDITOR_CONFIGS = {
+    "default": {"toolbar": None},
+}
+
+#########
+
+CKEDITOR_CONFIGS = {
+    "default": {
+        "allowedContent" : True,
+        "toolbar_Basic": [["Source", "-", "Bold", "Italic"]],
+        "toolbar_YourCustomToolbarConfig": [
+            {"name": "document", "items": ["Source", "-", "NewPage", "-"]},
+            {
+                "name": "clipboard",
+                "items": [
+                    "Cut",
+                    "Copy",
+                    "Paste",
+                    "PasteText",
+                    "PasteFromWord",
+                    "-",
+                    "Undo",
+                    "Redo",
+                ],
+            },
+            {"name": "editing", "items": ["Find", "Replace", "-", "SelectAll"]},
+            {
+                "name": "forms",
+                "items": [
+                    "Checkbox",
+                    "Radio",
+                    "TextField",
+                    "Textarea",
+                    "Select",
+                    "Button",
+                ],
+            },
+            "/",
+            {
+                "name": "basicstyles",
+                "items": [
+                    "Bold",
+                    "Italic",
+                    "Underline",
+                    "Strike",
+                    "Subscript",
+                    "Superscript",
+                    "-",
+                    "RemoveFormat",
+                ],
+            },
+            {
+                "name": "paragraph",
+                "items": [
+                    "NumberedList",
+                    "BulletedList",
+                    "-",
+                    "Outdent",
+                    "Indent",
+                    "-",
+                    "Blockquote",
+                    "CreateDiv",
+                    "-",
+                    "JustifyLeft",
+                    "JustifyCenter",
+                    "JustifyRight",
+                    "JustifyBlock",
+                    "-",
+                    "BidiLtr",
+                    "BidiRtl",
+                ],
+            },
+            {
+                "name": "insert",
+                "items": [
+                    "Image",
+                    "Table",
+                    "HorizontalRule",
+                    "Smiley",
+                    "SpecialChar",
+                    "PageBreak",
+                ],
+            },
+            "/",
+            {"name": "styles", "items": ["Styles", "Format", "Font", "FontSize"]},
+            {"name": "colors", "items": ["TextColor", "BGColor"]},
+            {"name": "tools", "items": ["Maximize", "ShowBlocks"]},
+            {"name": "about", "items": ["About"]},
+            "/",  # put this to force next toolbar on new line
+            {
+                "name": "yourcustomtools",
+                "items": [
+                    # put the name of your editor.ui.addButton here
+                    "Preview",
+                    "Maximize",
+                ],
+            },
+        ],
+        "toolbar": "YourCustomToolbarConfig",  # put selected
+        "height": 300,
+        "width": "100%",
+        "filebrowserWindowHeight": 725,
+        "filebrowserWindowWidth": 940,
+        "toolbarCanCollapse": True,
+        "mathJaxLib": "//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML",
+        "tabSpaces": 4,
+    }
+}

@@ -34,16 +34,21 @@ from .models import contactus, Token, BranchNetwork, Destination
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory, UserBooking
 from .models import RefCourier, PartyAccounts, AreaMaster, DeliveryBoyMaster
 from .models import Booking, BookingType, ParcelStatus, Trackinghistory, UserAdditionalDetails
-from .models import DrsPermission, Complaints
+from .models import DrsPermission, Complaints, MessageMarquee
 from django.db.models.functions import TruncDate
 from django.db import connection
 
 
 BARCODE_CLASS = barcode.get_barcode_class("code128")
-
 log = logging.getLogger(__name__)
-
 today_date = datetime.datetime.now().strftime("%Y")
+
+def get_marque_message():
+    message = MessageMarquee.objects.all()
+    if message.exists():
+        return message[0]
+    return None
+
 # Create your views here.
 def home(request):  
     """
@@ -53,7 +58,8 @@ def home(request):
         tracking_id = request.POST.get("tracking_number")                
         if tracking_id:                                    
             return redirect("/tracking/{}".format(tracking_id))    
-    return render(request, "index.html", {"today_date": today_date, "return_message": None})    
+    MARQUE_MESSAGE = get_marque_message()
+    return render(request, "index.html", {"today_date": today_date, "return_message": None, "marque_message": MARQUE_MESSAGE})    
 
 
 def tracking(request, tracking_number):    
@@ -128,15 +134,16 @@ def tracking(request, tracking_number):
                         last_status = final_status.status       
                         reason = ""
                         if final_status.reason:
-                            reason = final_status.reason                                            
-                        
+                            reason = final_status.reason     
+
+                        MARQUE_MESSAGE = get_marque_message()
                         return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
                     "last_status": last_status, "today_date": today_date, "drs_details": if_drs, 
                     "status": final_status.status, "reason": reason, "date": final_status.created_at,
-                      "dbd": delivery_boy_detail, "drs_num": drs_num,"comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button})
-                
+                      "dbd": delivery_boy_detail, "drs_num": drs_num,"comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button, "marque_message": MARQUE_MESSAGE})
+                MARQUE_MESSAGE = get_marque_message()
                 return render(request, "tracking.html", {"booking_details": booking_details, "tracking_history": tracking_history,
-                "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button})   
+                "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "comp_details": comp_details, "comp_exists": comp_exists, "show_comp_button": show_comp_button, "marque_message": MARQUE_MESSAGE})   
             
             else: # use for internal drs tracking
                 if request.user.is_authenticated:
@@ -158,12 +165,12 @@ def tracking(request, tracking_number):
                             reason = ""                        
                             if final_status.reason:
                                 reason = final_status.reason
-                            
+                            MARQUE_MESSAGE = get_marque_message()
                             return render(request, "tracking.html", {"tracking_history": [],
                         "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
                         "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
                         "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
-                        "dbd": delivery_boy_detail, "drs_num": drs_num,"comp_exists": comp_exists, "show_comp_button": show_comp_button})
+                        "dbd": delivery_boy_detail, "drs_num": drs_num,"comp_exists": comp_exists, "show_comp_button": show_comp_button, "marque_message": MARQUE_MESSAGE})
 
         return redirect("home")        
     except Exception as e:   
@@ -186,12 +193,12 @@ def tracking(request, tracking_number):
                     reason = ""                        
                     if final_status.reason:
                         reason = final_status.reason
-                    
+                    MARQUE_MESSAGE = get_marque_message()
                     return render(request, "tracking.html", {"tracking_history": [],
                 "last_status": last_status, "today_date": today_date, "drs_details": if_drs, "status": final_status.status, 
                 "reason": reason, "date": final_status.created_at, "only_and_only_drs": only_and_only_drs,
                 "c_note_number": tracking_number, "from_destination": final_status.origin, "receiver_name": final_status.consignee_name,
-                "dbd": delivery_boy_detail, "drs_num": drs_num, "comp_exists": comp_exists, "show_comp_button": show_comp_button})            
+                "dbd": delivery_boy_detail, "drs_num": drs_num, "comp_exists": comp_exists, "show_comp_button": show_comp_button, "marque_message": MARQUE_MESSAGE})            
         log.exception(e)
         log.info("Error for finding tracking number: {}".format(tracking_number))        
         return redirect("home")
@@ -318,8 +325,8 @@ def contactUs(request):
                     contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message, status="OPEN")
                     contact_obj.save()
                     return_message = "Request submitted successfully."       
-
-                    return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date})    
+                    MARQUE_MESSAGE = get_marque_message()
+                    return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date, "marque_message": MARQUE_MESSAGE})    
             else:
                 client_ip = request.META.get('REMOTE_ADDR')
                 log.info("RobertTiz IP : {}".format(client_ip))
@@ -327,12 +334,12 @@ def contactUs(request):
             log.warning(f"Getting {str(name)} contact details, {request.user}")
     except Exception as e:
         log.exception(e)
-    return render(request, "contactus.html", {"today_date": today_date})
-
+    MARQUE_MESSAGE = get_marque_message()
+    return render(request, "contactus.html", {"today_date": today_date, "marque_message": MARQUE_MESSAGE})
 
 def network(request):
     message = 1    
-    head_offices = BranchNetwork.objects.filter(status="R O") 
+    head_offices = BranchNetwork.objects.filter(status="R O")[:50]
     try:           
         if request.method == "POST":
             if "by_pincode" in request.POST and request.POST.get("pincode"):
@@ -381,22 +388,28 @@ def network(request):
     except Exception as e:
         log.exception(e)
     message = None
-    context = {"head_offices": head_offices, "message": message, "today_date": today_date}
+    MARQUE_MESSAGE = get_marque_message()
+    context = {"head_offices": head_offices, "message": message, "today_date": today_date, "marque_message": MARQUE_MESSAGE}
     return render(request, "network.html", context=context)
 
 
 def terms_and_conditions(request):
-    return render(request, "terms_and_condition/terms_and_condition.html")
+    MARQUE_MESSAGE = get_marque_message()
+    context = {"marque_message": MARQUE_MESSAGE}
+    return render(request, "terms_and_condition/terms_and_condition.html", context=context)
 
 def privacy_and_policy(request):
-    return render(request, "terms_and_condition/privacy_and_policy.html")
+    MARQUE_MESSAGE = get_marque_message()
+    return render(request, "terms_and_condition/privacy_and_policy.html", context={"marque_message": MARQUE_MESSAGE})
 
 def services(request):
-    return render(request, "services.html", {"today_date": today_date})
+    MARQUE_MESSAGE = get_marque_message()
+    return render(request, "services.html", context={"today_date": today_date, "marque_message": MARQUE_MESSAGE})
 
 
 def about_us(request):
-    return render(request, "aboutus.html", {"today_date": today_date})
+    MARQUE_MESSAGE = get_marque_message()
+    return render(request, "aboutus.html", context={"today_date": today_date, "marque_message": MARQUE_MESSAGE})
 
 
 def login_auth(request):
@@ -418,11 +431,13 @@ def login_auth(request):
                 return render(request, "login.html", context)
             else:
                 log.error(f"{user_name} try to login with password: {password}, but failed.")
-                context = {"message": "Invalid credentials !", "today_date": today_date}
+                MARQUE_MESSAGE = get_marque_message()
+                context = {"message": "Invalid credentials !", "today_date": today_date, "marque_message": MARQUE_MESSAGE}
                 return render(request, "login.html", context)
     except Exception as e:
         log.exception(e)
-    return render(request, "login.html", {"today_date": today_date})
+    MARQUE_MESSAGE = get_marque_message()
+    return render(request, "login.html", context={"today_date": today_date, "marque_message": MARQUE_MESSAGE})
 
 
 @login_required(login_url="login_auth")
@@ -435,7 +450,8 @@ def logout(request):
 def dashboard(request):    
     from_date = datetime.datetime.now().strftime("%Y-%m-%d")
     to_date = datetime.datetime.now().strftime("%Y-%m-%d")
-    return render(request, "dashboard.html", context={"from_date": from_date, "to_date": to_date})
+    MARQUE_MESSAGE = get_marque_message()
+    return render(request, "dashboard.html", context={"from_date": from_date, "to_date": to_date, "marque_message": MARQUE_MESSAGE})
 
 
 @login_required(login_url="login_auth")
@@ -2184,6 +2200,6 @@ def shipment_book(request):
                 branch_aloted=branch_aloted).save()   
             
         return render(request, 'user_book.html', context={"return_message": "Congratulations! Your details have been submitted successfully, Our team will contact you shortly."})
-    
-    return render(request, 'user_book.html')
+    marquee_message = get_marque_message()
+    return render(request, 'user_book.html', context={"marque_message": marquee_message})
 

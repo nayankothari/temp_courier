@@ -1,7 +1,8 @@
 from django.db import models
 from datetime import datetime
-from django.utils import timezone
 from datetime import timedelta
+from django.utils import timezone
+from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 
 
@@ -406,3 +407,13 @@ class UserBooking(models.Model):
     class Meta:
         verbose_name_plural = "User Booking"
 
+class MessageMarquee(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)    
+    message = RichTextField(max_length=2000, default="", null=True, blank=True)
+
+
+    def __str__(self):
+        return self.message
+    
+    class Meta:
+        verbose_name_plural = "Marquee message"

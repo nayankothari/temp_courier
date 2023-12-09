@@ -47,6 +47,8 @@
 
 <body>
     <!-- bg-body-tertiary -->
+    <h1 style="font-size: 3px;">AirpostXpress Courier and Tracking</h1>
+    <p style="font-size: 1px;">The AirpostXpress courier service stands out as an exemplary professional courier service. We frequently entrust AirpostXpress with our personal courier needs, consistently experiencing punctual deliveries for our parcels.</p>
     <section id="blank_section">
     </section>
     <!--  -->
@@ -101,9 +103,25 @@
             </div>
         </div>
     </nav>
-
+    <!-- Use to publish notification to all public or branches -->
     {% if user.is_authenticated %}
-    <div class="container mt-5 alert alert-dark back_color">
+    <div class="container-fluid mt-5" style="background-color: rgba(248, 239, 64, 0.897);">
+        <div class="row">
+            {% if marque_message %}
+            <marquee behavior="scroll" direction="left">{{ marque_message|safe }}</marquee>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="container-fluid mt-5" style="background-color: rgba(248, 239, 64, 0.897);">
+        <div class="row">
+            {% if marque_message %}
+            <marquee behavior="scroll" direction="left">{{ marque_message|safe }}</marquee>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %} {% if user.is_authenticated %}
+    <div class="container-fluid alert alert-dark back_color">
         <div class="row justify-content-center">
             <div class="col-md-6 text-center">
                 <!-- <a href="{% url 'bookings' %}" class="text-decoration-none btn btn-outline-dark mt-3"><b>Booking</b></a> -->

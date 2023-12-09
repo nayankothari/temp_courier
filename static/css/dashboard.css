@@ -1,0 +1,27 @@
+.form-group.required .control-label:after {
+    color: #d00;
+    content: "*";
+    position: absolute;
+    margin-left: 8px;
+    top: 7px;
+}
+
+.table-responsive {
+    margin-top: -10px;
+    max-height: 450px !important;
+}
+
+.back_color {
+    background-color: rgba(240, 230, 240, 0.628) !important;
+    border-radius: 10px;
+}
+
+.red_color {
+    color: red !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .second_space {
+        margin-top: 20px;
+    }
+}

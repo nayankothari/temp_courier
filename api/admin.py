@@ -4,7 +4,7 @@ from .models import Trackinghistory, ParcelStatus, BranchNetwork
 from .models import contactus, State, Token, Country, PartyAccounts, Reasons
 from .models import UserAdditionalDetails, BookingType, DeliveryBoyMaster, AreaMaster
 from .models import DrsNoGenerator, DrsMaster, DrsTransactionHistory, GstModel, Network
-from .models import DrsPermission, Complaints, UserBooking
+from .models import DrsPermission, Complaints, UserBooking, MessageMarquee
 
 
 class AdminTracking(admin.ModelAdmin):
@@ -25,7 +25,6 @@ class BranchDetails(admin.ModelAdmin):
 
 class DrsDetails(admin.ModelAdmin):
     list_display = ["drs_no", "date", "status", "user"]
-
 
 class DrspermissionDetails(admin.ModelAdmin):
     list_display = ["user", "can_veiw"]
@@ -52,6 +51,9 @@ class UserAddDetails(admin.ModelAdmin):
 class ComplaintsDetails(admin.ModelAdmin):
     list_display = ["doc_number", "created_at","from_counter", "to_counter", "by_user", "status"]
 
+class UserBookingDetails(admin.ModelAdmin):
+    list_display = ["created_at", "r_pincode","s_pincode", "status", "branch_aloted", "assign_user", "ip_address"]
+
 
 admin.site.register(Booking, BookingDetails)
 admin.site.register(RefCourier)
@@ -76,4 +78,6 @@ admin.site.register(GstModel)
 admin.site.register(Network, NetworkDetails)
 admin.site.register(DrsPermission, DrspermissionDetails)
 admin.site.register(Complaints, ComplaintsDetails)
-admin.site.register(UserBooking)
+admin.site.register(UserBooking, UserBookingDetails)
+admin.site.register(MessageMarquee)
+
