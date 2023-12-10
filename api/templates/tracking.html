@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% load static %} {% block title %}Tracking{% endblock title %} {% block content %}
-<div class="container mt-5">
+<div class="container">
     <!-- Complaint model -->
     <div class="modal fade" id="complaint-model">
         <div class="modal-dialog">
@@ -24,7 +24,7 @@
     </div>
 
 
-    <div class="row mt-4">
+    <div class="row">
         <div class="col-12 mt-4">
             <h4 class="text-center"></h4>
             <div class="table-responsive">
@@ -99,7 +99,7 @@
                             {% if user.is_authenticated %}
                             <td class="text-success"><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }} | DRS No: {{ drs_num }}</b></td>
                             {% else %}
-                            <td class="text-success"><b>{{ last_status }}</b></td>
+                            <td class="text-success" style="font-size: 20px;"><b><i class="bi bi-patch-check-fill"></i> {{ last_status }}</b></td>
                             {% endif %}
                         </tr>
                         {% elif last_status.name == 'PENDING' %}
