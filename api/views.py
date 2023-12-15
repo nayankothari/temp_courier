@@ -65,7 +65,8 @@ def home(request):
 def tracking(request, tracking_number):    
     try:            
         tracking_number = int(tracking_number)  
-        log.info("Search for tracking number: {}".format(tracking_number))     
+        client_ip = request.META.get('REMOTE_ADDR', "Not available")
+        log.info("Search for tracking number: {} by user {} by IP: {}".format(tracking_number, request.user, client_ip))     
         if tracking_number:
             data = Booking.objects.filter(c_note_number=tracking_number)                        
             comp_details = Complaints.objects.filter(doc_number=tracking_number).order_by("-created_at")
@@ -313,7 +314,8 @@ def get_complaints(request):
 # ################################ Contact us #######################################
 def contactUs(request):    
     try:
-        if request.method == "POST":        
+        if request.method == "POST":       
+             
             name = request.POST.get("name")
             email = request.POST.get("email")
             country = request.POST.get("country")
@@ -322,16 +324,19 @@ def contactUs(request):
             exclude_names = ["RobertTiz", "RaymondTum"]
             if str(name) not in exclude_names:
                 if name and email and country and pincode:            
-                    contact_obj = contactus.objects.create(name=name, email=email, country=country, mobile_number=pincode, message=message, status="OPEN")
+                    contact_obj = contactus.objects.create(name=name, email=email, country=country,
+                                    mobile_number=pincode, message=message, status="OPEN")
                     contact_obj.save()
                     return_message = "Request submitted successfully."       
                     MARQUE_MESSAGE = get_marque_message()
-                    return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date, "marque_message": MARQUE_MESSAGE})    
+                    client_ip = request.META.get('REMOTE_ADDR', "Not Available")
+                    log.warning(f"saved contact info by Form name: {str(name)} and contact details, By : logeedin user name: {request.user} and IP: {client_ip}")
+                    return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date, "marque_message": MARQUE_MESSAGE})                    
             else:
                 client_ip = request.META.get('REMOTE_ADDR')
                 log.info("RobertTiz IP : {}".format(client_ip))
-
-            log.warning(f"Getting {str(name)} contact details, {request.user}")
+            client_ip = request.META.get('REMOTE_ADDR', "Not Available")
+            log.warning(f"Getting {str(name)} contact details, {request.user} by IP: {client_ip}")
     except Exception as e:
         log.exception(e)
     MARQUE_MESSAGE = get_marque_message()

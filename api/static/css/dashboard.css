@@ -13,6 +13,7 @@
 
 .back_color {
     background-color: rgba(240, 230, 240, 0.628) !important;
+    /* background-color: rgb(226, 238, 227) !important; */
     border-radius: 10px;
 }
 
