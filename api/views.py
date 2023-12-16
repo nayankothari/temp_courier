@@ -314,8 +314,7 @@ def get_complaints(request):
 # ################################ Contact us #######################################
 def contactUs(request):    
     try:
-        if request.method == "POST":       
-             
+        if request.method == "POST":                    
             name = request.POST.get("name")
             email = request.POST.get("email")
             country = request.POST.get("country")
@@ -330,16 +329,17 @@ def contactUs(request):
                     return_message = "Request submitted successfully."       
                     MARQUE_MESSAGE = get_marque_message()
                     client_ip = request.META.get('REMOTE_ADDR', "Not Available")
-                    log.warning(f"saved contact info by Form name: {str(name)} and contact details, By : logeedin user name: {request.user} and IP: {client_ip}")
+                    log.warning(f"saved contact info by Form name: {str(name)} and contact details, By : logged-in user name: {request.user} and IP: {client_ip}")
                     return render(request, "contactus.html", {"return_message": return_message, "today_date": today_date, "marque_message": MARQUE_MESSAGE})                    
             else:
                 client_ip = request.META.get('REMOTE_ADDR')
-                log.info("RobertTiz IP : {}".format(client_ip))
-            client_ip = request.META.get('REMOTE_ADDR', "Not Available")
-            log.warning(f"Getting {str(name)} contact details, {request.user} by IP: {client_ip}")
+                log.info("RobertTiz IP : {}".format(client_ip))            
     except Exception as e:
         log.exception(e)
+        
     MARQUE_MESSAGE = get_marque_message()
+    client_ip = request.META.get('REMOTE_ADDR', "Not Available")
+    log.warning(f"Getting {str(name)} contact details, {request.user} by IP: {client_ip}")
     return render(request, "contactus.html", {"today_date": today_date, "marque_message": MARQUE_MESSAGE})
 
 def network(request):

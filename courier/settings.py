@@ -35,8 +35,7 @@ DEBUG = db_details["DEBUG"]
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ["143.244.136.147", "airpostxpress.com", "www.airpostxpress.com", "www.saroorifoods.com", 
-                     "saroorifoods.com", ".vinayagaflourandoilmill.in", "www.vinayagaflourandoilmill.in"]
+    ALLOWED_HOSTS = ["143.244.136.147", "airpostxpress.com", "www.airpostxpress.com"]
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin' # Need to remove when upload on server with domain name.
 
