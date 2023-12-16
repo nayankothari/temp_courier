@@ -35,7 +35,7 @@ class CustomErrorMiddleware:
 class BlockIPMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.blocked_ips = ['176.111.174.153', '185.234.216.114']  # List of IP addresses to block
+        self.blocked_ips = ['176.111.174.153', '185.234.216.114', '159.224.217.252']  # List of IP addresses to block
 
     def __call__(self, request):
         ip_address = request.META.get('REMOTE_ADDR')        
