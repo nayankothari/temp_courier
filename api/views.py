@@ -339,7 +339,7 @@ def contactUs(request):
         
     MARQUE_MESSAGE = get_marque_message()
     client_ip = request.META.get('REMOTE_ADDR', "Not Available")
-    log.warning(f"Getting {str(name)} contact details, {request.user} by IP: {client_ip}")
+    log.warning(f"Getting contact details, {request.user} by IP: {client_ip}")
     return render(request, "contactus.html", {"today_date": today_date, "marque_message": MARQUE_MESSAGE})
 
 def network(request):
