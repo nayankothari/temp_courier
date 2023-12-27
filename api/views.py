@@ -119,7 +119,7 @@ def tracking(request, tracking_number):
                             # booking_details.c_note_number
                             url = f'<a id="sele_data" class="sele_data_1 btn btn-outline-primary btn-sm text-dark" data-sid="{url}" >Get latest updates <i class="bi bi-arrow-clockwise"></i></a>'
                         else:
-                            url = f'Get latest updates <a href="{url}" target="_blank" class="btn btn-outline-primary btn-sm text-dark">Get latest updates <i class="bi bi-arrow-clockwise"></i></a>'
+                            url = f'<a href="{url}" target="_blank" class="btn btn-outline-primary btn-sm text-dark">Get latest updates <i class="bi bi-arrow-clockwise"></i></a>'
                         tracking_history["Date"] = ""
                         tracking_history["Location"] = ""
                         tracking_history["CheckpointState"] = ""
