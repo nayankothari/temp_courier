@@ -116,9 +116,10 @@ def tracking(request, tracking_number):
                                 url = str(booking_details.ref_courier_name.multi_name) + "UUUU" + str(booking_details.ref_courier_number)
 
                         if selenium:                            
-                            url = f'Get latest updates <a id="sele_data" class="text-primary sele_data_1 btn btn-secondary" data-sid="{url}" >{booking_details.c_note_number}</a>'
+                            # booking_details.c_note_number
+                            url = f'<a id="sele_data" class="sele_data_1 btn btn-outline-primary btn-sm text-dark" data-sid="{url}" >Get latest updates <i class="bi bi-arrow-clockwise"></i></a>'
                         else:
-                            url = f'Get latest updates <a href="{url}" target="_blank" class="btn btn-secondary">{booking_details.c_note_number}</a>'
+                            url = f'Get latest updates <a href="{url}" target="_blank" class="btn btn-outline-primary btn-sm text-dark">Get latest updates <i class="bi bi-arrow-clockwise"></i></a>'
                         tracking_history["Date"] = ""
                         tracking_history["Location"] = ""
                         tracking_history["CheckpointState"] = ""
