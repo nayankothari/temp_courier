@@ -40,58 +40,58 @@
                         </tr>
                         {% if only_and_only_drs == 1 %}
                         <tr>
-                            <th scope="row">C.N. Number</th>
-                            <td><b>{{ c_note_number }}</b></td>
+                            <th scope="row" style="font-size: 13px;">C.N. Number</th>
+                            <td style="font-size: 13px;"><b>{{ c_note_number }}</b></td>
 
                         </tr>
                         {% else %}
                         <tr>
-                            <th scope="row">C.N. Number</th>
-                            <td><b>{{ booking_details.c_note_number }}</b></td>
+                            <th scope="row" style="font-size: 13px;">C.N. Number</th>
+                            <td style="font-size: 13px;"><b>{{ booking_details.c_note_number }}</b></td>
 
                         </tr>
                         {% endif %} {% if booking_details.ref_courier_name.type != 'Internal' %}
                         <tr>
-                            <th scope="row">Ref. Number</th>
-                            <td>{{ booking_details.ref_courier_number }}
+                            <th scope="row" style="font-size: 13px;">Ref. Number</th>
+                            <td style="font-size: 13px;">{{ booking_details.ref_courier_number }}
                                 <button type='button' id='copy_btn' class='border-0 bg-transparent text-primary copy_btn' data-sid="{{ booking_details.ref_courier_number }}" title="Copy to clipboard"><span id="cp_clipboard"><i class="bi bi-clipboard"></i></span></button>
                             </td>
 
                         </tr>
                         {% endif %} {% if only_and_only_drs == 1 %}
                         <tr>
-                            <th scope="row">From Center</th>
-                            <td>{{ from_destination }}</td>
+                            <th scope="row" style="font-size: 13px;">From Center</th>
+                            <td style="font-size: 13px;">{{ from_destination }}</td>
                         </tr>
                         {% else %}
                         <tr>
-                            <th scope="row">From Center</th>
-                            <td>{{ booking_details.from_destination }}</td>
+                            <th scope="row" style="font-size: 13px;">From Center</th>
+                            <td style="font-size: 13px;">{{ booking_details.from_destination }}</td>
                         </tr>
                         {% endif %}
                         <tr>
-                            <th scope="row">To Center</th>
-                            <td><b>{{ booking_details.to_destination }}</b></td>
+                            <th scope="row" style="font-size: 13px;">To Center</th>
+                            <td style="font-size: 13px;"><b>{{ booking_details.to_destination }}</b></td>
                         </tr>
                         {% if only_and_only_drs == 1 %}
                         <tr>
-                            <th scope="row">Date/Time</th>
-                            <td>{{ date | date:'d-m-Y' }}</td>
+                            <th scope="row" style="font-size: 13px;">Date/Time</th>
+                            <td style="font-size: 13px;">{{ date | date:'d-m-Y' }}</td>
                         </tr>
                         {% else %}
                         <tr>
-                            <th scope="row">Date/Time</th>
-                            <td>{{ booking_details.doc_date }}</td>
+                            <th scope="row" style="font-size: 13px;">Date/Time</th>
+                            <td style="font-size: 13px;">{{ booking_details.doc_date }}</td>
                         </tr>
                         {% endif %} {% if only_and_only_drs == 1 %}
                         <tr>
-                            <th scope="row">Receiver name</th>
-                            <td>{{ receiver_name }}</td>
+                            <th scope="row" style="font-size: 13px;">Receiver name</th>
+                            <td style="font-size: 13px;">{{ receiver_name }}</td>
                         </tr>
                         {% else %}
                         <tr>
-                            <th scope="row">Receiver name</th>
-                            <td>{{ booking_details.receiver_name }}</td>
+                            <th scope="row" style="font-size: 13px;">Receiver name</th>
+                            <td style="font-size: 13px;">{{ booking_details.receiver_name }}</td>
                         </tr>
                         {% endif %} {% if last_status.name == 'DELIVERED' %}
                         <tr>
@@ -142,7 +142,7 @@
                         </tr>
                         {% endif %} {% if only_and_only_drs == 1 %}
                         <tr>
-                            <th scope="row">Remarks/Receiver</th>
+                            <th scope="row" style="font-size: 13px;">Remarks/Receiver</th>
                             <td>{{ reason }}</td>
                         </tr>
                         {% endif %}

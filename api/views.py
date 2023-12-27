@@ -63,7 +63,8 @@ def home(request):
 
 
 def tracking(request, tracking_number):    
-    try:            
+    tracking_number_drs = tracking_number
+    try:        
         tracking_number = int(tracking_number)  
         client_ip = request.META.get('REMOTE_ADDR', "Not available")
         log.info("Search for tracking number: {} by user {} by IP: {}".format(tracking_number, request.user, client_ip))     
@@ -115,9 +116,9 @@ def tracking(request, tracking_number):
                                 url = str(booking_details.ref_courier_name.multi_name) + "UUUU" + str(booking_details.ref_courier_number)
 
                         if selenium:                            
-                            url = f'Get latest updates <a id="sele_data" class="text-primary sele_data_1" data-sid="{url}" >{booking_details.c_note_number}</a>'
+                            url = f'Get latest updates <a id="sele_data" class="text-primary sele_data_1 btn btn-secondary" data-sid="{url}" >{booking_details.c_note_number}</a>'
                         else:
-                            url = f'Get latest updates <a href="{url}" target="_blank">{booking_details.c_note_number}</a>'
+                            url = f'Get latest updates <a href="{url}" target="_blank" class="btn btn-secondary">{booking_details.c_note_number}</a>'
                         tracking_history["Date"] = ""
                         tracking_history["Location"] = ""
                         tracking_history["CheckpointState"] = ""
@@ -127,7 +128,7 @@ def tracking(request, tracking_number):
                 else:                    
                     final_status = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")
                     if final_status.exists():
-                        final_status = final_status[0]        
+                        final_status = final_status[0] 
                         drs_num = final_status.drs_number                                           
                         delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
                         delivery_boy_detail = delivery_boy_detail.deliveryboy_name                        
@@ -151,7 +152,7 @@ def tracking(request, tracking_number):
                     drs_permission = DrsPermission.objects.filter(user=request.user, can_veiw=True)
                     if drs_permission.exists():
                         # drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_number).order_by("-created_at")                                        
-                        drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")                    
+                        drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_number_drs).order_by("-created_at")                    
                         if drs_obj.exists():
                             # find booking complaint
                             comp_exists = 0
@@ -179,6 +180,7 @@ def tracking(request, tracking_number):
             drs_permission = DrsPermission.objects.filter(user=request.user, can_veiw=True)
             if drs_permission.exists():
                 # drs_obj = DrsTransactionHistory.objects.filter(user=request.user, docket_number=tracking_number).order_by("-created_at")                                        
+                tracking_number = str(tracking_number_drs)                              
                 drs_obj = DrsTransactionHistory.objects.filter(docket_number=tracking_number).order_by("-created_at")                    
                 if drs_obj.exists():
                     # find booking complaint
