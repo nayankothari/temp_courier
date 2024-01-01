@@ -595,7 +595,7 @@ def booking_dashboard_return(request):
                                 user=request.user).order_by("-created_at").values("id",
                         "c_note_number", "doc_date", "to_destination__name", "booking_type__booking_type",
                         "party_name__party_name", "receiver_name", "weight", "freight_charge", "amount", 
-                        "ref_courier_name__name", "booking_mode")  
+                        "ref_courier_name__name", "booking_mode")[:150]  
                         
         return JsonResponse({"status": 1, "data": list(today_bookings)})
     return JsonResponse({"status": 0})
@@ -1069,7 +1069,7 @@ def account_booking_return(request):
                 today_bookings = Booking.objects.filter(doc_date__range=(from_date, to_date),
                         user=request.user, booking_mode="A/C").order_by("-created_at").values("id", "c_note_number", "to_destination__name", 
                                         "ref_courier_name__name", "doc_date", "booking_type__booking_type",
-                                        "party_name__party_name", "weight")  
+                                        "party_name__party_name", "weight")[:150] 
                 return JsonResponse({"status": 1, "data": list(today_bookings)})
             except Exception as e:
                 log.error("Fast booking search dates are set to blank thats why below error occur.")
@@ -1077,7 +1077,7 @@ def account_booking_return(request):
         today_bookings = Booking.objects.filter(created_at__startswith=today_date,
                 user=request.user, booking_mode="A/C").order_by("-created_at").values("id", "c_note_number", "to_destination__name", 
                                 "ref_courier_name__name", "doc_date", "booking_type__booking_type",
-                                "party_name__party_name", "weight")  
+                                "party_name__party_name", "weight")[:150]  
                         
         return JsonResponse({"status": 1, "data": list(today_bookings)})
     return JsonResponse({"status": 0})
