@@ -608,7 +608,7 @@ def export_to_excel_bookings(request):
             list_of_c_notes = list_of_c_notes[0]
             list_of_c_notes = ast.literal_eval(list_of_c_notes)
             booking_details = Booking.objects.filter(user=request.user, 
-                c_note_number__in=list_of_c_notes).order_by("ref_courier_number")
+                c_note_number__in=list_of_c_notes).order_by("doc_date")
             if booking_details.exists():      
                 file_name = datetime.datetime.now().strftime("Booking_%Y-%m-%d %I:%M.csv")
                 response = HttpResponse(content_type='text/csv')
