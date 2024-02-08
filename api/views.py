@@ -132,7 +132,7 @@ def tracking(request, tracking_number):
                         final_status = final_status[0] 
                         drs_num = final_status.drs_number                                           
                         delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
-                        delivery_boy_detail = delivery_boy_detail.deliveryboy_name                        
+                        # delivery_boy_detail = delivery_boy_detail.deliveryboy_name                        
                         if_drs = 1                        
                         last_status = final_status.status       
                         reason = ""
@@ -161,9 +161,10 @@ def tracking(request, tracking_number):
                             if_drs = 1    
                             only_and_only_drs = 1 
                             final_status = drs_obj[0]                          
-                            drs_num = final_status.drs_number   
+                            drs_num = final_status.drs_number
+                            
                             delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
-                            delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
+                            # delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
                             last_status = final_status.status                               
                             reason = ""                        
                             if final_status.reason:
@@ -190,9 +191,9 @@ def tracking(request, tracking_number):
                     if_drs = 1    
                     only_and_only_drs = 1 
                     final_status = drs_obj[0]                             
-                    drs_num = final_status.drs_number     
+                    drs_num = final_status.drs_number                         
                     delivery_boy_detail = DrsMaster.objects.get(drs_no=final_status.drs_number, user=final_status.user)
-                    delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
+                    # delivery_boy_detail = delivery_boy_detail.deliveryboy_name                                                                 
                     last_status = final_status.status                               
                     reason = ""                        
                     if final_status.reason:

@@ -5,7 +5,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <p class="modal-title">Raise your query for shipment no. <b>{{ booking_details.c_note_number }}</b></p>
+                    <p class="modal-title">Raise your query for shipment no. <b>{{ booking_details.c_note_number }}</b>
+                    </p>
                     <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -54,7 +55,8 @@
                         <tr>
                             <th scope="row" style="font-size: 13px;">Ref. Number</th>
                             <td style="font-size: 13px;">{{ booking_details.ref_courier_number }}
-                                <button type='button' id='copy_btn' class='border-0 bg-transparent text-primary copy_btn' data-sid="{{ booking_details.ref_courier_number }}" title="Copy to clipboard"><span id="cp_clipboard"><i class="bi bi-clipboard"></i></span></button>
+                                <button type='button' id='copy_btn' class='border-0 bg-transparent text-primary copy_btn' data-sid="{{ booking_details.ref_courier_number }}" title="Copy to clipboard"><span
+                                        id="cp_clipboard"><i class="bi bi-clipboard"></i></span></button>
                             </td>
 
                         </tr>
@@ -97,16 +99,17 @@
                         <tr>
                             <th scope="row" class="text-success">Current Status</th>
                             {% if user.is_authenticated %}
-                            <td class="text-success"><b><i class="bi bi-patch-check-fill"></i> {{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }} | DRS No: {{ drs_num }}</b></td>
+                            <td class="text-success"><b><i class="bi bi-patch-check-fill"></i> {{ last_status }} By {{ dbd.deliveryboy_name }}, Contact: {{ dbd.deliveryboy_name.mobile_number }} | DRS No: {{ drs_num }}</b></td>
                             {% else %}
-                            <td class="text-success" style="font-size: 20px;"><b><i class="bi bi-patch-check-fill"></i> {{ last_status }}</b></td>
+                            <td class="text-success" style="font-size: 20px;"><b><i class="bi bi-patch-check-fill"></i>
+                                    {{ last_status }}</b></td>
                             {% endif %}
                         </tr>
                         {% elif last_status.name == 'PENDING' %}
                         <tr>
                             <th scope="row" class="text-success">Current Status</th>
                             {% if user.is_authenticated %}
-                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }} | DRS No: {{ drs_num }}</b></td>
+                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.deliveryboy_name }}, Contact: {{ dbd.deliveryboy_name.mobile_number }} | DRS No: {{ drs_num }}</b></td>
                             {% else %}
                             <td class="text-danger"><b>{{ last_status }}</b></td>
                             {% endif %}
@@ -115,7 +118,7 @@
                         <tr>
                             <th scope="row" class="text-success">Current Status</th>
                             {% if user.is_authenticated %}
-                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }} | DRS No: {{ drs_num }}</b></td>
+                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.deliveryboy_name }}, Contact: {{ dbd.deliveryboy_name.mobile_number }} | DRS No: {{ drs_num }}</b></td>
                             {% else %}
                             <td class="text-danger"><b>{{ last_status }}</b></td>
                             {% endif %}
@@ -124,7 +127,7 @@
                         <tr>
                             <th scope="row" class="text-success">Current Status</th>
                             {% if user.is_authenticated %}
-                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }} | DRS No: {{ drs_num }}</b></td>
+                            <td class="text-danger"><b>{{ last_status }} By {{ dbd.deliveryboy_name }}, Contact: {{ dbd.deliveryboy_name.mobile_number }} | DRS No: {{ drs_num }}</b></td>
                             {% else %}
                             <td class="text-danger"><b>{{ last_status }}</b></td>
                             {% endif %}
@@ -134,10 +137,22 @@
                             <th scope="row">Current Status</th>
                             {% if booking_details.ref_courier_name.type != 'Internal' %}
                             <!-- Need some external details here -->
+                            {% if user.is_authenticated %}
+                            <!-- tt -->
+                            {% if dbd.deliveryboy_name %}
+                            <td><b>{{ last_status }} By {{ dbd.deliveryboy_name }}, Contact: {{ dbd.deliveryboy_name.mobile_number }} | DRS No: {{ drs_num }}</b></td>
+                            {% endif %}
+                            <!-- tt -->
+                            <!-- else -->
+                            <!-- <td><b> last_status </b></td> -->
+                            {% endif %}
+                            <!-- tt -->
                             {% for track_his in tracking_history %}
                             <td>{{ track_his.Activity | safe}}</td>
-                            {% endfor %} {% else %} {% if user.is_authenticated %} {% if dbd.delivery_boy_name %}
-                            <td><b>{{ last_status }} By {{ dbd.delivery_boy_name }}, Contact: {{ dbd.mobile_number }} | DRS No: {{ drs_num }}</b></td>
+                            {% endfor %}
+                            <!-- tt -->
+                            {% else %} {% if user.is_authenticated %} {% if dbd.deliveryboy_name %}
+                            <td><b>{{ last_status }} By {{ dbd.deliveryboy_name }}, Contact: {{ dbd.deliveryboy_name.mobile_number }} | DRS No: {{ drs_num }}</b></td>
                             {% else %}
                             <td><b>{{ last_status }}</b></td>
                             {% endif %} {% else %}
@@ -145,6 +160,7 @@
                             {% endif %} {% endif %}
                         </tr>
                         {% endif %}
+
                         <!-- if only DRS -->
                         {% if only_and_only_drs == 1 %}
                         <tr>
@@ -262,7 +278,8 @@
                 </div>
                 {% endif %}
                 <div class="col-4 text-center">
-                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-primary btn-sm mb-3">Back Home</button></a>
+                    <a href="{% url 'home' %}"><button type="button" class="btn btn-outline-primary btn-sm mb-3">Back
+                            Home</button></a>
                 </div>
             </div>
         </div>
@@ -288,12 +305,15 @@
                             {% if comp.status == 'OPEN' %}
                             <td>
                                 <!-- <input type="button" value="Work in progress." class="btn btn-primary btn-sm"> -->
-                                <span style="font-style: italic; font-size: 12px;">Thank you! we are working together to resolve your issue.</span>
+                                <span style="font-style: italic; font-size: 12px;">Thank you! we are working together to
+                                    resolve your issue.</span>
                             </td>
                             {% elif comp.status == 'CLOSE' %}
                             <td>
                                 <!-- <input type="button" value="Work in progress." class="btn btn-primary btn-sm"> -->
-                                <span style="font-style: italic; font-size: 12px;">we are happy to inform you that your issue has been resolved, if you ever need assistance again, we are just a message away.</span>
+                                <span style="font-style: italic; font-size: 12px;">we are happy to inform you that your
+                                    issue has been resolved, if you ever need assistance again, we are just a message
+                                    away.</span>
                             </td>
                             {% else %}
                             <td></td>
