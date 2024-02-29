@@ -196,7 +196,9 @@
                         </tr>
                         {% if drs_details == 1 %}
                         <tr>
-                            <td>{{ date|date:"Y-m-d" }}</td>
+                            <!-- <td>{{ date|date:"Y-m-d" }}</td> -->
+                            <td>{{ dbd.date|date:"Y-m-d" }}</td>
+                            <!-- This date does not have to change, should be the same as drs creation date.-->
                             <!-- <td>{{ track_his.d_from </td> -->
                             <!-- <td>{{ track_his.d_to </td> -->
                             {% if user.is_authenticated %}

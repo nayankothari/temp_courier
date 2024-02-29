@@ -1980,7 +1980,9 @@ def upload_drs_details(request):
             instances_to_create = []
             for i in drs_history[1:]:
                 parcel_status = ParcelStatus.objects.get(id=i[3])                
-                instance = DrsTransactionHistory(docket_number=i[0], origin=i[1], consignee_name=i[2], drs_number=drs_number, status=parcel_status, user=request.user, reason=i[4])
+                instance = DrsTransactionHistory(docket_number=i[0], origin=i[1],
+                    consignee_name=i[2], drs_number=drs_number, status=parcel_status, 
+                    user=request.user, reason=i[4])
                 instances_to_create.append(instance)
             DrsTransactionHistory.objects.bulk_create(instances_to_create) 
 
