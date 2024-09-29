@@ -407,6 +407,7 @@
 
     // ################################## Save DRS Details ####################################
     $("#save_drs").click(function() {
+        $('#save_drs').prop('disabled', true);
         var drs_history = [];
         $('#DrsTable tr').each(function() {
             var rowData = [];
@@ -447,8 +448,10 @@
                     window.location.href = '/drs'
                 } else {
                     alert(response.message);
+                    $('#save_drs').prop('disabled', false);
                 };
             }
         });
+        // $('#save_drs').prop('disabled', false);
     });
 </script>
